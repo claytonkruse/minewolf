@@ -1,0 +1,10 @@
+@import "@picocss/pico";
+
+a.x {
+    color: unset;
+    color: red;
+}
+
+a > * {
+    color: white;
+}
