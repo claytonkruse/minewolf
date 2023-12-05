@@ -1,0 +1,132 @@
+<h1>Add a Server</h1>
+<form>
+	<label for="server-name">
+		Server Name
+		<input type="text" name="server-name" id="server-name" placeholder="Minewolf" />
+	</label>
+	<label for="server-slogan">
+		Slogan
+		<input type="text" name="server-slogan" id="server-slogan" placeholder="A Minecraft server." />
+	</label>
+	<div class="address">
+		<label for="server-ip">
+			Server IP
+			<input type="text" name="server-ip" id="server-ip" placeholder="0.0.0.0" />
+		</label>
+		<label for="server-port">
+			Server Port
+			<input type="text" name="sever-port" id="server-port" placeholder="25565" />
+		</label>
+	</div>
+	<fieldset>
+		<legend>Minecraft Edition</legend>
+		<label for="edition-java">
+			<input type="radio" name="server-edition" id="edition-java" value="java" checked />
+			Java
+		</label>
+		<label for="edition-bedrock">
+			<input type="radio" name="server-edition" id="edition-bedrock" value="bedrock" />
+			Bedrock
+		</label>
+		<label for="edition-both-separate">
+			<input type="radio" name="server-edition" id="edition-both-separate" value="separate" />
+			Both, but seperate
+		</label>
+		<label for="edition-crossplay">
+			<input type="radio" name="server-edition" id="edition-crossplay" value="crossplay" />
+			Both, with crossplay
+		</label>
+	</fieldset>
+	<fieldset>
+		<legend>Whitelisted?</legend>
+		<label for="server-whitelisted-yes">
+			<input type="radio" name="server-whitelisted" id="server-whitelisted-yes" value="yes" />
+			Yes
+		</label>
+		<label for="server-whitelisted-no">
+			<input type="radio" name="server-whitelisted" id="server-whitelisted-no" value="no" checked />
+			No
+		</label>
+	</fieldset>
+	<label for="server-tags">
+		Additional Tags
+		<input
+			type="text"
+			name="server-tags"
+			id="server-tags"
+			placeholder="survival, creative, pvp, skyblock, hunger games, bedwars"
+		/>
+	</label>
+	<label for="server-banner">
+		Banner
+		<input type="file" name="server-banner" id="server-banner" />
+		<small>jpeg, png, or gif</small>
+	</label>
+	<label for="server-description">
+		Description
+		<textarea name="server-description" id="" cols="30" rows="10"></textarea>
+		<small
+			>If this is a whitelisted server, you may want to include instructions on how to be added.</small
+		>
+	</label>
+	<label for="server-video">
+		YouTube Video
+		<input
+			type="text"
+			name="server-video"
+			id="server-video"
+			placeholder="https://youtu.be/bnAQQEHtoW0"
+		/>
+		<small>This video may be embedded on the server page.</small>
+	</label>
+	<label for="server-website">
+		Website
+		<input
+			type="text"
+			name="server-website"
+			id="server-website"
+			placeholder="https://minewolf.net"
+		/>
+	</label>
+	<label for="server-dynmap">
+		Dynmap URL
+		<input
+			type="text"
+			name="server-dynmap"
+			id="server-dynmap"
+			placeholder="https://dynmap.minewolf.net"
+		/>
+	</label>
+	<label for="server-email">
+		Email
+		<input type="text" name="server-email" id="server-email" placeholder="support@minewolf.net" />
+	</label>
+	<label for="server-discord">
+		Discord Invite
+		<input
+			type="text"
+			name="server-discord"
+			id="server-discord"
+			placeholder="https://discord.gg/DiSCoRdIsEVil"
+		/>
+	</label>
+	<button type="submit">Post</button>
+</form>
+
+<style lang="scss">
+	textarea {
+		resize: vertical;
+		min-height: 5rem;
+	}
+
+	.address {
+		display: grid;
+		grid-template-columns: 1fr max-content;
+		gap: 1rem;
+	}
+
+	#server-port {
+		display: block;
+		width: 5rem;
+	}
+</style>

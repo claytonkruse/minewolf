@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let name: string = 'Undefined Server';
-	export let rank: number = 0;
+	export let rank: number | string = 0;
 	export let online: boolean = false;
 	export let players = '0/0';
 </script>
