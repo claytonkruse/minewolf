@@ -97,10 +97,10 @@
 			placeholder="https://dynmap.minewolf.net"
 		/>
 	</label>
-	<label for="server-email">
+	<!-- <label for="server-email">
 		Email
 		<input type="text" name="server-email" id="server-email" placeholder="support@minewolf.net" />
-	</label>
+	</label> -->
 	<label for="server-discord">
 		Discord Invite
 		<input
