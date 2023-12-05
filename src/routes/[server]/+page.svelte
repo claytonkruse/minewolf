@@ -34,7 +34,7 @@
 		<li><a href="vote">Vote for this Server</a></li>
 	</ul>
 </nav>
-<span on:click={copy_ip} data-tooltip={tooltip} data-placement="bottom">{ip}</span>
+<span on:click={copy_ip} data-tooltip={tooltip} data-placement="bottom"><code>{ip}</code></span>
 {#if data}
 	<section>
 		{#if data.version}
