@@ -1,6 +1,6 @@
 <nav class="container-fluid">
 	<ul>
-		<li><a href="/">Minewolf</a></li>
+		<li><a class="uppercase" href="/">Minewolf</a></li>
 	</ul>
 	<ul>
 		<li><a href="/browse">Browse</a></li>

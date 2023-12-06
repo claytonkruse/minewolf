@@ -1,4 +1,4 @@
-<h1>Add a Server</h1>
+<h1>Add Your Server</h1>
 <form>
 	<label for="server-name">
 		Server Name

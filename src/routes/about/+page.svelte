@@ -17,7 +17,7 @@
 </p>
 <p>
 	I also plan for Minewolf to be at least a <em>little</em> inovative, like all developers with
-	delusions of of grandeur. So far I've got <em>revenue sharing</em>.
+	delusions of of grandeur. So far I've got: <em>revenue sharing</em>.
 </p>
 <p>
 	With revenue sharing, server owners would get a portion of the ad revenue from votes, and maybe
