@@ -17,7 +17,7 @@
 		tooltip = 'Copied.';
 		setTimeout(() => {
 			tooltip = 'Copy again?';
-		}, 5000);
+		}, 8888);
 	}
 </script>
 

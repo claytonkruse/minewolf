@@ -11,12 +11,21 @@
 		<a class="name" href="/">{name}</a>
 		<p class="tags">tag1, tag2, tag3</p>
 	</td>
-	<td>Banner</td>
+	<td><img class="banner" src="/banner.png" alt="" /></td>
 	<td>{players}</td>
 	<td>{online ? 'online' : 'offline'}</td>
 </tr>
 
 <style lang="scss">
+	.banner {
+		--normal-width: 486px;
+		--normal-height: 60px;
+		// min-width: var(--normal-width);
+		// max-width: var(--normal-width);
+		// min-height: var(--normal-height);
+		// max-height: var(--normal-height);
+	}
+
 	.name {
 		font-size: 1rem;
 		margin-bottom: 0.3rem;
