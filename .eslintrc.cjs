@@ -27,5 +27,15 @@ module.exports = {
 				parser: '@typescript-eslint/parser'
 			}
 		}
-	]
+	],
+	rules: {
+		// 'no-unused-vars': ['error', { "ignoreRestSiblings": true }],
+		'@typescript-eslint/no-unused-vars': ['error', { "ignoreRestSiblings": true }],
+
+		semi: ['error', 'always'],
+		'comma-dangle': ['error', 'never'],
+		'comma-spacing': ['error', { before: false, after: true }],
+		'brace-style': ['error', '1tbs', { allowSingleLine: true }],
+		'block-spacing': ['error', 'always']
+	}
 };

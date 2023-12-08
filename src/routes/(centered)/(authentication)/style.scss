@@ -1,0 +1,18 @@
+article {
+    padding: 1rem !important;
+    max-width: 30rem;
+}
+
+form {
+    margin: 0;
+    div {
+        & > input {
+            margin-bottom: 0 !important;
+        }
+        margin-bottom: 1rem;
+    }
+}
+
+nav {
+    line-height: 0;
+}

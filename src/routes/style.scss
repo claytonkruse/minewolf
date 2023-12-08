@@ -1,5 +1,19 @@
 @import "@picocss/pico";
 
+:root,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-flow: column;
+
+    main {
+        flex-grow: 1;
+    }
+}
+
 a.x {
     color: unset;
     color: red;
@@ -15,6 +29,22 @@ a > * {
     padding: 0.15em 0.6em;
     background-color: rgba(0, 0, 0, 25%);
     border-radius: 0.3em;
+
+    &.gamemode {
+        color: green;
+    }
+
+    &.plugin {
+        color: orange;
+    }
+
+    &.gameplay {
+        color: yellow;
+    }
+
+    &.interest {
+        color: purple;
+    }
 }
 
 .uppercase {

@@ -34,7 +34,11 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@lucia-auth/adapter-prisma": "^3.0.2",
 		"@picocss/pico": "^1.5.10",
-		"sass": "^1.69.5"
+		"lucia": "^2.7.4",
+		"prisma": "^5.7.0",
+		"sass": "^1.69.5",
+		"zod": "^3.22.4"
 	}
 }

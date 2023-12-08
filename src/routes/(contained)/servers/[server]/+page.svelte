@@ -2,7 +2,7 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
-	let ip: string = 'minewolf.net';
+	let ip: string = 'mc.minewolf.net';
 	let tooltip: string = 'Copy IP?';
 
 	let data: any;
@@ -21,11 +21,38 @@
 	}
 </script>
 
+<aside>
+	<table>
+		<tr>
+			<th>IP</th>
+			<td>{ip}</td>
+		</tr>
+		<tr>
+			<th>Version</th>
+			<td>1.8</td>
+		</tr>
+		<tr>
+			<th>Votes</th>
+			<td>321</td>
+		</tr>
+		<tr>
+			<th>Players</th>
+			<td>12/23</td>
+		</tr>
+		<tr>
+			<th>Uptime</th>
+			<td>100%</td>
+		</tr>
+	</table>
+</aside>
+
 <hgroup>
 	<h1>Minewolf</h1>
 	<h2>The best Minecraft server that there ever was.</h2>
 </hgroup>
+
 <img class="banner" src="/banner.png" alt="" />
+
 <nav aria-label="breadcrumb">
 	<ul>
 		<li><a href="/">Website</a></li>
@@ -34,6 +61,7 @@
 		<li><a href="vote">Vote for this Server</a></li>
 	</ul>
 </nav>
+
 <span on:click={copy_ip} data-tooltip={tooltip} data-placement="bottom"><code>{ip}</code></span>
 {#if data}
 	<section>
@@ -44,19 +72,19 @@
 			<div>{data.players.online}/{data.players.max} players online</div>
 		{/if}
 	</section>
-	<section>
-		<div class="game-listing">
-			{#if data.icon}
+	<article class="game-listing">
+		{#if data.icon}
+			<figure>
 				<img src={data.icon} alt="" />
-			{/if}
-			{#if data.motd}
-				<code>
-					{@html data.motd.html[0]}<br />
-					{@html data.motd.html[1]}
-				</code>
-			{/if}
-		</div>
-	</section>
+			</figure>
+		{/if}
+		{#if data.motd}
+			<code>
+				{@html data.motd.html[0]}<br />
+				{@html data.motd.html[1]}
+			</code>
+		{/if}
+	</article>
 {/if}
 <section>
 	<p>
@@ -67,24 +95,17 @@
 		assumenda cum nobis cupiditate soluta maiores natus! Ipsa a accusamus modi!
 	</p>
 </section>
-{#if data}
-	{#if data.plugins}
-		<section>
-			<h2>Plugins</h2>
-			<div class="tag-group">
-				{#each data.plugins as plugin}
-					<span class="tag">{plugin.name}</span>{' '}
-				{/each}
-			</div>
-		</section>
+
+<section class="tag-group">
+	<div class="tag gamemode">Survival</div>
+	<div class="tag gamemode">Creative</div>
+	{#if data}
+		{#if data.plugins}
+			{#each data.plugins as plugin}
+				<span class="tag plugin">{plugin.name}</span>{' '}
+			{/each}
+		{/if}
 	{/if}
-{/if}
-<section>
-	<h2>Tags</h2>
-	<div class="tag-group">
-		<div class="tag">survival</div>
-		<div class="tag">creative</div>
-	</div>
 </section>
 
 <style lang="scss">
@@ -106,14 +127,16 @@
 	}
 
 	.game-listing {
-		height: 3rem;
-		img {
-			vertical-align: top;
-			height: 100%;
-		}
+		all: unset;
+		display: flex;
 		code {
 			font-size: 1em;
+			height: 100%;
 		}
 		// border: 1px dotted red;
+	}
+
+	aside {
+		float: right;
 	}
 </style>
