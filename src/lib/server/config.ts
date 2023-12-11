@@ -1,0 +1,4 @@
+export const CHARS_ALLOWED_IN_USERNAME =
+	'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_';
+export const MIN_SERVER_NAME_LENGTH = 5;
+export const MAX_SERVER_NAME_LENGTH = 20;

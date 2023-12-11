@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import illegal_usernames from './illegal_usernames';
 import { prisma } from '$lib/server/prisma';
+import find_illegal_chars from '$lib/utils/find_illegal_chars';
+import { CHARS_ALLOWED_IN_USERNAME } from '$lib/server/config';
 
 const minPasswordLength: number = 8;
 const maxPasswordLength: number = 256;
@@ -11,13 +13,9 @@ export const schema = z.object({
 		.min(3, { message: 'Username must be at least 3 characters.' })
 		.max(18, { message: 'Username may not exceed 18 characters.' })
 		.superRefine((username, ctx) => {
-			const legalChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_';
-			let found_illegal: Array<string> = [];
-			for (const char of username.split('')) {
-				if (!legalChars.includes(char)) found_illegal = [...found_illegal, char];
-			}
-			found_illegal = [...new Set(found_illegal)]; // removes duplicates.
+			const found_illegal = find_illegal_chars(username, CHARS_ALLOWED_IN_USERNAME);
 			if (found_illegal.length == 0) return;
+
 			let message = 'Username may not contain ';
 			if (found_illegal.length === 1) {
 				message += found_illegal[0];
@@ -26,6 +24,7 @@ export const schema = z.object({
 				message += `or ${found_illegal.at(-1)}`;
 			}
 			message += '.';
+
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message

@@ -19,7 +19,8 @@ model User {
 
   keys     Key[]
   sessions Session[]
-  servers  Server[]
+
+  servers Server[]
 }
 
 model Key {
@@ -53,7 +54,26 @@ model Server {
 
   createdAt DateTime
 
-  votes Vote[]
+  ip   String @unique
+  port Int
+
+  name        String
+  slogan      String
+  description String
+  website     String
+  video       String
+  dynmap      String
+  discord     String
+
+  java      Boolean
+  bedrock   Boolean
+  crossplay Boolean
+
+  whitelisted Boolean
+  version     String
+
+  votes      Vote[]
+  servertags ServerTag[]
 }
 
 model Vote {
@@ -65,4 +85,23 @@ model Vote {
   server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
 
   minecraft_username String
+}
+
+model Tag {
+  id String @id @unique
+
+  type String
+  name String @unique
+
+  servertags ServerTag[]
+}
+
+model ServerTag {
+  id String @id @unique
+
+  tag_id String
+  tag    Tag    @relation(references: [id], fields: [tag_id], onDelete: Cascade)
+
+  server_id String
+  server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
 }
