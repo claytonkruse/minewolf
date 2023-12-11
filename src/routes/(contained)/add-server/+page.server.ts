@@ -5,8 +5,8 @@ import { z } from 'zod';
 import { prisma } from '$lib/server/prisma';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.auth.validate();
-	if (!session) throw redirect(303, `/login?from=/add-server`);
+	// const session = await locals.auth.validate();
+	// if (!session) throw redirect(303, `/login?from=/add-server`);
 	return {};
 };
 
@@ -25,7 +25,9 @@ const schema = z.object({
 		.refine(
 			(name) => !find_illegal_chars(name, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),
 			{ message: 'Name may only contain letters.' }
-		)
+		),
+	ip: z.string().trim().min(3, { message: 'A server IP or hostname is required.' }).max(40),
+	port: z.number().int().nonnegative().lte(65535)
 });
 
 export const actions = {

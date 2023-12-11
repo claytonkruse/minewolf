@@ -1,3 +1,16 @@
+<script lang="ts">
+	let ip = '';
+	let port_input: HTMLInputElement;
+
+	function on_ip_input() {
+		if (!ip.includes(':')) return;
+		const ip_parts = ip.split(':');
+		ip = ip_parts[0];
+		port_input.value = ip_parts[1];
+		port_input.focus();
+	}
+</script>
+
 <h1>Add Your Server</h1>
 <form>
 	<label for="server-name">
@@ -11,11 +24,18 @@
 	<div class="address">
 		<label for="server-ip">
 			Server IP
-			<input type="text" name="ip" id="server-ip" placeholder="0.0.0.0" />
+			<input
+				type="text"
+				name="ip"
+				id="server-ip"
+				placeholder="0.0.0.0"
+				bind:value={ip}
+				on:input={on_ip_input}
+			/>
 		</label>
 		<label for="server-port">
 			Server Port
-			<input type="text" name="port" id="server-port" placeholder="25565" />
+			<input type="text" name="port" id="server-port" placeholder="25565" bind:this={por} />
 		</label>
 	</div>
 	<fieldset>
