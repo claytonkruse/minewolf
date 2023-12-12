@@ -24,7 +24,7 @@ export const actions: Actions = {
 			const { fieldErrors: errors } = validation.error.flatten();
 			const { password, ...data } = formData;
 
-			return { data, errors };
+			return fail(422, { data, errors });
 		}
 
 		const { username, password } = validation.data;

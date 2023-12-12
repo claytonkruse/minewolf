@@ -12,7 +12,7 @@
 </script>
 
 <h1>Add Your Server</h1>
-<form>
+<form method="POST">
 	<label for="server-name">
 		Server Name
 		<input type="text" name="name" id="server-name" placeholder="Minewolf" />
@@ -35,7 +35,7 @@
 		</label>
 		<label for="server-port">
 			Server Port
-			<input type="text" name="port" id="server-port" placeholder="25565" bind:this={por} />
+			<input type="text" name="port" id="server-port" placeholder="25565" bind:this={port_input} />
 		</label>
 	</div>
 	<fieldset>

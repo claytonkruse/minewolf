@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { error, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { z } from 'zod';
 import { prisma } from '$lib/server/prisma';
@@ -55,16 +55,21 @@ export const actions = {
 		const formData = await request.formData();
 		const parsed = await schema.safeParseAsync(formData);
 		if (!parsed.success) {
-			const { fieldErrors: errors } = parsed.error.flatten();
-			return { data: formData, errors };
+			const { fieldErrors } = parsed.error.flatten();
+			return fail(422, { data: formData, fieldErrors });
 		}
 
-		prisma.server.create({
-			data: {
-				user_id: session.user.userId,
-				version: 'unknown',
-				...parsed.data
-			}
-		});
+		try {
+			await prisma.server.create({
+				data: {
+					user_id: session.user.userId,
+					version: 'unknown',
+					...parsed.data
+				}
+			});
+		} catch (error) {
+			console.log(error);
+			return fail(500, { error: 'An unknown database error occurred.' });
+		}
 	}
 } satisfies Actions;

@@ -54,16 +54,16 @@ model Server {
 
   createdAt DateTime @default(now())
 
-  ip   String @unique
-  port Int
+  ip   String
+  port Int?
 
   name        String
-  slogan      String
-  description String
-  website     String
-  video       String
-  dynmap      String
-  discord     String
+  slogan      String?
+  description String?
+  website     String?
+  video       String?
+  dynmap      String?
+  discord     String?
 
   edition     String
   whitelisted Boolean @default(false)
