@@ -5,9 +5,9 @@ let prisma: PrismaClient;
 
 if (dev) {
 	prisma = global.prisma || new PrismaClient();
+	global.prisma = prisma;
 } else {
 	prisma = new PrismaClient();
 }
 
 export { prisma };
-3
