@@ -60,10 +60,11 @@ model Server {
   name        String
   slogan      String?
   description String?
-  website     String?
-  video       String?
-  dynmap      String?
-  discord     String?
+
+  website String?
+  video   String?
+  dynmap  String?
+  discord String?
 
   edition     String
   whitelisted Boolean @default(false)

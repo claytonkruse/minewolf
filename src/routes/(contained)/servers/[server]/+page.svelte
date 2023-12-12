@@ -1,23 +1,24 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 
-	let ip: string = 'mc.minewolf.net';
 	let tooltip: string = 'Copy IP?';
 
-	let data: any;
+	export let data: PageData;
+	let { ip, port, name, slogan, description, website, dynmap, discord } = data;
+
+	let api_data: any;
 	onMount(async () => {
 		if (browser) {
-			data = await (await fetch(`https://api.mcsrvstat.us/3/${ip}`)).json();
+			api_data = await (await fetch(`https://api.mcsrvstat.us/3/${ip}`)).json();
 		}
 	});
 
 	async function copy_ip() {
-		await navigator.clipboard.writeText(ip);
+		await navigator.clipboard.writeText(ip || '69');
 		tooltip = 'Copied.';
-		setTimeout(() => {
-			tooltip = 'Copy again?';
-		}, 8888);
+		setTimeout(() => (tooltip = 'Copy again?'), Math.pow(8, 4));
 	}
 </script>
 
@@ -27,6 +28,12 @@
 			<th>IP</th>
 			<td>{ip}</td>
 		</tr>
+		{#if port}
+			<tr>
+				<th>Port</th>
+				<td>{port}</td>
+			</tr>
+		{/if}
 		<tr>
 			<th>Version</th>
 			<td>1.8</td>
@@ -47,61 +54,57 @@
 </aside>
 
 <hgroup>
-	<h1>Minewolf</h1>
-	<h2>The best Minecraft server that there ever was.</h2>
+	<h1>{name}</h1>
+	<h2>{slogan}</h2>
 </hgroup>
 
 <img class="banner" src="/banner.png" alt="" />
 
 <nav aria-label="breadcrumb">
 	<ul>
-		<li><a href="/">Website</a></li>
-		<li><a href="/">Dynmap</a></li>
-		<li><a href="/">Discord</a></li>
+		<li><a href={website}>Website</a></li>
+		<li><a href={dynmap}>Dynmap</a></li>
+		<li><a href={discord}>Discord</a></li>
 		<li><a href="vote">Vote for this Server</a></li>
 	</ul>
 </nav>
 
-<span on:click={copy_ip} data-tooltip={tooltip} data-placement="bottom"><code>{ip}</code></span>
-{#if data}
+<button type="button" on:click={copy_ip} data-tooltip={tooltip} data-placement="bottom">
+	<code>{ip}</code>
+</button>
+{#if api_data}
 	<section>
-		{#if data.version}
-			<div>Minecraft Version {data.version}</div>
+		{#if api_data.version}
+			<div>Minecraft Version {api_data.version}</div>
 		{/if}
-		{#if data.players}
-			<div>{data.players.online}/{data.players.max} players online</div>
+		{#if api_data.players}
+			<div>{api_data.players.online}/{api_data.players.max} players online</div>
 		{/if}
 	</section>
 	<article class="game-listing">
-		{#if data.icon}
+		{#if api_data.icon}
 			<figure>
-				<img src={data.icon} alt="" />
+				<img src={api_data.icon} alt="" />
 			</figure>
 		{/if}
-		{#if data.motd}
+		{#if api_data.motd}
 			<code>
-				{@html data.motd.html[0]}<br />
-				{@html data.motd.html[1]}
+				{@html api_data.motd.html[0]}<br />
+				{@html api_data.motd.html[1]}
 			</code>
 		{/if}
 	</article>
 {/if}
 <section>
-	<p>
-		Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum excepturi illo quas sint,
-		laudantium, eaque odit aliquam eum repellendus voluptatem necessitatibus quis sequi quod
-		accusantium. Dignissimos culpa voluptatem dolor ut eius voluptate odit nesciunt reprehenderit!
-		Sed temporibus, quo repudiandae nisi quasi esse fugiat nihil quia iusto at quam, perspiciatis
-		assumenda cum nobis cupiditate soluta maiores natus! Ipsa a accusamus modi!
-	</p>
+	<p>{description}</p>
 </section>
 
 <section class="tag-group">
 	<div class="tag gamemode">Survival</div>
 	<div class="tag gamemode">Creative</div>
-	{#if data}
-		{#if data.plugins}
-			{#each data.plugins as plugin}
+	{#if api_data}
+		{#if api_data.plugins}
+			{#each api_data.plugins as plugin}
 				<span class="tag plugin">{plugin.name}</span>{' '}
 			{/each}
 		{/if}
