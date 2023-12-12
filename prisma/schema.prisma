@@ -47,12 +47,12 @@ model Session {
 }
 
 model Server {
-  id String @id @unique
+  id Int @id @unique @default(autoincrement())
 
   user_id String
   user    User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
-  createdAt DateTime
+  createdAt DateTime @default(now())
 
   ip   String @unique
   port Int
@@ -65,30 +65,29 @@ model Server {
   dynmap      String
   discord     String
 
-  java      Boolean
-  bedrock   Boolean
-  crossplay Boolean
+  edition     String
+  whitelisted Boolean @default(false)
 
-  whitelisted Boolean
-  version     String
+  //
+  version String
 
   votes      Vote[]
   servertags ServerTag[]
 }
 
 model Vote {
-  id String @id @unique
+  id Int @id @unique @default(autoincrement())
 
-  createdAt DateTime
+  createdAt DateTime @default(now())
 
-  server_id String
+  server_id Int
   server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
 
   minecraft_username String
 }
 
 model Tag {
-  id String @id @unique
+  id Int @id @unique @default(autoincrement())
 
   type String
   name String @unique
@@ -97,11 +96,11 @@ model Tag {
 }
 
 model ServerTag {
-  id String @id @unique
+  id Int @id @unique @default(autoincrement())
 
-  tag_id String
-  tag    Tag    @relation(references: [id], fields: [tag_id], onDelete: Cascade)
+  tag_id Int
+  tag    Tag @relation(references: [id], fields: [tag_id], onDelete: Cascade)
 
-  server_id String
+  server_id Int
   server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
 }
