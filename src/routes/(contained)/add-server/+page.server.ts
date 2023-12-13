@@ -81,7 +81,7 @@ export const actions = {
 				break;
 			case 'bedrock':
 				break;
-			case 'seperate':
+			case 'separate':
 				break;
 			case 'crossplay':
 				break;
@@ -105,6 +105,6 @@ export const actions = {
 			return fail(500, { error: 'An unknown database error occurred.' });
 		}
 
-		throw redirect(303, `/server/${server.id}`);
+		throw redirect(303, `/servers/${server.id}`);
 	}
 } satisfies Actions;

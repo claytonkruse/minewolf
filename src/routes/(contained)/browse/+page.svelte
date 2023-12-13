@@ -9,7 +9,7 @@
 	$: page = data.page;
 </script>
 
-<h1>Browse</h1>
+<h1>Browse Minecraft Servers</h1>
 <form action="/browse">
 	<input type="search" name="q" id="search" />
 </form>

@@ -1,12 +1,15 @@
-<h1>Server Owner Dashboard</h1>
+<h1>Dashboard</h1>
 
-<nav>
-	<ul><li><a href="/logout/">Logout</a></li></ul>
-</nav>
-
-<section>
-	<h2>Your Servers</h2>
-</section>
+<aside>
+	<nav>
+		<ul>
+			<li><a href="/add-server/">Add Server</a></li>
+			<li><a href="/user/servers/">My Servers</a></li>
+			<li><a href="/user/bookmarked/">Bookmarked Servers</a></li>
+			<li><a href="/logout/">Logout</a></li>
+		</ul>
+	</nav>
+</aside>
 
 <p>Idea for revenue sharing:</p>
 <p>1 vote = 8w</p>
@@ -47,9 +50,3 @@
 		<li>keepinventory</li>
 	</ul>
 </ul>
-
-<nav>
-	<ul>
-		<li><a href="/add-server">Add a Server</a></li>
-	</ul>
-</nav>

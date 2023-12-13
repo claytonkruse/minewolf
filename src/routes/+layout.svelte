@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { LayoutData } from './$types';
 	import Navbar from './Navbar.svelte';
+	import Footer from './Footer.svelte';
 	import './style.scss';
 
 	export let data: LayoutData;
@@ -9,3 +10,4 @@
 
 <Navbar {username} />
 <slot />
+<Footer />

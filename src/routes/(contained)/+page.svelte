@@ -1,12 +1,9 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import { onMount } from 'svelte';
-
 	import ServerList from '$lib/components/ServerList.svelte';
 	import ServerListing from '$lib/components/ServerListing.svelte';
 </script>
 
-<h1>Servers</h1>
+<h1>Minecraft Servers</h1>
 
 <ServerList>
 	<ServerListing rank="★" name="Sponsor 1" />

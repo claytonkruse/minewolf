@@ -14,15 +14,6 @@ body {
     }
 }
 
-a.x {
-    color: unset;
-    color: red;
-}
-
-a > * {
-    color: white;
-}
-
 .tag {
     font-size: 0.6rem;
     display: inline-block;
@@ -53,4 +44,16 @@ a > * {
 
 .lowercase {
     text-transform: lowercase;
+}
+
+.unstyled {
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+
+    &:is(button) {
+        display: inline-block;
+        width: max-content;
+    }
 }

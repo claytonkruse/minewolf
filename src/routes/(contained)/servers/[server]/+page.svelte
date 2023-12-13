@@ -2,11 +2,10 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-
 	let tooltip: string = 'Copy IP?';
 
 	export let data: PageData;
-	let { ip, port, name, slogan, description, website, dynmap, discord } = data;
+	let { ip, port, name, slogan, description, website, dynmap, discord, version } = data;
 
 	let api_data: any;
 	onMount(async () => {
@@ -25,6 +24,10 @@
 <aside>
 	<table>
 		<tr>
+			<th>Rank</th>
+			<td>3</td>
+		</tr>
+		<tr>
 			<th>IP</th>
 			<td>{ip}</td>
 		</tr>
@@ -36,7 +39,7 @@
 		{/if}
 		<tr>
 			<th>Version</th>
-			<td>1.8</td>
+			<td>{version}</td>
 		</tr>
 		<tr>
 			<th>Votes</th>
@@ -69,7 +72,13 @@
 	</ul>
 </nav>
 
-<button type="button" on:click={copy_ip} data-tooltip={tooltip} data-placement="bottom">
+<button
+	type="button"
+	class="unstyled"
+	on:click={copy_ip}
+	data-tooltip={tooltip}
+	data-placement="bottom"
+>
 	<code>{ip}</code>
 </button>
 {#if api_data}
