@@ -16,14 +16,20 @@ export const schema = z.object({
 			const found_illegal = find_illegal_chars(username, CHARS_ALLOWED_IN_USERNAME);
 			if (found_illegal.length == 0) return;
 
-			let message = 'Username may not contain ';
-			if (found_illegal.length === 1) {
-				message += found_illegal[0];
-			} else {
-				for (let i = 0; i < found_illegal.length - 1; i++) message += `${found_illegal[i]}, `;
-				message += `or ${found_illegal.at(-1)}`;
-			}
-			message += '.';
+			const formatter = new Intl.ListFormat('en-US', {
+				type: 'disjunction'
+			});
+			const message = `Username may not contain ${formatter.format(found_illegal)}.`;
+
+			// The old way of doing it. (without ListFormat)
+			//let message = 'Username may not contain ';
+			//if (found_illegal.length === 1) {
+			//	message += found_illegal[0];
+			//} else {
+			//	for (let i = 0; i < found_illegal.length - 1; i++) message += `${found_illegal[i]}, `;
+			//	message += `or ${found_illegal.at(-1)}`;
+			//}
+			//message += '.';
 
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
