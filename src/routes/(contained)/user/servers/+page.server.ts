@@ -6,7 +6,7 @@ export const load = (async ({ locals }) => {
 	const session = await locals.auth.validate();
 	if (!session) throw redirect(303, '/login/?from=/user/servers/');
 	const user_id = session.user.userId;
-	const servers = prisma.server.findMany({ where: { user_id } });
+	const servers = await prisma.server.findMany({ where: { user_id } });
 
 	return { servers };
 }) satisfies PageServerLoad;
