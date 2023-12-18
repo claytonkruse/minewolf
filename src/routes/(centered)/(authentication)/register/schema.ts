@@ -16,9 +16,7 @@ export const schema = z.object({
 			const found_illegal = find_illegal_chars(username, CHARS_ALLOWED_IN_USERNAME);
 			if (found_illegal.length == 0) return;
 
-			const formatter = new Intl.ListFormat('en-US', {
-				type: 'disjunction'
-			});
+			const formatter = new Intl.ListFormat('en-US', { type: 'disjunction' });
 			const message = `Username may not contain ${formatter.format(found_illegal)}.`;
 
 			// The old way of doing it. (without ListFormat)

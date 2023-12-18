@@ -1,5 +1,6 @@
 export const CHARS_ALLOWED_IN_USERNAME =
 	'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_';
+export const MAX_SERVER_IP_LENGTH = 40;
 export const MIN_SERVER_NAME_LENGTH = 5;
 export const MAX_SERVER_NAME_LENGTH = 20;
 export const MAX_SERVER_SLOGAN_LENGTH = 25;

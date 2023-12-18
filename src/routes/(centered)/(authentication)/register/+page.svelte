@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { beforeSubmit } from '../beforeSubmit';
 	import LinkFrom from '$lib/components/LinkFrom.svelte';
-	import Errors from '../Errors.svelte';
+	import Errors from '$lib/components/Errors.svelte';
 
 	export let form;
 
@@ -18,7 +18,7 @@
 		<h1>Register</h1>
 		<h2>Create an account. An email is optional, although required to reset your password.</h2>
 	</hgroup>
-	
+
 	<form method="POST" use:enhance={() => beforeSubmit(registerButton)}>
 		<div>
 			<input

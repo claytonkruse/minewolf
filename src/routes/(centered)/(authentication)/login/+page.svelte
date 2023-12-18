@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import { beforeSubmit } from '../beforeSubmit';
 	import LinkFrom from '$lib/components/LinkFrom.svelte';
-	import Errors from '../Errors.svelte';
+	import Errors from '$lib/components/Errors.svelte';
 
 	$: from = $page.url.searchParams.get('from');
 

@@ -1,7 +1,8 @@
 <script lang="ts">
-	// import type { Prisma } from '@prisma/client';
-	// export let server: Prisma.ServerSelect;
-	export let server: any;
+	import Errors from '$lib/components/Errors.svelte';
+
+	export let server: any = {};
+	export let errors: Record<string, Array<string>> | undefined;
 
 	let ip = server.ip?.toString() || '';
 	let port_input: HTMLInputElement;
@@ -18,7 +19,8 @@
 <form method="POST">
 	<label for="server-name">
 		Server Name
-		<input type="text" name="name" id="server-name" placeholder="Minewolf" required />
+		<input type="text" name="name" id="server-name" placeholder="Minewolf" />
+		<Errors errors={errors?.name} />
 	</label>
 	<label for="server-slogan">
 		Slogan
@@ -26,9 +28,9 @@
 			type="text"
 			name="slogan"
 			id="server-slogan"
-			value={server.slogan}
 			placeholder="A Minecraft server."
 		/>
+		<Errors errors={errors?.slogan} />
 	</label>
 	<div class="address">
 		<label for="server-ip">
@@ -41,16 +43,29 @@
 				bind:value={ip}
 				on:input={on_ip_input}
 			/>
+			<Errors errors={[...(errors?.ip ?? []), ...(errors?.port ?? [])]} />
 		</label>
 		<label for="server-port">
 			Server Port
-			<input type="text" name="port" id="server-port" placeholder="25565" bind:this={port_input} />
+			<input
+				type="text"
+				name="port"
+				id="server-port"
+				placeholder="25565"
+				bind:this={port_input}
+			/>
 		</label>
 	</div>
 	<fieldset>
 		<legend>Minecraft Edition</legend>
 		<label for="edition-java">
-			<input type="radio" name="edition" id="edition-java" value="java" checked />
+			<input
+				type="radio"
+				name="edition"
+				id="edition-java"
+				value="java"
+				checked
+			/>
 			Java
 		</label>
 		<label for="edition-bedrock">
@@ -58,22 +73,43 @@
 			Bedrock
 		</label>
 		<label for="edition-both-separate">
-			<input type="radio" name="edition" id="edition-both-separate" value="separate" />
+			<input
+				type="radio"
+				name="edition"
+				id="edition-both-separate"
+				value="separate"
+			/>
 			Both, but separate
 		</label>
 		<label for="edition-crossplay">
-			<input type="radio" name="edition" id="edition-crossplay" value="crossplay" />
+			<input
+				type="radio"
+				name="edition"
+				id="edition-crossplay"
+				value="crossplay"
+			/>
 			Both, with crossplay
 		</label>
 	</fieldset>
 	<fieldset>
 		<legend>Whitelisted?</legend>
 		<label for="server-whitelisted-yes">
-			<input type="radio" name="whitelisted" id="server-whitelisted-yes" value="yes" />
+			<input
+				type="radio"
+				name="whitelisted"
+				id="server-whitelisted-yes"
+				value="yes"
+			/>
 			Yes
 		</label>
 		<label for="server-whitelisted-no">
-			<input type="radio" name="whitelisted" id="server-whitelisted-no" value="no" checked />
+			<input
+				type="radio"
+				name="whitelisted"
+				id="server-whitelisted-no"
+				value="no"
+				checked
+			/>
 			No
 		</label>
 	</fieldset>
@@ -86,30 +122,48 @@
 			placeholder="survival, creative, pvp, skyblock, hunger games, bedwars"
 		/>
 	</label>
+
 	<label for="server-banner">
 		Banner
 		<input type="file" name="banner" id="server-banner" />
 		<small>jpeg, png, or gif</small>
 	</label>
+
 	<label for="server-description">
 		Description
 		<textarea name="server-description" id="" cols="30" rows="10"></textarea>
 		<small
-			>If this is a whitelisted server, you may want to include instructions on how to be added.</small
+			>If this is a whitelisted server, you may want to include instructions on
+			how to be added.</small
 		>
 	</label>
 	<label for="server-video">
 		YouTube Video
-		<input type="text" name="video" id="server-video" placeholder="https://youtu.be/bnAQQEHtoW0" />
+		<input
+			type="text"
+			name="video"
+			id="server-video"
+			placeholder="https://youtu.be/bnAQQEHtoW0"
+		/>
 		<small>This video may be embedded on the server page.</small>
 	</label>
 	<label for="server-website">
 		Website
-		<input type="text" name="website" id="server-website" placeholder="https://minewolf.net" />
+		<input
+			type="text"
+			name="website"
+			id="server-website"
+			placeholder="https://minewolf.net"
+		/>
 	</label>
 	<label for="server-dynmap">
 		Dynmap URL
-		<input type="text" name="dynmap" id="server-dynmap" placeholder="https://dynmap.minewolf.net" />
+		<input
+			type="text"
+			name="dynmap"
+			id="server-dynmap"
+			placeholder="https://dynmap.minewolf.net"
+		/>
 	</label>
 	<!-- <label for="server-email">
 		Email
