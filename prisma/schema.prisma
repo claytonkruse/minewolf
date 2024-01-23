@@ -67,13 +67,15 @@ model Server {
   discord String?
 
   edition     String
-  whitelisted Boolean @default(false)
+  whitelisted Boolean? @default(false)
 
   //
-  version String
+  min_version String?
+  max_version String?
 
-  votes      Vote[]
-  servertags ServerTag[]
+  votes          Vote[]
+  servertags     ServerTag[]
+  serverversions ServerVersion[]
 }
 
 model Vote {
@@ -99,9 +101,29 @@ model Tag {
 model ServerTag {
   id Int @id @unique @default(autoincrement())
 
+  server_id Int
+  server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
+
   tag_id Int
   tag    Tag @relation(references: [id], fields: [tag_id], onDelete: Cascade)
 
+  @@unique([server_id, tag_id])
+}
+
+model Version {
+    id String @id @unique
+
+  serverVersions ServerVersion[]
+}
+
+model ServerVersion {
+  id Int @id @unique @default(autoincrement())
+
   server_id Int
   server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
+
+  version_id String
+  version   Version @relation(references: [id], fields: [version_id], onDelete: Cascade)
+
+  @@unique([server_id, version_id])
 }

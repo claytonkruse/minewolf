@@ -1,5 +1,9 @@
 @import "@picocss/pico";
 
+* {
+    min-width: 0; // THIS FIXES SO MANY THINGS!!
+}
+
 :root,
 body {
     height: 100%;

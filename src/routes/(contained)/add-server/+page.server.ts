@@ -3,6 +3,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { schema } from './schema';
+import pingServer from '$lib/utils/pingServer';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth.validate();
@@ -24,29 +25,22 @@ export const actions = {
 			return fail(422, { data: formData, errors: fieldErrors });
 		}
 
-		const { edition, ...rest } = parsed.data;
-		switch (edition) {
-			case 'java':
-				break;
-			case 'bedrock':
-				break;
-			case 'separate':
-				break;
-			case 'crossplay':
-				break;
-			default:
-				console.log('Somebody POST an invaild edition.');
-				return fail(422, {});
-		}
-
 		let server;
 		try {
+            const { ip } = parsed.data;
+            const serverPingData = await pingServer(ip);
+            const { online, version: version_raw } = serverPingData;
+            if (!online) return fail(422, { error: 'Server must be online to be added.' });
+            const version_range = version_raw.trim().split('-');
+            const min_version = version_range[0];
+            const max_version = version_range[version_range.length - 1];
+            
 			server = await prisma.server.create({
 				data: {
 					user_id: session.user.userId,
-					version: 'unknown',
-					edition,
-					...rest
+                    min_version,
+                    max_version,
+                    ...parsed.data
 				}
 			});
 		} catch (error) {

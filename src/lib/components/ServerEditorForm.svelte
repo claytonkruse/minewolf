@@ -13,7 +13,7 @@
 		ip = ip_parts[0];
 		port_input.value = ip_parts[1];
 		port_input.focus();
-	}
+    }
 </script>
 
 <form method="POST">

@@ -89,8 +89,7 @@ const schema = z.object({
 			{
 				message: 'Edition must be valid.'
 			}
-		)
-		.nullish(),
+		),
 	whitelisted: z.coerce.boolean().nullish()
 });
 
