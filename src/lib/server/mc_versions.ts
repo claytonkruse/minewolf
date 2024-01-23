@@ -17,7 +17,7 @@ let versions: Array<{id: string, type: string}>;
 
 update_mc_version_list();
 function get_mc_versions() {
-    return mc_versions;
+    return versions;
 }
 
 async function update_mc_version_list() {
