@@ -4,11 +4,13 @@ import type { Actions } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { schema } from './schema';
 import pingServer from '$lib/utils/pingServer';
+import { get_mc_versions } from '$lib/server/mc_versions';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth.validate();
 	if (!session) throw redirect(303, `/login?from=/add-server`);
-	return {};
+    const versions = await get_mc_versions();
+	return { versions };
 };
 
 export const actions = {
@@ -51,3 +53,4 @@ export const actions = {
 		throw redirect(303, `/servers/${server.id}`);
 	}
 } satisfies Actions;
+
