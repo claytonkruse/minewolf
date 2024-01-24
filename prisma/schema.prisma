@@ -111,7 +111,8 @@ model ServerTag {
 }
 
 model Version {
-    id String @id @unique
+  id   String @id @unique
+  type String
 
   serverVersions ServerVersion[]
 }
@@ -123,7 +124,7 @@ model ServerVersion {
   server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
 
   version_id String
-  version   Version @relation(references: [id], fields: [version_id], onDelete: Cascade)
+  version    Version @relation(references: [id], fields: [version_id], onDelete: Cascade)
 
   @@unique([server_id, version_id])
 }
