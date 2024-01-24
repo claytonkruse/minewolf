@@ -17,22 +17,21 @@ type Version = { id: string, type: string };
 let no_update_until: number;
 let versions: Array<Version>;
 
+
 async function get_mc_versions() {
-    if (versions && Date.now() < no_update_until) {
-        return versions; 
-    }
-    console.log('Updating Minecraft version list.');
-    
+    const get_db_versions = async () => await prisma.version.findMany();
+    if (versions && Date.now() < no_update_until) return versions;
     const oneHour = 1000 * 60 * 60;
     no_update_until = Date.now() + (oneHour * 8) + Math.round(Math.random() * (oneHour * 5));
-
-    const db_versions = await prisma.version.findMany();
-
+    console.log('Updating Minecraft version list.');
+    
     const response = await fetch("https://launchermeta.mojang.com/mc/game/version_manifest.json");
     if (!response.ok) {
         console.log('Unable to retrieve Minecraft version mainfest; returning stored versions');
-        return db_versions; // If version manifest unavailibe return saved DB versions
+        return versions ?? await get_db_versions();
     }
+
+    const db_versions = await get_db_versions();
     manifest = await response.json();
     const { versions: manifest_versions } = manifest;
     versions = [];
