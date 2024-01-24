@@ -6,3 +6,5 @@ export const MAX_SERVER_NAME_LENGTH = 20;
 export const MAX_SERVER_SLOGAN_LENGTH = 25;
 export const MAX_SERVER_DESCRIPTION_LENGTH = 2000;
 export const MAX_SERVER_WEBSITE_URL_LENGTH = 50;
+
+export const DATABASE = 'sqlite'.toLowerCase();
