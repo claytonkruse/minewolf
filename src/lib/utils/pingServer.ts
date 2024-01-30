@@ -51,11 +51,13 @@ type ServerPing = {
 		| undefined;
 };
 
+// this code needs to be tested
 let queue = 0;
 let recent = 0;
 function throttle() {
 	return new Promise<void>((resolve) => {
 		function execute() {
+			queue--;
 			recent++;
 			setTimeout(() => {
 				recent--;
@@ -64,8 +66,8 @@ function throttle() {
 			resolve();
 		}
 
-		if (recent < 4) return execute();
 		queue++;
+		if (recent < 4) return execute();
 		setTimeout(() => execute, queue * 1000);
 	});
 }
