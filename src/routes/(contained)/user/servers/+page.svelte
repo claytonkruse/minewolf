@@ -16,17 +16,19 @@
 			</tr>
 		</thead>
 		{#each servers as server}
-			<td>1</td>
-			<td><a href={`/user/servers/${server.id}/`}>{server.name}</a></td>
-			<td>
-				<nav>
-					<ul>
-						<li><a href={`/servers/${server.id}/`}>View</a></li>
-						<li><a href={`/user/servers/${server.id}/edit/`}>Edit</a></li>
-						<li><a href={`/user/servers/${server.id}/remove/`}>Remove</a></li>
-					</ul>
-				</nav>
-			</td>
+			<tr>
+				<td>1</td>
+				<td><a href={`/user/servers/${server.id}/`}>{server.name}</a></td>
+				<td>
+					<nav>
+						<ul>
+							<li><a href={`/servers/${server.id}/`}>View</a></li>
+							<li><a href={`/user/servers/${server.id}/edit/`}>Edit</a></li>
+							<li><a href={`/user/servers/${server.id}/remove/`}>Remove</a></li>
+						</ul>
+					</nav>
+				</td>
+			</tr>
 		{/each}
 	</table>
 </section>
