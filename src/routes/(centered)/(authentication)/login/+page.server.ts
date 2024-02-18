@@ -13,8 +13,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 const schema = z.object({
-	username: z.string({ required_error: 'You must enter a username.' }).trim().min(1),
-	password: z.string().trim().optional()
+	username: z
+		.string({ required_error: 'You must enter a username.' })
+		.trim()
+		.min(1),
+	password: z.string().trim()
 });
 
 export const actions = {
@@ -34,21 +37,37 @@ export const actions = {
 		}
 
 		const { username, password } = validation.data;
-		if (!password) throw redirect(303, '/login/via-email');
 
 		try {
-			const key = await auth.useKey('username', username.toLowerCase(), password);
-			const session = await auth.createSession({ userId: key.userId, attributes: {} });
+			const key = await auth.useKey(
+				'username',
+				username.toLowerCase(),
+				password
+			);
+			const session = await auth.createSession({
+				userId: key.userId,
+				attributes: {}
+			});
 			locals.auth.setSession(session);
 		} catch (e) {
-			if (
-				e instanceof LuciaError &&
-				(e.message === 'AUTH_INVALID_KEY_ID' || e.message === 'AUTH_INVALID_PASSWORD')
-			) {
-				return fail(400, { message: 'Invalid credentials.' });
+			if (e instanceof LuciaError) {
+				switch (e.message) {
+					case 'AUTH_INVALID_KEY_ID':
+						return fail(400, {
+							errors: { username: ['Invalid username.'], password: [] }
+						});
+					case 'AUTH_INVALID_PASSWORD':
+						if (password === '') throw redirect(303, '/login/email-sent');
+						return fail(400, {
+							errors: { username: [], password: ['Invalid password.'] }
+						});
+				}
+				return fail(400, {
+					errors: { username: [], password: ['Invalid credentials.'] }
+				});
 			}
 			return fail(500, {
-				message: 'An unknown error occured.'
+				errors: { username: [], password: ['An unknown error occured.'] }
 			});
 		}
 

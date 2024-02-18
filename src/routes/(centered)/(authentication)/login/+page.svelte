@@ -4,10 +4,11 @@
 	import { beforeSubmit } from '../beforeSubmit';
 	import LinkFrom from '$lib/components/LinkFrom.svelte';
 	import Errors from '$lib/components/Errors.svelte';
+	import type { ActionData } from './$types';
 
 	$: from = $page.url.searchParams.get('from');
 
-	export let form;
+	export let form: ActionData;
 	let username = form?.data?.username;
 	$: errors = form?.errors;
 
@@ -21,7 +22,7 @@
 	</hgroup>
 
 	<form method="POST" use:enhance={() => beforeSubmit(loginButton)}>
-		<div>
+		<label for="login-username">
 			<input
 				class="input"
 				type="text"
@@ -33,8 +34,8 @@
 				required
 			/>
 			<Errors errors={errors?.username} />
-		</div>
-		<div>
+		</label>
+		<label for="login-password">
 			<input
 				class="input"
 				type="password"
@@ -44,7 +45,7 @@
 				placeholder="Password"
 			/>
 			<Errors errors={errors?.password} />
-		</div>
+		</label>
 		<!-- <fieldset>
 			<label for="remember-me">
 				<input type="checkbox" role="switch" id="remember-me" name="remember-me" />

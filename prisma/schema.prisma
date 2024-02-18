@@ -2,129 +2,129 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.sqlite"
+    provider = "sqlite"
+    url      = "file:./dev.sqlite"
 }
 
 model User {
-  id String @id @unique
+    id String @id @unique
 
-  username     String   @unique
-  createdAt    DateTime
-  lastOnlineAt DateTime
+    username     String   @unique
+    createdAt    DateTime
+    lastOnlineAt DateTime
 
-  keys     Key[]
-  sessions Session[]
+    keys     Key[]
+    sessions Session[]
 
-  servers Server[]
+    servers Server[]
 }
 
 model Key {
-  id String @id @unique
+    id String @id @unique
 
-  user_id String
-  user    User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    user_id String
+    user    User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
-  hashed_password String?
+    hashed_password String?
 
-  @@index([user_id])
+    @@index([user_id])
 }
 
 model Session {
-  id String @id @unique
+    id String @id @unique
 
-  user_id String
-  user    User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    user_id String
+    user    User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
-  active_expires BigInt
-  idle_expires   BigInt
+    active_expires BigInt
+    idle_expires   BigInt
 
-  @@index([user_id])
+    @@index([user_id])
 }
 
 model Server {
-  id Int @id @unique @default(autoincrement())
+    id Int @id @unique @default(autoincrement())
 
-  user_id String
-  user    User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    user_id String
+    user    User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
+    createdAt DateTime @default(now())
 
-  ip   String
-  port Int?
+    ip   String
+    port Int?
 
-  name        String
-  slogan      String?
-  description String?
+    name        String
+    slogan      String?
+    description String?
 
-  website String?
-  video   String?
-  dynmap  String?
-  discord String?
+    website String?
+    video   String?
+    dynmap  String?
+    discord String?
 
-  edition     String
-  whitelisted Boolean? @default(false)
+    edition     String
+    whitelisted Boolean? @default(false)
 
-  //
-  min_version String?
-  max_version String?
+    //
+    min_version String?
+    max_version String?
 
-  votes          Vote[]
-  servertags     ServerTag[]
-  serverversions ServerVersion[]
+    votes          Vote[]
+    servertags     ServerTag[]
+    serverversions ServerVersion[]
 }
 
 model Vote {
-  id Int @id @unique @default(autoincrement())
+    id Int @id @unique @default(autoincrement())
 
-  createdAt DateTime @default(now())
+    createdAt DateTime @default(now())
 
-  server_id Int
-  server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
+    server_id Int
+    server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
 
-  minecraft_username String
+    minecraft_username String
 }
 
 model Tag {
-  id Int @id @unique @default(autoincrement())
+    id Int @id @unique @default(autoincrement())
 
-  type String
-  name String @unique
+    type String
+    name String @unique
 
-  servertags ServerTag[]
+    servertags ServerTag[]
 }
 
 model ServerTag {
-  id Int @id @unique @default(autoincrement())
+    id Int @id @unique @default(autoincrement())
 
-  server_id Int
-  server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
+    server_id Int
+    server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
 
-  tag_id Int
-  tag    Tag @relation(references: [id], fields: [tag_id], onDelete: Cascade)
+    tag_id Int
+    tag    Tag @relation(references: [id], fields: [tag_id], onDelete: Cascade)
 
-  @@unique([server_id, tag_id])
+    @@unique([server_id, tag_id])
 }
 
 model Version {
-  id   String @id @unique
-  type String
+    id   String @id @unique
+    type String
 
-  serverVersions ServerVersion[]
+    serverVersions ServerVersion[]
 }
 
 model ServerVersion {
-  id Int @id @unique @default(autoincrement())
+    id Int @id @unique @default(autoincrement())
 
-  server_id Int
-  server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
+    server_id Int
+    server    Server @relation(references: [id], fields: [server_id], onDelete: Cascade)
 
-  version_id String
-  version    Version @relation(references: [id], fields: [version_id], onDelete: Cascade)
+    version_id String
+    version    Version @relation(references: [id], fields: [version_id], onDelete: Cascade)
 
-  @@unique([server_id, version_id])
+    @@unique([server_id, version_id])
 }
