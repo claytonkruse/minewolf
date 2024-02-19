@@ -16,11 +16,14 @@
 <article>
 	<hgroup>
 		<h1>Register</h1>
-		<h2>Create an account. An email is optional, although required to reset your password.</h2>
+		<h2>
+			Create an account. An email is optional, although required to reset your
+			password.
+		</h2>
 	</hgroup>
 
 	<form method="POST" use:enhance={() => beforeSubmit(registerButton)}>
-		<div>
+		<label for="register-username">
 			<input
 				class="input"
 				type="text"
@@ -32,8 +35,8 @@
 				required
 			/>
 			<Errors errors={errors?.username} />
-		</div>
-		<div>
+		</label>
+		<label for="register-password">
 			<input
 				class="input"
 				type="text"
@@ -43,8 +46,8 @@
 				placeholder="Password"
 			/>
 			<Errors errors={errors?.password} />
-		</div>
-		<div>
+		</label>
+		<label for="register-email">
 			<input
 				class="input"
 				type="email"
@@ -55,7 +58,7 @@
 				bind:value={email}
 			/>
 			<Errors errors={errors?.email} />
-		</div>
+		</label>
 
 		<button type="submit" bind:this={registerButton}>Register</button>
 	</form>
