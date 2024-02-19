@@ -54,7 +54,7 @@ model Server {
 
     createdAt DateTime @default(now())
 
-    ip   String
+    ip   String @unique
     port Int?
 
     name        String

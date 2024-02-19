@@ -9,14 +9,15 @@ import { get_mc_versions } from '$lib/server/mc_versions';
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth.validate();
 	if (!session) throw redirect(303, `/login?from=/add-server`);
-    const versions = await get_mc_versions();
+	const versions = await get_mc_versions();
 	return { versions };
 };
 
 export const actions = {
 	default: async ({ locals, request }) => {
 		const session = await locals.auth.validate();
-		if (!session) throw error(401, 'Client must be authenticated to add a server.');
+		if (!session)
+			throw error(401, 'Client must be authenticated to add a server.');
 
 		const formData = Object.fromEntries(await request.formData());
 		const parsed = await schema.safeParseAsync(formData);
@@ -29,20 +30,21 @@ export const actions = {
 
 		let server;
 		try {
-            const { ip } = parsed.data;
-            const serverPingData = await pingServer(ip);
-            const { online, version: version_raw } = serverPingData;
-            if (!online) return fail(422, { error: 'Server must be online to be added.' });
-            const version_range = version_raw.trim().split('-');
-            const min_version = version_range[0];
-            const max_version = version_range[version_range.length - 1];
-            
+			const { ip } = parsed.data;
+			const serverPingData = await pingServer(ip);
+			const { online, version: version_raw } = serverPingData;
+			if (!online)
+				return fail(422, { error: 'Server must be online to be added.' });
+			const version_range = version_raw.trim().split('-');
+			const min_version = version_range[0];
+			const max_version = version_range[version_range.length - 1];
+
 			server = await prisma.server.create({
 				data: {
 					user_id: session.user.userId,
-                    min_version,
-                    max_version,
-                    ...parsed.data
+					min_version,
+					max_version,
+					...parsed.data
 				}
 			});
 		} catch (error) {
@@ -53,4 +55,3 @@ export const actions = {
 		throw redirect(303, `/servers/${server.id}`);
 	}
 } satisfies Actions;
-
