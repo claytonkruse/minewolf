@@ -1,64 +1,68 @@
-import { prisma } from '$lib/server/prisma';
+// import { db } from "$lib/server/drizzle/db";
+// // import { versions, tags } from "$lib/server/drizzle/schema";
+// import cache from "./cache";
 
-let manifest: {
-    latest: {
-        release: string,
-        snapshot: string,
-    },
-    versions: Array<{
-        id: string,
-        type: string,
-        url: string,
-        time: string,
-        releaseTime: string,
-    }>
-};
-type Version = { id: string, type: string };
-let no_update_until: number;
-let versions: Array<Version>;
+// type Version = { id: string; type: string };
 
+// async function get_mc_versions() {
+//     const db_versions = await db.select().from(versions);
 
-async function get_mc_versions() {
-    const get_db_versions = async () => await prisma.version.findMany();
-    if (versions && Date.now() < no_update_until) return versions;
-    const oneHour = 1000 * 60 * 60;
-    no_update_until = Date.now() + (oneHour * 8) + Math.round(Math.random() * (oneHour * 5));
-    console.log('Updating Minecraft version list.');
-    
-    const response = await fetch("https://launchermeta.mojang.com/mc/game/version_manifest.json");
-    if (!response.ok) {
-        console.log('Unable to retrieve Minecraft version mainfest; returning stored versions');
-        return versions ?? await get_db_versions();
-    }
+//     const reqUrl =
+//         "https://launchermeta.mojang.com/mc/game/version_manifest.json";
+//     const cached = cache.get(reqUrl);
+//     let response;
+//     if (cached) response = cached;
+//     else {
+//         response = await (await fetch(reqUrl)).json();
+//         cache.set(reqUrl, response, 6000);
+//     }
 
-    const db_versions = await get_db_versions();
-    manifest = await response.json();
-    const { versions: manifest_versions } = manifest;
-    versions = [];
-    let new_versions: Array<Version> = [];
-    for (const manifest_version of manifest_versions) {
-        const { id, type } = manifest_version;
-        const version: Version = { id, type };
-        versions = [...versions, version];
+//     const manifest: {
+//         latest: {
+//             release: string;
+//             snapshot: string;
+//         };
+//         versions: Array<{
+//             id: string;
+//             type: string;
+//             url: string;
+//             time: string;
+//             releaseTime: string;
+//         }>;
+//     } = response;
+//     const manifest_versions = manifest.versions.toReversed();
+//     let versions_list: Array<Version> = [];
+//     let new_versions: Array<Version> = [];
+//     for (const manifest_version of manifest_versions) {
+//         const { id, type } = manifest_version;
+//         const version: Version = { id, type };
+//         versions_list = [...versions_list, version];
 
-        if (db_versions.every((db_version) => db_version.id !== version.id)) {
-            new_versions = [...new_versions, version];
-        }
-    }
+//         if (db_versions.every((db_version) => db_version.id !== version.id)) {
+//             new_versions = [...new_versions, version];
+//         }
+//     }
 
-    // Not availible with sqlite
-    //await prisma.version.createMany(new_versions);
-    // instead:
-    for (const version of new_versions) {
-        //console.log('adding new version ' + Date.now());
-        console.log('Found new version; adding to database.');
-        await prisma.version.create({ data: version }).catch(() => '');
-    }
+//     // Add new versions to database
+//     for (const version of new_versions) {
+//         console.log("Found new version; adding to database.");
+//         const [tag] = await db
+//             .insert(tags)
+//             .values({
+//                 type: "version",
+//                 name: version.id,
+//             })
+//             .returning();
 
-    return versions;
-}
+//         if (tag) {
+//             await db
+//                 .insert(versions)
+//                 .values({ ...version, tagId: tag.id })
+//                 .catch(() => "");
+//         }
+//     }
 
-export {
-    get_mc_versions
-};
+//     return versions_list;
+// }
 
+// export { get_mc_versions };

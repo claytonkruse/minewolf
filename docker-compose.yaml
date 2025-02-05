@@ -1,0 +1,12 @@
+# This file is just used for spinning up a development database.
+# It is not used in production.
+
+services:
+    postgres:
+        image: postgres
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: postgres
+        ports:
+            - 5432:5432

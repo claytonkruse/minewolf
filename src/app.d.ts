@@ -2,24 +2,12 @@
 // for information about these interfaces
 
 declare global {
-	namespace App {
-		// interface Error {}
-		interface Locals {
-			auth: import('lucia').AuthRequest;
-		}
-		// interface PageData {}
-		// interface Platform {}
-	}
-
-	namespace Lucia {
-		type Auth = import('$lib/server/lucia').Auth;
-		type DatabaseUserAttributes = {
-			username: string;
-			createdAt: Date;
-			lastOnlineAt: Date;
-		};
-		type DatabaseSessionAttributes = Record<string, never>; // Record<string, never> is apparently a better way of expressing an epmty object according to eslint.
-	}
+    namespace App {
+        interface Locals {
+            session: import("$lib/server/drizzle/schema").sessions | null;
+            user: import("$lib/server/drizzle/schema").users | null;
+        }
+    }
 }
 
 export {};

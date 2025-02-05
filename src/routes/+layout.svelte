@@ -1,13 +1,10 @@
 <script lang="ts">
-	import type { LayoutData } from './$types';
-	import Navbar from './Navbar.svelte';
-	import Footer from './Footer.svelte';
-	import './style.scss';
+    import type { LayoutProps } from "./$types";
+    import "../app.pcss";
 
-	export let data: LayoutData;
-	$: username = data.username;
+    let { children }: LayoutProps = $props();
 </script>
 
-<Navbar {username} />
-<slot />
-<Footer />
+<div class="contents text-center">
+    {@render children()}
+</div>
