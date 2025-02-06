@@ -1,14 +1,16 @@
 import type { PageServerLoad, Actions } from "./$types";
 import { db } from "$lib/server/drizzle/db";
-import { servers } from "$lib/server/drizzle/schema";
-import { eq } from "drizzle-orm";
-import crypto from "crypto";
+import { serverTable, voteTable } from "$lib/server/drizzle/schema";
+import { eq, gt, and, or } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
 
 export const load = (async ({ params }) => {
-    const server = await db.query.servers
+    const serverId = Number(params.id);
+    const server = await db.query.serverTable
         .findFirst({
-            where: eq(servers.id, params.id),
+            where: eq(serverTable.id, serverId),
         })
+
         .catch((e) => error(400, "Database error."));
 
     if (!server) {
@@ -18,13 +20,16 @@ export const load = (async ({ params }) => {
     return { server };
 }) satisfies PageServerLoad;
 
+// vote implementation
+// TODO: secure this outdated implementation
 import ursa from "ursa-purejs";
 import net from "node:net";
+import { error, redirect } from "@sveltejs/kit";
 
 function sendData(settings, callback) {
     settings.key = settings.key.replace(/ /g, "+");
     settings.key = wordwrap(settings.key, 65, true);
-    var timestampdata = new Date().getTime();
+    let timestampdata = new Date().getTime();
     if (settings.data.timestamp)
         timestampdata = new Date(settings.data.timestamp);
     var pubKey = new Buffer(
@@ -45,7 +50,7 @@ function sendData(settings, callback) {
         "\n";
     var buf = new Buffer(build, "binary");
 
-    key = ursa.createPublicKey(pubKey);
+    let key = ursa.createPublicKey(pubKey);
     var data = key.encrypt(build, "binary", "binary", ursa.RSA_PKCS1_PADDING);
 
     var called = false;
@@ -77,20 +82,18 @@ function sendData(settings, callback) {
     });
 }
 
-let done;
-let res;
-let found;
-let key;
-
 function wordwrap(str, maxWidth) {
-    var newLineStr = "\n";
+    let done;
+    let res;
+    let found;
+
     done = false;
     res = "";
     do {
         found = false;
 
         if (!found) {
-            res += [str.slice(0, maxWidth), newLineStr].join("");
+            res += [str.slice(0, maxWidth), "\n"].join("");
             str = str.slice(maxWidth);
         }
 
@@ -104,34 +107,82 @@ function wordwrap(str, maxWidth) {
 }
 
 export const actions: Actions = {
-    default: async ({ request, params }) => {
-        const formData = await request.formData();
-        const username = formData.get("vote-username")?.toString();
+    default: async ({ getClientAddress, request, params, cookies }) => {
+        const ip = getClientAddress();
+        console.log(`Received vote request from ${ip}.`);
 
-        if (!username || username.length > 100) {
+        const formData = await request.formData();
+        let username = formData.get("vote-username")?.toString();
+        username = username || "";
+        if (username.length > 100) {
             error(400, "Invalid Minecraft username.");
         }
 
-        const server = await db.query.servers.findFirst({
-            where: eq(servers.id, params.id),
+        const serverId = Number(params.id);
+
+        const existingVote = await db.query.voteTable.findFirst({
+            where: and(
+                gt(
+                    voteTable.createdAt,
+                    new Date(Date.now() - 1000 * 60 * 60 * 24),
+                ),
+                or(
+                    // The below is designed to allow same user to vote with different ips on different servers.
+                    // This addresses the case that a bad actor tries to interfere with votes by impersonating a user and
+                    // voting for an arbitrary server, thereby wasting his victim's vote.
+                    eq(voteTable.ip, ip),
+                    and(
+                        eq(voteTable.minecraftUsername, username),
+                        eq(voteTable.serverId, serverId),
+                    ),
+                ),
+            ),
+        });
+        if (existingVote) {
+            console.log("You already voted.");
+            error(400, "You have already voted today.");
+        }
+
+        const server = await db.query.serverTable.findFirst({
+            where: eq(serverTable.id, serverId),
         });
 
         if (!server) {
             return error(404, "Server does not exist.");
         }
 
-        sendData(
-            {
-                host: server.votifierAddress || server.address,
-                port: server.votifierPort || 8192,
-                key: server.votifierKey,
-                data: {
-                    user: username,
-                    site: "Minewolf",
-                    timestamp: Date.now(),
+        await db.insert(voteTable).values({
+            id: randomUUID(),
+            serverId,
+            minecraftUsername: username,
+            ip,
+        });
+
+        cookies.set("last_voted_at", Date.now().toString(), {
+            path: "/",
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+        });
+
+        if (!server.votifierEnabled) {
+            console.log("Server does not have votifier enabled.");
+            sendData(
+                {
+                    host: server.votifierAddress || server.address,
+                    port: server.votifierPort || 8192,
+                    key: server.votifierKey,
+                    data: {
+                        user: username,
+                        site: "Minewolf",
+                        timestamp: Date.now(),
+                    },
                 },
-            },
-            () => {},
-        );
+                () => {},
+            );
+            console.log("Vote sent.");
+        }
+
+        redirect(302, "./success/");
     },
 };

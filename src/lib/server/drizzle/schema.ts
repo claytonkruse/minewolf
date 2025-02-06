@@ -7,7 +7,7 @@ import {
     integer,
 } from "drizzle-orm/pg-core";
 
-export const users = pgTable("user", {
+export const userTable = pgTable("user", {
     id: text().primaryKey().unique(),
 
     discordId: text("discord_id").notNull().unique(),
@@ -17,16 +17,18 @@ export const users = pgTable("user", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
     lastOnlineAt: timestamp("last_online_at").defaultNow().notNull(),
 });
+export type User = InferSelectModel<typeof userTable>;
 
-export const usersRelations = relations(users, ({ many }) => ({
-    sessions: many(sessions),
+export const usersRelations = relations(userTable, ({ many }) => ({
+    sessions: many(sessionTable),
+    servers: many(serverTable),
 }));
 
-export const sessions = pgTable("session", {
+export const sessionTable = pgTable("session", {
     id: text("id").primaryKey().unique(),
     userId: text("user_id")
         .notNull()
-        .references(() => users.id, { onDelete: "cascade" }),
+        .references(() => userTable.id, { onDelete: "cascade" }),
 
     discordAccessToken: text("discord_access_token").notNull(),
     discordAccessTokenExpiresAt: timestamp(
@@ -36,20 +38,21 @@ export const sessions = pgTable("session", {
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+export type Session = InferSelectModel<typeof sessionTable>;
 
-export const sessionsRelations = relations(sessions, ({ one }) => ({
-    user: one(users, {
-        fields: [sessions.userId],
-        references: [users.id],
+export const sessionsRelations = relations(sessionTable, ({ one }) => ({
+    user: one(userTable, {
+        fields: [sessionTable.userId],
+        references: [userTable.id],
     }),
 }));
 
-export const servers = pgTable("server", {
+export const serverTable = pgTable("server", {
     // not changable by user
     id: integer().primaryKey().generatedByDefaultAsIdentity().notNull(),
     userId: text("user_id")
         .notNull()
-        .references(() => users.id, { onDelete: "cascade" }),
+        .references(() => userTable.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     lastPingAt: timestamp("last_ping_at", { mode: "date" })
         .defaultNow()
@@ -65,22 +68,23 @@ export const servers = pgTable("server", {
     iconUrl: text("icon_url").notNull().default(""),
     cleanMotd: text("clean_motd").notNull().default(""),
     htmlMotd: text("html_motd").notNull().default(""),
-    crossplay: boolean("crossplay").default(false).notNull(),
+    crossplay: boolean("crossplay").notNull().default(false),
 
     // chanable by user
     address: text("ip").unique().notNull(),
     port: integer("port").notNull().default(25565),
 
-    bedrockAddress: text("bedrock_address"),
+    bedrockAddress: text("bedrock_address").notNull().default(""),
     bedrockPort: integer("bedrock_port").notNull().default(19132),
 
+    votifierEnabled: boolean("votifier_enabled").notNull().default(false),
     votifierAddress: text("votifier_address").notNull().default(""),
     votifierPort: integer("votifier_port").notNull().default(8192),
     votifierKey: text("votifier_key").notNull().default(""),
 
     name: text("name").notNull(),
     description: text("description").notNull().default(""),
-    bannerUrl: text("banner_url").default(""),
+    bannerUrl: text("banner_url").notNull().default(""),
 
     website: text("website").notNull().default(""),
     video: text("video").notNull().default(""),
@@ -94,17 +98,31 @@ export const servers = pgTable("server", {
     versionString: text("version_string").default("1.8.9").notNull(),
     autoVersion: boolean("auto_version").default(true).notNull(),
 });
+export type Server = InferSelectModel<typeof serverTable>;
+export const serverRelations = relations(serverTable, ({ one, many }) => ({
+    user: one(userTable, {
+        fields: [serverTable.userId],
+        references: [userTable.id],
+    }),
+    votes: many(voteTable),
+}));
 
-export type Server = InferSelectModel<typeof servers>;
+export const voteTable = pgTable("vote", {
+    id: text("id").primaryKey().unique(),
+    serverId: integer("server_id")
+        .notNull()
+        .references(() => serverTable.id, { onDelete: "cascade" }),
+    ip: text("ip").notNull(),
+    minecraftUsername: text("minecraft_username").notNull(),
 
-// export const votes = pgTable("vote", {
-//     id: text("id").primaryKey().unique(),
-//     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
-//     serverId: integer("server_id")
-//         .notNull()
-//         .references(() => servers.id, { onDelete: "cascade" }),
-//     minecraftUsername: text("minecraft_username").notNull(),
-// });
+    createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+});
+export const voteRelations = relations(voteTable, ({ one }) => ({
+    server: one(serverTable, {
+        fields: [voteTable.serverId],
+        references: [serverTable.id],
+    }),
+}));
 
 // export const tags = pgTable("tag", {
 //     id: integer("id").primaryKey().generatedByDefaultAsIdentity(),

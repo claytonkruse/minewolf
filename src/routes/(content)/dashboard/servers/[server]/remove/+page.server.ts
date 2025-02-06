@@ -1,7 +1,7 @@
 import { error, redirect } from "@sveltejs/kit";
 import type { PageServerLoad, Actions } from "./$types";
 import { temp_url } from "$lib/utils/redirect_urls";
-import { servers } from "$lib/server/drizzle/schema";
+import { serverTable } from "$lib/server/drizzle/schema";
 import { db } from "$lib/server/drizzle/db";
 import { eq } from "drizzle-orm";
 
@@ -9,8 +9,8 @@ export const load = (async ({ locals, url, params }) => {
     const { user } = locals;
     if (!user) redirect(303, temp_url("/login/", url.href));
 
-    const server = await db.query.servers.findFirst({
-        where: eq(servers.id, Number(params.server)),
+    const server = await db.query.serverTable.findFirst({
+        where: eq(serverTable.id, Number(params.server)),
     });
     if (!server) error(404, "That server doesn't exist.");
 
@@ -22,15 +22,15 @@ export const actions = {
         const { user } = locals;
         if (!user) error(401, "You must be authenticated to remove a server.");
 
-        const server = await db.query.servers.findFirst({
-            where: eq(servers.id, Number(params.server)),
+        const server = await db.query.serverTable.findFirst({
+            where: eq(serverTable.id, Number(params.server)),
         });
         if (!server) error(404, "That server doesn't exist.");
         if (server.userId !== user.id)
             error(403, "You are not authorized to remove this server.");
 
         try {
-            await db.delete(servers).where(eq(servers.id, server.id));
+            await db.delete(serverTable).where(eq(serverTable.id, server.id));
         } catch (e) {
             error(
                 500,

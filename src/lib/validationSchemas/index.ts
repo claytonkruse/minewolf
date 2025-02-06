@@ -1,4 +1,4 @@
-import { servers } from "$lib/server/drizzle/schema";
+import { serverTable } from "$lib/server/drizzle/schema";
 import { z } from "zod";
 
 const MAX_SERVER_IP_LENGTH = 50;
@@ -10,15 +10,17 @@ const serverSchema = {
     id: z.undefined(),
     userId: z.undefined(),
     createdAt: z.undefined(),
+    lastPingAt: z.undefined(),
     lastOnlineAt: z.undefined(),
 
     rank: z.undefined(),
     online: z.undefined(),
-    maxPlayers: z.undefined(),
     onlinePlayers: z.undefined(),
+    maxPlayers: z.undefined(),
     iconUrl: z.undefined(),
     cleanMotd: z.undefined(),
     htmlMotd: z.undefined(),
+    crossplay: z.undefined(),
 
     // chanable by user & refined
     address: z
@@ -33,6 +35,38 @@ const serverSchema = {
         .nonnegative({ message: "Port cannot be negative." })
         .lte(65535, { message: "Port must be valid." })
         .default(25565),
+    bedrockAddress: z
+        .string({ required_error: "A server IP or hostname is required." })
+        .trim()
+        .max(MAX_SERVER_IP_LENGTH, {
+            message: `Server IP may not exceed ${MAX_SERVER_IP_LENGTH} characters.`,
+        })
+        .default(""),
+    bedrockPort: z.coerce
+        .number({ invalid_type_error: "Port must be a number." })
+        .int({ message: "Port must be an integer." })
+        .nonnegative({ message: "Port cannot be negative." })
+        .lte(65535, { message: "Port must be valid." })
+        .default(19132),
+    votifierEnabled: z.boolean().default(false),
+    votifierAddress: z
+        .string({ required_error: "A server IP or hostname is required." })
+        .trim()
+        .max(MAX_SERVER_IP_LENGTH, {
+            message: `Server IP may not exceed ${MAX_SERVER_IP_LENGTH} characters.`,
+        }),
+    votifierPort: z.coerce
+        .number({ invalid_type_error: "Port must be a number." })
+        .int({ message: "Port must be an integer." })
+        .nonnegative({ message: "Port cannot be negative." })
+        .lte(65535, { message: "Port must be valid." })
+        .default(8192),
+    votifierKey: z
+        .string()
+        .max(1000, {
+            message: "Votifier public key may not exceed 1,000 characters.",
+        })
+        .default(""),
 
     name: z
         .string({ required_error: "You must enter a server name." })
@@ -84,15 +118,6 @@ const serverSchema = {
         })
         .default(""),
 
-    votifierKey: z
-        .string()
-        .max(1000, {
-            message: "Votifier public key may not exceed 1,000 characters.",
-        })
-        .optional()
-        .default(""),
-
-    // false booleans become undefined without this
     whitelisted: z.boolean().default(false),
     autoVersion: z.boolean().default(true),
 };
@@ -102,8 +127,8 @@ const { createInsertSchema, createUpdateSchema } = createSchemaFactory({
     // coerce: true,
 });
 
-export const insertServerSchema = createInsertSchema(servers, serverSchema);
+export const insertServerSchema = createInsertSchema(serverTable, serverSchema);
 export type InsertServerSchema = z.infer<typeof insertServerSchema>;
 
-export const updateServerSchema = createUpdateSchema(servers, serverSchema);
+export const updateServerSchema = createUpdateSchema(serverTable, serverSchema);
 export type UpdateServerSchema = z.infer<typeof updateServerSchema>;

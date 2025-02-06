@@ -4,6 +4,9 @@
     import { Input } from "$lib/components/ui/input";
     import { superForm } from "sveltekit-superforms";
 
+    import { Turnstile } from "svelte-turnstile";
+    import { PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY as turnstilePubKey } from "$env/static/public";
+
     let { form: data } = $props();
 
     const form = superForm(data, {
@@ -35,6 +38,9 @@
     <p class="text-sm text-muted-foreground">
         Please ensure your server is online before you submit.
     </p>
+
+    <Turnstile class="mt-3" siteKey={turnstilePubKey} />
+
     <Form.Button class="mt-3">
         {#if $submitting}
             Loading...

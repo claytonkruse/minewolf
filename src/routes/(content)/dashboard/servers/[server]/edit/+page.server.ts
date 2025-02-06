@@ -2,7 +2,7 @@ import { db } from "$lib/server/drizzle/db";
 import { updateServerSchema as schema } from "$lib/validationSchemas";
 import { fail, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { servers } from "$lib/server/drizzle/schema";
+import { serverTable } from "$lib/server/drizzle/schema";
 import { error, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { and, eq } from "drizzle-orm";
@@ -16,8 +16,8 @@ export const load = (async ({ locals, params }) => {
             temp_url("/login/", `/dashboard/servers/${params.server}/edit/`),
         );
 
-    const server = await db.query.servers.findFirst({
-        where: eq(servers.id, Number(params.server)),
+    const server = await db.query.serverTable.findFirst({
+        where: eq(serverTable.id, Number(params.server)),
     });
 
     if (!server) error(404, "Server not found.");
@@ -28,7 +28,9 @@ export const load = (async ({ locals, params }) => {
         id,
         userId,
         createdAt,
+        lastPingAt,
         lastOnlineAt,
+
         rank,
         online,
         onlinePlayers,
@@ -36,6 +38,7 @@ export const load = (async ({ locals, params }) => {
         iconUrl,
         cleanMotd,
         htmlMotd,
+        crossplay,
         ...userChangeable
     } = server; // remove fields that cannot be changed by user
 
@@ -55,12 +58,12 @@ export const actions: Actions = {
 
         try {
             await db
-                .update(servers)
+                .update(serverTable)
                 .set(form.data)
                 .where(
                     and(
-                        eq(servers.id, Number(params.server)),
-                        eq(servers.userId, user.id),
+                        eq(serverTable.id, Number(params.server)),
+                        eq(serverTable.userId, user.id),
                     ),
                 );
         } catch (e) {

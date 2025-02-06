@@ -15,6 +15,9 @@
     </h1>
     <h2 class="text-destructive">Removed servers are permanently deleted.</h2>
 </hgroup>
+
+<br />
+
 <form method="POST">
     <Button variant="destructive" type="submit">Remove</Button>
     <Button variant="secondary" href="/dashboard/servers/">Cancel</Button>

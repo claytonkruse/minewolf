@@ -1,5 +1,5 @@
 import { db } from "$lib/server/drizzle/db";
-import { servers } from "$lib/server/drizzle/schema";
+import { serverTable } from "$lib/server/drizzle/schema";
 import { eq } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
@@ -10,8 +10,8 @@ export const load = (async ({ locals }) => {
     if (!user) redirect(303, temp_url("/login/", "/dashboard/servers/"));
     const user_servers = await db
         .select()
-        .from(servers)
-        .where(eq(servers.userId, user.id));
+        .from(serverTable)
+        .where(eq(serverTable.userId, user.id));
 
     return { servers: user_servers };
 }) satisfies PageServerLoad;

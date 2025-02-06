@@ -1,0 +1,1 @@
+ALTER TABLE "server" ADD COLUMN "enable_votifier" boolean DEFAULT false NOT NULL;

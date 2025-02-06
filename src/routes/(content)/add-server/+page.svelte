@@ -28,12 +28,3 @@
         </Card.Content>
     </Card.Root>
 </div>
-<!-- <form method="POST" use:enhance>
-    <AddServerInput values={form?.data} errors={form?.errors} />
-    <p>
-        <small
-            >Further customization will be availible after the server is posted.</small
-        >
-    </p>
-    <button type="submit">Post</button>
-</form> -->

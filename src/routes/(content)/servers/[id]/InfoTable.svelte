@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Banner from "$lib/components/Banner.svelte";
+    import type { Server } from "$lib/server/drizzle/schema";
     import {
         Table,
         TableCell,
@@ -8,7 +8,7 @@
         TableBody,
     } from "$lib/components/ui/table";
 
-    let { server } = $props();
+    let { server }: { server: Server } = $props();
 </script>
 
 <div class="min-w-72 max-w-72">
@@ -105,14 +105,14 @@
                 </TableRow>
             {/if}
 
-            {#if server.bedrockAddress}
+            {#if server.bedrockAddress && server.bedrockAddress !== server.address}
                 <TableRow>
                     <TableHead>Bedrock Address</TableHead>
-                    <TableCell>{server.address}</TableCell>
+                    <TableCell>{server.bedrockAddress}</TableCell>
                 </TableRow>
             {/if}
 
-            {#if server.bedrockPort !== 19132}
+            {#if server.bedrockPort && server.bedrockPort !== 19132}
                 <TableRow>
                     <TableHead>Bedrock Port</TableHead>
                     <TableCell>{server.bedrockPort}</TableCell>

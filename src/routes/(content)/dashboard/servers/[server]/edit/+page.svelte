@@ -136,6 +136,20 @@
     <br />
 
     <h3 class="mb-2 text-xl font-bold" id="votifier">Votifier Info</h3>
+    <Form.Field {form} name="votifierEnabled">
+        <Form.Control>
+            {#snippet children({ props })}
+                <div class="flex items-center gap-2">
+                    <Checkbox
+                        {...props}
+                        bind:checked={$formData.votifierEnabled}
+                    />
+                    <Form.Label>Enable Votifier</Form.Label>
+                </div>
+            {/snippet}
+        </Form.Control>
+        <Form.FieldErrors />
+    </Form.Field>
     <ServerAddressField
         {form}
         addressField="votifierAddress"
@@ -230,7 +244,7 @@
     <Form.Field {form} name="autoVersion">
         <Form.Control>
             {#snippet children({ props })}
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center gap-2">
                     <Checkbox {...props} bind:checked={$formData.autoVersion} />
                     <Form.Label>Detect Minecraft version(s)</Form.Label>
                 </div>

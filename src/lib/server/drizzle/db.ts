@@ -1,10 +1,5 @@
-import { DB_URL } from "$env/static/private";
-import { drizzle } from "drizzle-orm/postgres-js";
-import * as schema from "./schema";
+import { drizzle } from "drizzle-orm/libsql";
+import { createClient } from "@libsql/client";
 
-export const db = drizzle({
-    connection:
-        DB_URL || "postgres://postgres:postgres@localhost:5432/postgres",
-    casing: "snake_case",
-    schema,
-});
+const client = createClient({ url: "sqlite.db" });
+const db = drizzle({ client });

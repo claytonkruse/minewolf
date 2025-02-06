@@ -1,5 +1,5 @@
 import { db } from "$lib/server/drizzle/db";
-import { servers } from "$lib/server/drizzle/schema";
+import { serverTable } from "$lib/server/drizzle/schema";
 import { eq } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
@@ -12,9 +12,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     const server = (
         await db
             .select()
-            .from(servers)
+            .from(serverTable)
             .limit(1)
-            .where(eq(servers.id, parse.data))
+            .where(eq(serverTable.id, parse.data))
             .catch((e) => error(400, "Database error."))
     )[0];
 

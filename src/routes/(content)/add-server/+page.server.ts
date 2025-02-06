@@ -8,13 +8,19 @@ import { insertServerSchema } from "$lib/validationSchemas";
 import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { db } from "$lib/server/drizzle/db";
-import { servers } from "$lib/server/drizzle/schema";
+import { serverTable } from "$lib/server/drizzle/schema";
 import { temp_url } from "$lib/utils/redirect_urls";
+import { z } from "zod";
+
+const schema = z.object({
+    ...insertServerSchema.shape,
+    turnstileToken: z.string({ required_error: "CAPTCHA error." }),
+});
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user) redirect(303, temp_url("/login/", "/add-server/"));
 
-    const form = await superValidate(zod(insertServerSchema));
+    const form = await superValidate(zod(schema));
 
     return { form };
 };
@@ -40,7 +46,7 @@ export const actions: Actions = {
         let server;
         try {
             [server] = await db
-                .insert(servers)
+                .insert(serverTable)
                 .values({
                     ...form.data,
                     userId: user.id,

@@ -9,11 +9,11 @@ export type DiscordUserInfo = {
 };
 
 import { db } from "$lib/server/drizzle/db";
-import { users } from "$lib/server/drizzle/schema";
+import { userTable } from "$lib/server/drizzle/schema";
 
 export async function updateUser(id: string, discordInfo: DiscordUserInfo) {
     return await db
-        .update(users)
+        .update(userTable)
         .set({
             discordId: discordInfo.id,
             name: discordInfo.global_name,

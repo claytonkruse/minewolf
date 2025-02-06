@@ -8,12 +8,12 @@ export const load = (async ({ locals }) => {
 
 import { db } from "$lib/server/drizzle/db";
 import { eq } from "drizzle-orm";
-import { sessions } from "$lib/server/drizzle/schema";
+import { sessionTable } from "$lib/server/drizzle/schema";
 import { redirect } from "@sveltejs/kit";
 
 export const actions: Actions = {
     default: async ({ locals, cookies }) => {
-        db.delete(sessions).where(eq(sessions.id, locals.session?.id));
+        db.delete(sessionTable).where(eq(sessionTable.id, locals.session?.id));
         cookies.delete("session", { path: "/" });
         redirect(302, "/login/");
     },
