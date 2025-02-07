@@ -4,8 +4,8 @@
 declare global {
     namespace App {
         interface Locals {
-            session: import("$lib/server/drizzle/schema").sessions | null;
-            user: import("$lib/server/drizzle/schema").users | null;
+            session: import("$lib/server/db/drizzle/schema").sessions | null;
+            user: import("$lib/server/db/drizzle/schema").users | null;
         }
     }
 }

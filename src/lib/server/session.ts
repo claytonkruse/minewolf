@@ -5,11 +5,11 @@ import {
 } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import type { Cookies } from "@sveltejs/kit";
-import { sessionTable } from "$lib/server/drizzle/schema";
-import { db } from "$lib/server/drizzle/db";
+import { sessionTable } from "$lib/server/db/drizzle/schema";
+import { db } from "$lib/server/db/drizzle/db";
 import { discord } from "./authProviders";
 import { getDiscordInfo } from "$lib/server/getDiscordInfo";
-import { updateUser } from "$lib/server/persistent/updateUser";
+import { updateUser } from "$lib/server/db/api/updateUser";
 
 const COOKIE_NAME = "session_token";
 
@@ -27,11 +27,18 @@ export function updateSessionCookie(
     });
 }
 
-function generateSessionToken(): string {
+export function generateSessionToken(): string {
     const bytes = new Uint8Array(20);
     crypto.getRandomValues(bytes);
     const token = encodeBase32LowerCaseNoPadding(bytes);
     return token;
+}
+
+function getId(token: string) {
+    const sessionId = encodeHexLowerCase(
+        sha256(new TextEncoder().encode(token)),
+    );
+    return sessionId;
 }
 
 export async function createSession(
@@ -41,9 +48,7 @@ export async function createSession(
     discordRefreshToken: string,
 ): Promise<string> {
     const token = generateSessionToken();
-    const sessionId = encodeHexLowerCase(
-        sha256(new TextEncoder().encode(token)),
-    );
+    const sessionId = getId(token);
 
     const session = {
         id: sessionId,
@@ -59,9 +64,8 @@ export async function createSession(
 
 export async function validateSession(cookies: Cookies) {
     const token = cookies.get(COOKIE_NAME);
-    const sessionId = encodeHexLowerCase(
-        sha256(new TextEncoder().encode(token)),
-    );
+    if (!token) return null;
+    const sessionId = getId(token);
     let session;
     try {
         session = await db.query.sessionTable.findFirst({
@@ -74,6 +78,7 @@ export async function validateSession(cookies: Cookies) {
         return null;
     }
     if (!session) return null;
+    const { user } = session;
 
     if (new Date() > session.discordAccessTokenExpiresAt) return null;
 
@@ -119,4 +124,12 @@ export async function validateSession(cookies: Cookies) {
     }
 
     return session;
+}
+
+export async function invalidateSession(cookies: Cookies) {
+    const token = cookies.get(COOKIE_NAME);
+    if (!token) return;
+    const sessionId = getId(token);
+    await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+    cookies.delete(COOKIE_NAME, { path: "/" });
 }

@@ -6,15 +6,12 @@ export const load = (async ({ locals }) => {
     }
 }) satisfies PageServerLoad;
 
-import { db } from "$lib/server/drizzle/db";
-import { eq } from "drizzle-orm";
-import { sessionTable } from "$lib/server/drizzle/schema";
+import { invalidateSession } from "$lib/server/session";
 import { redirect } from "@sveltejs/kit";
 
 export const actions: Actions = {
-    default: async ({ locals, cookies }) => {
-        db.delete(sessionTable).where(eq(sessionTable.id, locals.session?.id));
-        cookies.delete("session", { path: "/" });
+    default: async ({ cookies }) => {
+        await invalidateSession(cookies);
         redirect(302, "/login/");
     },
 };

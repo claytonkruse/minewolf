@@ -8,7 +8,6 @@
     import { Button } from "$lib/components/ui/button";
     import Banner from "$lib/components/Banner.svelte";
     import { PUBLIC_DISCORD_INVITE } from "$env/static/public";
-    import { browser } from "$app/environment";
     import { getImageURL } from "$lib/utils/getImageUrl.js";
 
     let { data } = $props();
@@ -19,8 +18,9 @@
             $message = result.error.message || "Unknown error.";
         },
     });
-
     const { form: formData, enhance, message, submitting } = form;
+
+    let newBannerUrl: string | undefined = $state();
 </script>
 
 <svelte:head>
@@ -31,8 +31,8 @@
 
 <form
     method="POST"
-    use:enhance
     enctype="multipart/form-data"
+    use:enhance
     class="m-auto w-fit text-left"
 >
     <Form.Field {form} name="name">
@@ -65,57 +65,36 @@
         <Form.FieldErrors />
     </Form.Field>
 
-    <Form.Field {form} name="bannerUrl">
+    <Form.Field {form} name="bannerFile">
         <Form.Control>
             {#snippet children({ props })}
                 <Form.Label>
                     <div class="mb-2 inline-block">Banner</div>
                     <br />
-                    {#if $formData.bannerUrl}
-                        <Banner src={$formData.bannerUrl} />
-                    {:else}
-                        <Banner src="/no-banner.png" />
+
+                    {#if newBannerUrl || server.bannerUrl}
+                        <Banner
+                            alt="Current Banner"
+                            src={newBannerUrl || server.bannerUrl}
+                        />
                     {/if}
 
-                    {#if browser}
-                        <input
-                            {...(() => {
-                                const { name, ...rest } = props;
-                                return rest;
-                            })()}
-                            class="mt-1"
-                            type="file"
-                            accept="image/*"
-                            onchange={async ({ target }) => {
-                                const input = target as HTMLInputElement;
-                                if (!input.files) return;
-                                const file = input.files[0];
-                                if (file)
-                                    $formData.bannerUrl =
-                                        await getImageURL(file);
-                            }}
-                        />
-                        <input
-                            name={props.name}
-                            type="hidden"
-                            value={$formData.bannerUrl}
-                        />
-                    {:else}
-                        <Input
-                            {...props}
-                            class="mt-2"
-                            type="text"
-                            bind:value={$formData.bannerUrl}
-                            placeholder="https://minewolf.new/banner.png"
-                        />
-
-                        <small class="text-muted-foreground"
-                            >Enable JavaScript for uploads.</small
-                        >
-                    {/if}
+                    <input
+                        {...props}
+                        class="mt-1"
+                        type="file"
+                        accept="image/*"
+                        onchange={async ({ target }) => {
+                            const input = target as HTMLInputElement;
+                            if (!input.files) return;
+                            const file = input.files[0];
+                            if (file) newBannerUrl = await getImageURL(file);
+                        }}
+                    />
                 </Form.Label>
             {/snippet}
         </Form.Control>
+
         <Form.FieldErrors />
     </Form.Field>
 

@@ -8,6 +8,7 @@
     import DiscordIcon from "~icons/bi/discord";
     import YouTubeIcon from "~icons/bi/youtube";
     import TwitterIcon from "~icons/bi/twitter-x";
+    import PersonIcon from "~icons/material-symbols/person-2-rounded";
 
     import type { LayoutProps } from "./$types";
     let { data, children }: LayoutProps = $props();
@@ -17,7 +18,7 @@
 </script>
 
 <div class="flex h-full flex-col">
-    <header class="flex justify-between px-5 py-2 lg:block">
+    <header class="flex justify-between px-10 py-2 lg:block">
         <nav class="lg:float-left">
             <a href="/" class="inline-block">
                 <img src={logo} alt="Minewolf" class="inline-block" />
@@ -45,7 +46,7 @@
                             class="align-bottom"
                             href="/dashboard/"
                         >
-                            {user.name}</Button
+                            <PersonIcon /> {user.name}</Button
                         >
                     {:else}
                         <Button

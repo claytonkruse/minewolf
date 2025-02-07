@@ -1,18 +1,22 @@
-import { db } from "$lib/server/drizzle/db";
-import { updateServerSchema as schema } from "$lib/validationSchemas";
+import type { PageServerLoad } from "./$types";
+import type { Actions } from "./$types";
+import { db } from "$lib/server/db/drizzle/db";
+import { updateServerSchema as schema } from "$lib/zod-schemas";
 import { fail, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { serverTable } from "$lib/server/drizzle/schema";
+import { serverTable } from "$lib/server/db/drizzle/schema";
 import { error, redirect } from "@sveltejs/kit";
-import type { Actions, PageServerLoad } from "./$types";
-import { and, eq } from "drizzle-orm";
+import { and, ConsoleLogWriter, eq } from "drizzle-orm";
 import { temp_url } from "$lib/utils/redirect_urls";
+import fs from "fs/promises";
+import sharp from "sharp";
 
 export const load = (async ({ locals, params }) => {
     const { user } = locals;
     if (!user)
         redirect(
             303,
+
             temp_url("/login/", `/dashboard/servers/${params.server}/edit/`),
         );
 
@@ -39,6 +43,7 @@ export const load = (async ({ locals, params }) => {
         cleanMotd,
         htmlMotd,
         crossplay,
+        bannerUrl,
         ...userChangeable
     } = server; // remove fields that cannot be changed by user
 
@@ -51,15 +56,41 @@ export const actions: Actions = {
     default: async (event) => {
         const { locals, params } = event;
         const { user } = locals;
-        if (!user) return fail(401, { message: "Unauthorized" });
+        if (!user) return fail(401, { message: "Unauthenticated." });
 
         const form = await superValidate(event, zod(schema));
         if (!form.valid) return fail(400, { form });
 
+        const { bannerFile, ...rest } = form.data;
+
         try {
+            let bannerGood = false;
+            if (bannerFile) {
+                const aBuffer = await bannerFile.arrayBuffer();
+
+                const webp = await sharp(Buffer.from(aBuffer), {
+                    animated: true,
+                })
+                    .toFormat("webp")
+                    .toBuffer();
+
+                await fs
+                    .writeFile(
+                        `storage/server-banners/${params.server}.webp`,
+                        webp,
+                    )
+                    .catch((e) => error(500, e));
+                bannerGood = true;
+            }
+
             await db
                 .update(serverTable)
-                .set(form.data)
+                .set({
+                    ...rest,
+                    bannerUrl: bannerGood
+                        ? `/servers/${params.server}/banner.webp?v=${Date.now().toString().slice(-6)}`
+                        : undefined,
+                })
                 .where(
                     and(
                         eq(serverTable.id, Number(params.server)),
@@ -68,10 +99,10 @@ export const actions: Actions = {
                 );
         } catch (e) {
             return fail(500, {
-                message: "Failed to update server in the database.",
+                message: "Failed to update server data.",
             });
         }
 
-        redirect(303, `/dashboard/servers/${params.server}/`);
+        redirect(303, `/servers/${params.server}/`);
     },
 };

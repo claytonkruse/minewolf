@@ -4,6 +4,10 @@
 
 <svelte:head>
     <title>Minewolf - The Superior Minecraft Server List</title>
+    <meta
+        name="description"
+        content="Minewolf is a new Minecraft server list that is different. Add your server before launch day now!"
+    />
 </svelte:head>
 
 <hgroup class="text-center">

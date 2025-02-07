@@ -1,18 +1,39 @@
-import { sessionTable, userTable } from "$lib/server/drizzle/schema";
+import { userTable } from "$lib/server/db/drizzle/schema";
 import { error, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { updateUser } from "$lib/server/persistent/updateUser";
+import { updateUser } from "$lib/server/db/api/updateUser";
 import { createSession, updateSessionCookie } from "$lib/server/session";
-import { db } from "$lib/server/drizzle/db";
+import { db } from "$lib/server/db/drizzle/db";
 import { eq } from "drizzle-orm";
 
 import { discord } from "$lib/server/authProviders";
 import { getDiscordInfo } from "$lib/server/getDiscordInfo";
 import { randomUUID } from "node:crypto";
+import { final_url } from "$lib/utils/redirect_urls";
+import localize_url from "$lib/utils/localize_url";
 
 export const load = (async ({ locals, url, cookies }) => {
+    console.log(localize_url(cookies.get("login-to")));
+    let destination = final_url(url);
+    destination =
+        !destination || destination === "/"
+            ? localize_url(cookies.get("login-to"))
+            : destination;
+    if (destination) {
+        cookies.set("login-to", destination, {
+            httpOnly: true,
+
+            secure: false,
+            path: "/",
+            sameSite: "lax",
+            maxAge: 60,
+        });
+    } else {
+        destination = "/dashboard/";
+    }
+
     if (locals.user) {
-        redirect(302, "/dashboard/");
+        redirect(302, destination);
     }
 
     const code = url.searchParams.get("code");
@@ -69,5 +90,6 @@ export const load = (async ({ locals, url, cookies }) => {
     if (!token) error(500, "Error while adding session to the database.");
 
     updateSessionCookie(cookies, token, accessTokenExpiresAt);
-    redirect(302, "/dashboard/");
+    console.log(destination);
+    redirect(302, destination);
 }) satisfies PageServerLoad;

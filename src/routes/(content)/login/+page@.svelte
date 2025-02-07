@@ -6,14 +6,20 @@
     } from "$env/static/public";
     import { Button } from "$lib/components/ui/button";
     import Icon from "~icons/pajamas/discord";
+    import logo from "$lib/images/logo.png";
+    import { page } from "$app/state";
+    import localize_url from "$lib/utils/localize_url";
 
     const discord = new arctic.Discord(clientId, null, redirectURI);
     const state = arctic.generateState();
     const scopes = ["identify", "email", "guilds"];
     const href = discord.createAuthorizationURL(state, null, scopes).toString();
-
-    import logo from "$lib/images/logo.png";
 </script>
+
+<svelte:head>
+    <title>Login - Minewolf</title>
+    <meta name="description" content="Log in to Minewolf with Discord." />
+</svelte:head>
 
 <div class="flex h-full content-center items-center justify-center text-center">
     <div>
@@ -34,6 +40,14 @@
             {href}
             class="bg-[#5865F2] font-bold uppercase text-primary transition hover:scale-105 hover:bg-[#5865F2]"
             ><Icon /> Log in with Discord</Button
+        >
+
+        <br /><br />
+
+        <Button
+            variant="link"
+            href={localize_url(page.url.searchParams.get("to")) || "/"}
+            >Go Back</Button
         >
 
         <br /><br /><br /><br />

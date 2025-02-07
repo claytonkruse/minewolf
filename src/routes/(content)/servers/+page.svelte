@@ -15,6 +15,10 @@
 
 <svelte:head>
     <title>Browse Minecraft Servers - Minewolf</title>
+    <meta
+        name="description"
+        content="Browse hundreds of unique Minecraft servers."
+    />
 </svelte:head>
 
 <h1>Browse Minecraft Servers</h1>

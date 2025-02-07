@@ -1,1 +1,0 @@
-ALTER TABLE "server" RENAME COLUMN "enable_votifier" TO "votifier_enabled";

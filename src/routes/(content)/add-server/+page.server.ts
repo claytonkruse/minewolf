@@ -4,11 +4,11 @@ import { error, fail, redirect } from "@sveltejs/kit";
 
 import pingServer from "$lib/server/pingServer";
 
-import { insertServerSchema } from "$lib/validationSchemas";
+import { insertServerSchema } from "$lib/zod-schemas";
 import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { db } from "$lib/server/drizzle/db";
-import { serverTable } from "$lib/server/drizzle/schema";
+import { db } from "$lib/server/db/drizzle/db";
+import { serverTable } from "$lib/server/db/drizzle/schema";
 import { temp_url } from "$lib/utils/redirect_urls";
 import { z } from "zod";
 

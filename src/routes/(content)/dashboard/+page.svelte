@@ -8,10 +8,11 @@
 
 <svelte:head>
     <title>Dashboard - Minewolf</title>
+    <meta name="description" content="Your Minewolf Dashboard" />
 </svelte:head>
 
 <div>
-    <h1 class="text-4xl font-bold">{user.name}'s Dashboard</h1>
+    <h1 class="text-4xl font-bold">{user.name}'s Minewolf Dashboard</h1>
 
     <br />
 

@@ -1,9 +1,9 @@
 import type { PageServerLoad } from "./$types";
 import { temp_url } from "$lib/utils/redirect_urls";
 import { error, redirect } from "@sveltejs/kit";
-import { db } from "$lib/server/drizzle/db";
+import { db } from "$lib/server/db/drizzle/db";
 import { eq } from "drizzle-orm";
-import { serverTable } from "$lib/server/drizzle/schema";
+import { serverTable } from "$lib/server/db/drizzle/schema";
 
 export const load = (async ({ locals, params, url }) => {
     const { user } = locals;

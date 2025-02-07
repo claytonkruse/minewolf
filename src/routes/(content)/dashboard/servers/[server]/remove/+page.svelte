@@ -9,6 +9,10 @@
     let { data }: Props = $props();
 </script>
 
+<svelte:head>
+    <title>Remove {data.name}? - Server Dashboard - Minewolf</title>
+</svelte:head>
+
 <hgroup>
     <h1 class="text-3xl font-bold">
         Are you sure you want to remove {data.name}?

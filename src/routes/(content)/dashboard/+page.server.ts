@@ -1,7 +1,8 @@
 import type { PageServerLoad } from "./$types";
+import loginRedirectFrom from "$lib/utils/loginRedirectFrom";
 
-export const load = (async ({ parent, locals }) => {
+export const load = (async ({ locals, url }) => {
     const { user } = locals;
-    await parent(); // required, otherwise the protection from the layout will be bypassed as load functions normally run in parallel
+    if (!user) loginRedirectFrom(url);
     return { user };
 }) satisfies PageServerLoad;
