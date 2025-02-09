@@ -9,6 +9,8 @@ RUN npm ci
 
 COPY . .
 
+RUN npm run build
+
 ENV PORT=3000
 
 ENV PUBLIC_DISCORD_INVITE=https://discord.gg/JmHKsnKuj8
