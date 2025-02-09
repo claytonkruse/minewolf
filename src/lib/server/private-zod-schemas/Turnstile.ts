@@ -34,8 +34,9 @@ async function validateToken(token: string, secret: string) {
     };
 }
 
-export const TurnstileSchema = z.object({
-    turnstileResponse: z.string({ required_error: "CAPTCHA error." }).refine(
+export const TurnstileSchema = z
+    .string({ required_error: "CAPTCHA error." })
+    .refine(
         async (token) => {
             const { success, error: trError } = await validateToken(
                 token,
@@ -43,10 +44,9 @@ export const TurnstileSchema = z.object({
             );
             if (!success) {
                 console.error("Capcha Error: " + trError);
-                return false;
+                return true;
             }
-            return true;
+            return false;
         },
         { message: "CAPTCHA error." },
-    ),
-});
+    );

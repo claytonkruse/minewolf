@@ -11,7 +11,12 @@
     let { data }: { data: PageData } = $props();
     let { server, form: validationForm } = data;
 
-    const form = superForm(validationForm);
+    let reset = $state<() => void>();
+    const form = superForm(validationForm, {
+        onUpdated() {
+            reset?.();
+        },
+    });
     const { form: formData, enhance } = form;
 
     if (browser) {
@@ -48,13 +53,13 @@
             <Form.FieldErrors />
         </Form.Field>
 
-        <Form.Field {form} name="turnstileResponse">
+        <Form.Field {form} name="cf-turnstile-response">
             <Form.Control>
                 {#snippet children({ props })}
                     <Turnstile
                         class="mt-3"
-                        responseFieldName={props.name}
                         siteKey={turnstilePubKey}
+                        bind:reset
                     />
                 {/snippet}
             </Form.Control>

@@ -7,7 +7,6 @@
     import { superForm } from "sveltekit-superforms";
     import { Turnstile } from "svelte-turnstile";
     import { PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY as turnstilePubKey } from "$env/static/public";
-    import { page } from "$app/state";
     interface Props {
         data: PageData;
     }
@@ -17,14 +16,11 @@
 
     let reset = $state<() => void>();
     const form = superForm(superValid, {
-        onError({ result }) {
-            $message = result.error.message || "Unknown error.";
-        },
         onUpdated() {
             reset?.();
         },
     });
-    const { form: formData, enhance, message, submitting } = form;
+    const { form: formData, enhance, submitting } = form;
 </script>
 
 <svelte:head>
@@ -48,9 +44,6 @@
 
         <ServerAddressField {form} />
 
-        {#if $message}
-            <p class="text-sm text-destructive">{$message}</p>
-        {/if}
         <p class="text-sm text-muted-foreground">
             Please ensure your server is online before you submit.
         </p>

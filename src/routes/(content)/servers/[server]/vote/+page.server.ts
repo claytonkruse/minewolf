@@ -11,7 +11,7 @@ const UsernameSchema = z
 
 const PublicSchema = z.object({
     voteUsername: UsernameSchema,
-    turnstileResponse: z.string({ required_error: "CAPTCHA error." }),
+    "cf-turnstile-response": z.string({ required_error: "CAPTCHA error." }),
 });
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -132,10 +132,11 @@ export const actions: Actions = {
         if (!form.valid) return fail(400, { form });
 
         const turnstileParse = await TurnstileSchema.safeParseAsync(
-            form.data.turnstileResponse,
+            form.data["cf-turnstile-response"],
         );
+
         if (!turnstileParse.success) {
-            setError(form, "turnstileResponse", "CAPTCHA error.");
+            setError(form, "cf-turnstile-response", "CAPTCHA error.");
             return fail(400, { form });
         }
 
@@ -190,22 +191,22 @@ export const actions: Actions = {
 
         if (!server.votifierEnabled) {
             console.log("Server does not have votifier enabled.");
-        }
-
-        sendData(
-            {
-                host: server.votifierAddress || server.address,
-                port: server.votifierPort || 8192,
-                key: server.votifierKey,
-                data: {
-                    user: username,
-                    site: "Minewolf",
-                    timestamp: Date.now(),
+        } else {
+            sendData(
+                {
+                    host: server.votifierAddress || server.address,
+                    port: server.votifierPort || 8192,
+                    key: server.votifierKey,
+                    data: {
+                        user: username,
+                        site: "Minewolf",
+                        timestamp: Date.now(),
+                    },
                 },
-            },
-            () => {},
-        );
-        console.log("Vote sent.");
+                () => {},
+            );
+            console.log("Vote sent.");
+        }
 
         redirect(302, "./success/");
     },

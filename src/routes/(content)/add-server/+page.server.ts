@@ -40,21 +40,19 @@ export const actions: Actions = {
             form.data["cf-turnstile-response"],
         );
         if (!turnstileParse.success) {
-            setError(
-                form,
-                "cf-turnstile-response",
-                turnstileParse.error.message,
-            );
+            setError(form, "cf-turnstile-response", "CAPTCHA error.");
             return fail(400, { form });
         }
 
         const { address } = form.data;
         let pingData = await pingServer(address);
         if (!pingData?.online) {
-            return fail(400, {
+            setError(
                 form,
-                error: "Could not connect to the Minecraft server.",
-            });
+                "address",
+                "Could not connect to the Minecraft server.",
+            );
+            return fail(400, { form });
         }
 
         let server;
@@ -78,10 +76,12 @@ export const actions: Actions = {
                 })
                 .returning();
         } catch (e) {
-            return fail(500, {
+            setError(
                 form,
-                message: "Error while adding server to the database.",
-            });
+                "address",
+                "Error while adding server to the database.",
+            );
+            return fail(500, { form });
         }
         redirect(303, `/dashboard/servers/${server.id}/edit/`);
     },
