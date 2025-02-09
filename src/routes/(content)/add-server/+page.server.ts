@@ -11,7 +11,9 @@ import { temp_url } from "$lib/utils/redirect_urls";
 import { z } from "zod";
 
 const PublicSchema = z.object({
-    turnstileResponse: z.string({ required_error: "CAPTCHA error." }),
+    "cf-turnstile-response": z
+        .string({ required_error: "CAPTCHA error." })
+        .nonempty("CAPTCHA error."),
     ...InsertServerSchema.shape,
 });
 
@@ -35,10 +37,14 @@ export const actions: Actions = {
         // Cloudflare Turnstile Validation
         // Validating server side to preserve secret.
         const turnstileParse = await TurnstileSchema.safeParseAsync(
-            form.data.turnstileResponse,
+            form.data["cf-turnstile-response"],
         );
         if (!turnstileParse.success) {
-            setError(form, "turnstileResponse", turnstileParse.error.message);
+            setError(
+                form,
+                "cf-turnstile-response",
+                turnstileParse.error.message,
+            );
             return fail(400, { form });
         }
 

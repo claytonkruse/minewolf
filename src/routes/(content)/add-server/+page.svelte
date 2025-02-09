@@ -15,9 +15,13 @@
     let { data }: Props = $props();
     let { form: superValid } = data;
 
+    let reset = $state<() => void>();
     const form = superForm(superValid, {
         onError({ result }) {
             $message = result.error.message || "Unknown error.";
+        },
+        onUpdated() {
+            reset?.();
         },
     });
     const { form: formData, enhance, message, submitting } = form;
@@ -51,13 +55,13 @@
             Please ensure your server is online before you submit.
         </p>
 
-        <Form.Field {form} name="turnstileResponse">
+        <Form.Field {form} name="cf-turnstile-response">
             <Form.Control>
                 {#snippet children({ props })}
                     <Turnstile
                         class="mt-3"
-                        responseFieldName={props.name}
                         siteKey={turnstilePubKey}
+                        bind:reset
                     />
                 {/snippet}
             </Form.Control>
