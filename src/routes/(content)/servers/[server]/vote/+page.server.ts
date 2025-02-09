@@ -4,7 +4,17 @@ import { serverTable, voteTable } from "$lib/server/db/drizzle/schema";
 import { eq, gt, and, or } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 
-export const load = (async ({ params }) => {
+const UsernameSchema = z
+    .string({ required_error: "Username is required." })
+    .min(2, { message: "Username must be at least 2 characters." })
+    .max(100, { message: "Username must be less than 100 characters." });
+
+const PublicSchema = z.object({
+    voteUsername: UsernameSchema,
+    turnstileResponse: z.string({ required_error: "CAPTCHA error." }),
+});
+
+export const load: PageServerLoad = async ({ params }) => {
     const serverId = Number(params.server);
     const server = await db.query.serverTable
         .findFirst({
@@ -17,30 +27,33 @@ export const load = (async ({ params }) => {
         throw error(404, "Server not found.");
     }
 
-    return { server };
-}) satisfies PageServerLoad;
+    const form = await superValidate(zod(PublicSchema));
+
+    return { server, form };
+};
 
 // vote implementation
 // TODO: secure this outdated implementation
 import ursa from "ursa-purejs";
 import net from "node:net";
-import { error, redirect } from "@sveltejs/kit";
-
-let key;
+import { error, redirect, fail } from "@sveltejs/kit";
+import { setError, superValidate } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
+import { z } from "zod";
 
 function sendData(settings, callback) {
     settings.key = settings.key.replace(/ /g, "+");
     settings.key = wordwrap(settings.key, 65, true);
-    var timestampdata = new Date().getTime();
+    let timestampdata = new Date().getTime();
     if (settings.data.timestamp)
         timestampdata = new Date(settings.data.timestamp);
-    var pubKey = new Buffer(
+    let pubKey = new Buffer(
         "-----BEGIN PUBLIC KEY-----\n" +
             settings.key +
             "\n-----END PUBLIC KEY-----\n",
     );
 
-    var build =
+    let build =
         "VOTE\n" +
         settings.data.site +
         "\n" +
@@ -50,20 +63,20 @@ function sendData(settings, callback) {
         "\n" +
         timestampdata +
         "\n";
-    var buf = new Buffer(build, "binary");
+    let buf = new Buffer(build, "binary");
 
-    key = ursa.createPublicKey(pubKey);
-    var data = key.encrypt(build, "binary", "binary", ursa.RSA_PKCS1_PADDING);
+    let key = ursa.createPublicKey(pubKey);
+    let data = key.encrypt(build, "binary", "binary", ursa.RSA_PKCS1_PADDING);
 
-    var called = false;
-    var callbackWrapper = function (e) {
+    let called = false;
+    let callbackWrapper = function (e) {
         if (!called) {
             called = true;
             callback(e);
         }
     };
 
-    var connection = net.createConnection(
+    let connection = net.createConnection(
         {
             host: settings.host,
             port: settings.port,
@@ -88,7 +101,7 @@ function wordwrap(str, maxWidth) {
     let done;
     let res;
     let found;
-    var newLineStr = "\n";
+    let newLineStr = "\n";
     done = false;
     res = "";
     do {
@@ -108,17 +121,25 @@ function wordwrap(str, maxWidth) {
     return res;
 }
 
+import { TurnstileSchema } from "$lib/server/private-zod-schemas";
+
 export const actions: Actions = {
     default: async ({ getClientAddress, request, params, cookies }) => {
         const ip = getClientAddress();
         console.log(`Received vote request from ${ip}.`);
 
-        const formData = await request.formData();
-        let username = formData.get("vote-username")?.toString();
-        username = username || "";
-        if (username.length > 100) {
-            error(400, "Invalid Minecraft username.");
+        const form = await superValidate(request, zod(PublicSchema));
+        if (!form.valid) return fail(400, { form });
+
+        const turnstileParse = await TurnstileSchema.safeParseAsync(
+            form.data.turnstileResponse,
+        );
+        if (!turnstileParse.success) {
+            setError(form, "turnstileResponse", "CAPTCHA error.");
+            return fail(400, { form });
         }
+
+        const username = form.data.voteUsername;
 
         const serverId = Number(params.server);
 

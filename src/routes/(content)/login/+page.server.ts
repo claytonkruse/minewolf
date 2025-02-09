@@ -13,7 +13,6 @@ import { final_url } from "$lib/utils/redirect_urls";
 import localize_url from "$lib/utils/localize_url";
 
 export const load = (async ({ locals, url, cookies }) => {
-    console.log(localize_url(cookies.get("login-to")));
     let destination = final_url(url);
     destination =
         !destination || destination === "/"
@@ -90,6 +89,5 @@ export const load = (async ({ locals, url, cookies }) => {
     if (!token) error(500, "Error while adding session to the database.");
 
     updateSessionCookie(cookies, token, accessTokenExpiresAt);
-    console.log(destination);
     redirect(302, destination);
 }) satisfies PageServerLoad;

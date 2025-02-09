@@ -1,7 +1,7 @@
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "./$types";
 import { db } from "$lib/server/db/drizzle/db";
-import { updateServerSchema as schema } from "$lib/zod-schemas";
+import { UpdateServerSchema as schema } from "$lib/public-zod-schemas";
 import { fail, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { serverTable } from "$lib/server/db/drizzle/schema";

@@ -3,37 +3,63 @@
     import { Input } from "$lib/components/ui/input";
     import { Button } from "$lib/components/ui/button";
     import { browser } from "$app/environment";
+    import * as Form from "$lib/components/ui/form";
+    import { Turnstile } from "svelte-turnstile";
+    import { PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY as turnstilePubKey } from "$env/static/public";
+    import { superForm } from "sveltekit-superforms";
 
     let { data }: { data: PageData } = $props();
-    let { server } = data;
+    let { server, form: validationForm } = data;
 
-    let username = $state("");
+    const form = superForm(validationForm);
+    const { form: formData, enhance } = form;
 
     if (browser) {
-        username = localStorage.getItem("minecraft_username") || "";
+        $formData.voteUsername =
+            localStorage.getItem("minecraft_username") || "";
     }
 
-    function onsubmit(event: SubmitEvent) {
-        localStorage.setItem("minecraft_username", username);
+    function onsubmit() {
+        localStorage.setItem("minecraft_username", $formData.voteUsername);
     }
 </script>
 
 <div class="mx-auto max-w-lg">
     <h1 class="text-2xl font-bold">Cast your vote for {server.name}?</h1>
     <br />
-    <form method="POST" class="text-left" {onsubmit}>
-        <label class="text-sm" for="vote-username"> Minecraft Username </label>
+    <form method="POST" class="text-left" {onsubmit} use:enhance>
+        <Form.Field {form} name="voteUsername">
+            <Form.Control>
+                {#snippet children({ props })}
+                    <label class="text-sm" for="voteUsername">
+                        Minecraft Username
+                    </label>
+                    <div class="flex gap-1">
+                        <Input
+                            {...props}
+                            type="text"
+                            bind:value={$formData.voteUsername}
+                            placeholder="notch"
+                        />
+                        <Button type="submit">Vote</Button>
+                    </div>
+                {/snippet}
+            </Form.Control>
+            <Form.FieldErrors />
+        </Form.Field>
 
-        <div class="flex gap-1">
-            <Input
-                type="text"
-                name="vote-username"
-                id="vote-username"
-                bind:value={username}
-                placeholder="notch"
-            />
-            <Button type="submit">Vote</Button>
-        </div>
+        <Form.Field {form} name="turnstileResponse">
+            <Form.Control>
+                {#snippet children({ props })}
+                    <Turnstile
+                        class="mt-3"
+                        responseFieldName={props.name}
+                        siteKey={turnstilePubKey}
+                    />
+                {/snippet}
+            </Form.Control>
+            <Form.FieldErrors />
+        </Form.Field>
     </form>
 
     <nav>

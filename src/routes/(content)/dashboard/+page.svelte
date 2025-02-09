@@ -30,6 +30,9 @@
                         >My Servers</Button
                     >
                 </li>
+                <li>
+                    <Button variant="outline" href="./account/">Account</Button>
+                </li>
             </ul>
 
             <br />

@@ -130,6 +130,21 @@ export async function invalidateSession(cookies: Cookies) {
     const token = cookies.get(COOKIE_NAME);
     if (!token) return;
     const sessionId = getId(token);
-    await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+    try {
+        await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+    } catch (e) {
+        console.log("Failed to invalidate session in database.");
+        return;
+    }
+    cookies.delete(COOKIE_NAME, { path: "/" });
+}
+
+export async function invalidateAll(cookies: Cookies, userId: string) {
+    try {
+        await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
+    } catch (e) {
+        console.log("Failed to invalidate sessions in database.");
+        return;
+    }
     cookies.delete(COOKIE_NAME, { path: "/" });
 }

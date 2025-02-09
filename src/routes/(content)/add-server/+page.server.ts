@@ -1,45 +1,53 @@
 import type { PageServerLoad, Actions } from "./$types";
 import sanitizeHtml from "sanitize-html";
 import { error, fail, redirect } from "@sveltejs/kit";
-
 import pingServer from "$lib/server/pingServer";
-
-import { insertServerSchema } from "$lib/zod-schemas";
-import { superValidate } from "sveltekit-superforms";
+import { InsertServerSchema } from "$lib/public-zod-schemas";
+import { superValidate, setError } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { db } from "$lib/server/db/drizzle/db";
 import { serverTable } from "$lib/server/db/drizzle/schema";
 import { temp_url } from "$lib/utils/redirect_urls";
 import { z } from "zod";
 
-const schema = z.object({
-    ...insertServerSchema.shape,
-    turnstileToken: z.string({ required_error: "CAPTCHA error." }),
+const PublicSchema = z.object({
+    turnstileResponse: z.string({ required_error: "CAPTCHA error." }),
+    ...InsertServerSchema.shape,
 });
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user) redirect(303, temp_url("/login/", "/add-server/"));
 
-    const form = await superValidate(zod(schema));
+    const form = await superValidate(zod(PublicSchema));
 
     return { form };
 };
 
+import { TurnstileSchema } from "$lib/server/private-zod-schemas";
 export const actions: Actions = {
-    default: async (event) => {
-        const { user } = event.locals;
-        if (!user) error(401);
-        const form = await superValidate(event, zod(insertServerSchema));
+    default: async ({ locals, request }) => {
+        const { user } = locals;
+        if (!user) error(401, "Unauthenticated.");
+
+        const form = await superValidate(request, zod(PublicSchema));
         if (!form.valid) return fail(400, { form });
 
+        // Cloudflare Turnstile Validation
+        // Validating server side to preserve secret.
+        const turnstileParse = await TurnstileSchema.safeParseAsync(
+            form.data.turnstileResponse,
+        );
+        if (!turnstileParse.success) {
+            setError(form, "turnstileResponse", turnstileParse.error.message);
+            return fail(400, { form });
+        }
+
         const { address } = form.data;
-
         let pingData = await pingServer(address);
-
         if (!pingData?.online) {
             return fail(400, {
                 form,
-                message: "Could not connect to the Minecraft server.",
+                error: "Could not connect to the Minecraft server.",
             });
         }
 
