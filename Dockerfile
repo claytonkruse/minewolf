@@ -1,4 +1,4 @@
-FROM node:23-apline as builder
+FROM node:23-apline
 
 WORKDIR /app
 
