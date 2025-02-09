@@ -1,7 +1,7 @@
 <script lang="ts">
     import * as Table from "$lib/components/ui/table";
-    import ServerListItem from "./ServerLIstItem.svelte";
-    import type { Server } from "$lib/server/drizzle/schema";
+    import ServerListItem from "./ServerListItem.svelte";
+    import type { Server } from "$lib/server/db/drizzle/schema";
 
     type Props = {
         servers?: Array<Server>;

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Server } from "$lib/server/drizzle/schema";
+    import type { Server } from "$lib/server/db/drizzle/schema";
     import { Row, Cell } from "$lib/components/ui/table";
     import Banner from "$lib/components/Banner.svelte";
     import ServerIcon from "$lib/components/ServerIcon.svelte";
