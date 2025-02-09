@@ -5,15 +5,11 @@ WORKDIR /app
 COPY package*.json .
 
 # clean install
-RUN npm ci
+RUN npm ci && npm run build
 
 COPY . .
 
-RUN npm run build
-
 ENV PORT=3000
-
-ENV PUBLIC_DISCORD_INVITE=https://discord.gg/JmHKsnKuj8
 
 EXPOSE 3000
 
