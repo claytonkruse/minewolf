@@ -1,11 +1,11 @@
-FROM node:18-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
 COPY package*.json .
 
 # clean install
-RUN npm ci
+RUN npm ci --omit dev
 
 COPY . .
 
