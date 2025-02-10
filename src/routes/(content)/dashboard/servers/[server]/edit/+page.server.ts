@@ -16,7 +16,6 @@ export const load = (async ({ locals, params }) => {
     if (!user)
         redirect(
             303,
-
             temp_url("/login/", `/dashboard/servers/${params.server}/edit/`),
         );
 

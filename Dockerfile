@@ -1,14 +1,15 @@
 FROM node:22-alpine
 
-#WORKDIR /app
-WORKDIR /
+RUN mkdir -p /app/storage && chown -R node:node /app/storage
+
+WORKDIR /app
+
+VOLUME /app/storage
 
 COPY package*.json .
 
 # clean install
 RUN npm ci
-
-VOLUME /storage
 
 COPY . .
 
