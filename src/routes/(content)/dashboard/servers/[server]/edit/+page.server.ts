@@ -95,6 +95,7 @@ export const actions: Actions = {
 
             console.log("Writing to file...");
             try {
+                await fs.mkdir(`storage/server-banners`, { recursive: true });
                 await fs.writeFile(
                     `storage/server-banners/${params.server}.webp`,
                     webp,
