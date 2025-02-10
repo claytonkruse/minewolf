@@ -42,11 +42,13 @@ export const TurnstileSchema = z
                 token,
                 CLOUDFLARE_TURNSTILE_SECRET_KEY,
             );
+            console.log("Ran validation on CAPTCHA: " + token);
             if (!success) {
+                console.log("CAPTCHA validation failed");
                 console.error("Capcha Error: " + trError);
-                return true;
+                return false;
             }
-            return false;
+            return true;
         },
         { message: "CAPTCHA error." },
     );
