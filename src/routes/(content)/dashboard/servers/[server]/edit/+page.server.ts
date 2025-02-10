@@ -61,9 +61,7 @@ export const actions: Actions = {
             error(401, { message: "Unauthenticated." });
         }
 
-        console.log("Received POST request to edit server: ");
         const formData = await event.request.formData();
-        console.log("Original form data: \n", formData);
         const form = await superValidate(formData, zod(schema));
         console.log("Validated: \n", form.data);
         if (!form.valid) {
