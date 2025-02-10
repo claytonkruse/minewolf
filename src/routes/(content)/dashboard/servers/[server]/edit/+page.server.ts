@@ -54,7 +54,6 @@ export const load = (async ({ locals, params }) => {
 fs.mkdir(`storage/server-banners`, { recursive: true });
 export const actions: Actions = {
     default: async (event) => {
-        console.log("Received POST request to edit server...");
         const { locals, params } = event;
         const { user } = locals;
         if (!user) {
@@ -62,7 +61,9 @@ export const actions: Actions = {
             error(401, { message: "Unauthenticated." });
         }
 
+        console.log("Received POST request to edit server: ");
         const form = await superValidate(event, zod(schema));
+        console.log(form.data);
         if (!form.valid) {
             console.log("Form is invalid.");
             console.log(form.errors);
