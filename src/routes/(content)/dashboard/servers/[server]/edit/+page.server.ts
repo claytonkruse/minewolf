@@ -2,11 +2,11 @@ import type { PageServerLoad } from "./$types";
 import type { Actions } from "./$types";
 import { db } from "$lib/server/db/drizzle/db";
 import { UpdateServerSchema as schema } from "$lib/public-zod-schemas";
-import { fail, superValidate } from "sveltekit-superforms";
+import { fail, setError, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { serverTable } from "$lib/server/db/drizzle/schema";
 import { error, redirect } from "@sveltejs/kit";
-import { and, ConsoleLogWriter, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { temp_url } from "$lib/utils/redirect_urls";
 import fs from "fs/promises";
 import sharp from "sharp";
@@ -63,26 +63,51 @@ export const actions: Actions = {
 
         const { bannerFile, ...rest } = form.data;
 
-        try {
-            let bannerGood = false;
-            if (bannerFile) {
-                const aBuffer = await bannerFile.arrayBuffer();
+        let bannerGood = false;
+        if (bannerFile) {
+            console.log("Banner file recieved.");
+            console.log("Converting to buffer...");
+            let aBuffer: ArrayBuffer;
+            try {
+                aBuffer = await bannerFile.arrayBuffer();
+                console.log("Buffer converted.");
+            } catch (e) {
+                setError(
+                    form,
+                    "bannerFile",
+                    "Failed to convert file to buffer.",
+                );
+                return fail(400, { form });
+            }
 
-                const webp = await sharp(Buffer.from(aBuffer), {
+            console.log("Converting to WebP...");
+            let webp: Buffer;
+            try {
+                webp = await sharp(Buffer.from(aBuffer), {
                     animated: true,
                 })
                     .toFormat("webp")
                     .toBuffer();
-
-                await fs
-                    .writeFile(
-                        `storage/server-banners/${params.server}.webp`,
-                        webp,
-                    )
-                    .catch((e) => error(500, e));
-                bannerGood = true;
+                console.log("WebP converted.");
+            } catch (e) {
+                setError(form, "bannerFile", "Failed to convert to WebP.");
+                return fail(400, { form });
             }
 
+            console.log("Writing to file...");
+            try {
+                await fs.writeFile(
+                    `storage/server-banners/${params.server}.webp`,
+                    webp,
+                );
+            } catch (e) {
+                setError(form, "bannerFile", "Failed to write file to disk.");
+                return fail(500, { form });
+            }
+            bannerGood = true;
+        }
+
+        try {
             await db
                 .update(serverTable)
                 .set({
@@ -98,8 +123,8 @@ export const actions: Actions = {
                     ),
                 );
         } catch (e) {
-            return fail(500, {
-                message: "Failed to update server data.",
+            error(500, {
+                message: "Failed to update server in database.",
             });
         }
 
