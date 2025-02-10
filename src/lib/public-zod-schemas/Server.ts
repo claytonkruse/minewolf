@@ -21,6 +21,7 @@ export const ServerSchema = z.object({
     cleanMotd: z.undefined(),
     htmlMotd: z.undefined(),
     crossplay: z.undefined(),
+    bannerUrl: z.undefined(),
 
     // chanable by user & refined
     address: z
@@ -122,7 +123,8 @@ export const ServerSchema = z.object({
         .max(80, { message: "Version cannot exceed 80 characters." })
         .optional(),
 
-    bannerUrl: z.undefined(),
     // not in database
-    bannerFile: z.instanceof(File).optional(),
+    bannerFile: z
+        .instanceof(File, { message: "Banner file is invalid." })
+        .optional(),
 });
