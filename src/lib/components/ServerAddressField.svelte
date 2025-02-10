@@ -30,7 +30,6 @@
                     bind:value={$formData[addressField]}
                     placeholder={addressPlaceholder || "mc.minewolf.net"}
                 />
-                <Form.FieldErrors />
             {/snippet}
         </Form.Control>
         <Form.FieldErrors />
@@ -45,7 +44,6 @@
                     bind:value={$formData[portField]}
                     placeholder={portPlaceholder}
                 />
-                <Form.FieldErrors />
             {/snippet}
         </Form.Control>
         <Form.FieldErrors />
