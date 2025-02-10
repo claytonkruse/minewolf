@@ -54,12 +54,19 @@ export const load = (async ({ locals, params }) => {
 fs.mkdir(`storage/server-banners`, { recursive: true });
 export const actions: Actions = {
     default: async (event) => {
+        console.log("Received POST request to edit server...");
         const { locals, params } = event;
         const { user } = locals;
-        if (!user) return fail(401, { message: "Unauthenticated." });
+        if (!user) {
+            console.log("Unauthenticated.");
+            error(401, { message: "Unauthenticated." });
+        }
 
         const form = await superValidate(event, zod(schema));
-        if (!form.valid) return fail(400, { form });
+        if (!form.valid) {
+            console.log("Form is invalid.");
+            return fail(400, { form });
+        }
 
         const { bannerFile, ...rest } = form.data;
 
@@ -108,6 +115,7 @@ export const actions: Actions = {
                 );
                 return fail(500, { form });
             }
+            console.log("File written.");
             bannerGood = true;
         }
 

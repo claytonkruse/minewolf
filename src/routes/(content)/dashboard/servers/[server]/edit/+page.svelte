@@ -32,8 +32,8 @@
 <form
     method="POST"
     enctype="multipart/form-data"
-    use:enhance
     class="m-auto w-fit text-left"
+    use:enhance
 >
     <Form.Field {form} name="name">
         <Form.Control>
@@ -260,7 +260,6 @@
                 </div>
             {/snippet}
         </Form.Control>
-
         <Form.FieldErrors />
     </Form.Field>
 
