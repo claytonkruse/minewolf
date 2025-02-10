@@ -100,7 +100,11 @@ export const actions: Actions = {
                     webp,
                 );
             } catch (e) {
-                setError(form, "bannerFile", "Failed to write file to disk.");
+                setError(
+                    form,
+                    "bannerFile",
+                    "Failed to write file to disk." + e,
+                );
                 return fail(500, { form });
             }
             bannerGood = true;
