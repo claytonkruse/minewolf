@@ -162,10 +162,10 @@ export const actions: Actions = {
                 ),
             ),
         });
-        // if (existingVote) {
-        //     console.log("You already voted.");
-        //     error(400, "You have already voted today.");
-        // }
+        if (existingVote) {
+            console.log("You already voted.");
+            error(400, "You have already voted today.");
+        }
 
         const server = await db.query.serverTable.findFirst({
             where: eq(serverTable.id, serverId),
