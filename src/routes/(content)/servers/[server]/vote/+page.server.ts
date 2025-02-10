@@ -164,7 +164,8 @@ export const actions: Actions = {
         });
         if (existingVote) {
             console.log("You already voted.");
-            error(400, "You have already voted today.");
+            setError(form, "voteUsername", "You have already voted today.");
+            return fail(400, { form });
         }
 
         const server = await db.query.serverTable.findFirst({
