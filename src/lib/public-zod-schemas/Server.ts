@@ -6,23 +6,6 @@ const MIN_SERVER_NAME_LENGTH = 4;
 const MAX_SERVER_NAME_LENGTH = 100;
 
 export const ServerSchema = z.object({
-    // not chanable by user
-    id: z.undefined(),
-    userId: z.undefined(),
-    createdAt: z.undefined(),
-    lastPingAt: z.undefined(),
-    lastOnlineAt: z.undefined(),
-
-    rank: z.undefined(),
-    online: z.undefined(),
-    onlinePlayers: z.undefined(),
-    maxPlayers: z.undefined(),
-    iconUrl: z.undefined(),
-    cleanMotd: z.undefined(),
-    htmlMotd: z.undefined(),
-    crossplay: z.undefined(),
-    bannerUrl: z.undefined(),
-
     // chanable by user & refined
     address: z
         .string({ required_error: "A server IP or hostname is required." })
