@@ -62,8 +62,10 @@ export const actions: Actions = {
         }
 
         console.log("Received POST request to edit server: ");
-        const form = await superValidate(event, zod(schema));
-        console.log(form.data);
+        const formData = await event.request.formData();
+        console.log("Original form data: \n", formData);
+        const form = await superValidate(formData, zod(schema));
+        console.log("Validated: \n", form.data);
         if (!form.valid) {
             console.log("Form is invalid.");
             console.log(form.errors);
