@@ -51,6 +51,7 @@ export const load = (async ({ locals, params }) => {
     return { server, form };
 }) satisfies PageServerLoad;
 
+fs.mkdir(`storage/server-banners`, { recursive: true });
 export const actions: Actions = {
     default: async (event) => {
         const { locals, params } = event;
@@ -95,7 +96,6 @@ export const actions: Actions = {
 
             console.log("Writing to file...");
             try {
-                await fs.mkdir(`storage/server-banners`, { recursive: true });
                 await fs.writeFile(
                     `storage/server-banners/${params.server}.webp`,
                     webp,
@@ -127,9 +127,8 @@ export const actions: Actions = {
                     ),
                 );
         } catch (e) {
-            error(500, {
-                message: "Failed to update server in database.",
-            });
+            setError(form, "name", "Failed to update server in database.");
+            return fail(500, { form });
         }
 
         redirect(303, `/servers/${params.server}/`);
