@@ -1,11 +1,13 @@
 FROM node:22-alpine
 
-WORKDIR /app
+#WORKDIR /app
 
 COPY package*.json .
 
 # clean install
 RUN npm ci
+
+VOLUME /storage
 
 COPY . .
 
