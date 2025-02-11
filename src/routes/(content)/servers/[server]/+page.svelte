@@ -81,20 +81,22 @@
 
         <br />
 
-        <div>
-            <Tooltip.Provider>
-                <Tooltip.Root>
-                    <Tooltip.Trigger>
-                        <Button variant="outline" onclick={copy_ip}>
-                            <code class="block">{full_address}</code>
-                        </Button>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                        <p>{tooltip}</p>
-                    </Tooltip.Content>
-                </Tooltip.Root>
-            </Tooltip.Provider>
-        </div>
+        {#if !server.addressPrivate}
+            <div>
+                <Tooltip.Provider>
+                    <Tooltip.Root>
+                        <Tooltip.Trigger>
+                            <Button variant="outline" onclick={copy_ip}>
+                                <code class="block">{full_address}</code>
+                            </Button>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>
+                            <p>{tooltip}</p>
+                        </Tooltip.Content>
+                    </Tooltip.Root>
+                </Tooltip.Provider>
+            </div>
+        {/if}
 
         <div class="mt-2 flex gap-3">
             {#if server.iconUrl}

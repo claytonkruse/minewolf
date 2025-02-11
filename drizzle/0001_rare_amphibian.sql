@@ -1,0 +1,1 @@
+ALTER TABLE "server" ADD COLUMN "address_private" boolean DEFAULT false NOT NULL;

@@ -93,30 +93,32 @@
                 <TableCell>{server.versionString}</TableCell>
             </TableRow>
 
-            <TableRow>
-                <TableHead>Address</TableHead>
-                <TableCell>{server.address}</TableCell>
-            </TableRow>
-
-            {#if server.port !== 25565}
+            {#if !server.addressPrivate}
                 <TableRow>
-                    <TableHead>Port</TableHead>
-                    <TableCell>{server.port}</TableCell>
+                    <TableHead>Address</TableHead>
+                    <TableCell>{server.address}</TableCell>
                 </TableRow>
-            {/if}
 
-            {#if server.bedrockAddress && server.bedrockAddress !== server.address}
-                <TableRow>
-                    <TableHead>Bedrock Address</TableHead>
-                    <TableCell>{server.bedrockAddress}</TableCell>
-                </TableRow>
-            {/if}
+                {#if server.port !== 25565}
+                    <TableRow>
+                        <TableHead>Port</TableHead>
+                        <TableCell>{server.port}</TableCell>
+                    </TableRow>
+                {/if}
 
-            {#if server.bedrockPort && server.bedrockPort !== 19132}
-                <TableRow>
-                    <TableHead>Bedrock Port</TableHead>
-                    <TableCell>{server.bedrockPort}</TableCell>
-                </TableRow>
+                {#if server.bedrockAddress && server.bedrockAddress !== server.address}
+                    <TableRow>
+                        <TableHead>Bedrock Address</TableHead>
+                        <TableCell>{server.bedrockAddress}</TableCell>
+                    </TableRow>
+                {/if}
+
+                {#if server.bedrockPort && server.bedrockPort !== 19132}
+                    <TableRow>
+                        <TableHead>Bedrock Port</TableHead>
+                        <TableCell>{server.bedrockPort}</TableCell>
+                    </TableRow>
+                {/if}
             {/if}
 
             <!-- <TableRow>

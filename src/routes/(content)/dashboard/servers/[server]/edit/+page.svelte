@@ -100,11 +100,70 @@
 
     <br />
 
-    <h3 class="mb-2 text-xl font-bold">Java Edition Info</h3>
+    <h3 class="mb-4 text-xl font-bold">Conneciton Information</h3>
+
+    <Form.Field {form} name="whitelisted">
+        <Form.Control>
+            {#snippet children({ props })}
+                <div class="flex items-center space-x-2">
+                    <Checkbox {...props} bind:checked={$formData.whitelisted} />
+                    <Form.Label>Whitelisted</Form.Label>
+                </div>
+            {/snippet}
+        </Form.Control>
+        <Form.FieldErrors />
+    </Form.Field>
+
+    <Form.Field {form} name="addressPrivate">
+        <Form.Control>
+            {#snippet children({ props })}
+                <div class="flex items-center gap-2">
+                    <Checkbox
+                        {...props}
+                        bind:checked={$formData.addressPrivate}
+                        disabled={!$formData.whitelisted}
+                    />
+                    <Form.Label>Do not show addresses on server page</Form.Label
+                    >
+                </div>
+            {/snippet}
+        </Form.Control>
+        <Form.FieldErrors />
+    </Form.Field>
+
+    <Form.Field {form} name="autoVersion">
+        <Form.Control>
+            {#snippet children({ props })}
+                <div class="flex items-center gap-2">
+                    <Checkbox {...props} bind:checked={$formData.autoVersion} />
+                    <Form.Label>Detect Minecraft version(s)</Form.Label>
+                </div>
+            {/snippet}
+        </Form.Control>
+        <Form.FieldErrors />
+    </Form.Field>
+
+    <Form.Field {form} name="versionString">
+        <Form.Control>
+            {#snippet children({ props })}
+                <Form.Label>Minecraft Versions</Form.Label>
+                <Input
+                    {...props}
+                    bind:value={$formData.versionString}
+                    placeholder="1.8.9"
+                    disabled={$formData.autoVersion}
+                />
+            {/snippet}
+        </Form.Control>
+        <Form.FieldErrors />
+    </Form.Field>
+    <br />
+
+    <h4 class="mb-2 text-sm font-bold">Java Edition</h4>
     <ServerAddressField {form} />
     <br />
 
-    <h3 class="mb-2 text-xl font-bold">Bedrock Edition Info</h3>
+    <h4 class="mb-2 text-sm font-bold">Bedrock Edition</h4>
     <ServerAddressField
         {form}
         addressField="bedrockAddress"
@@ -114,7 +173,7 @@
     />
     <br />
 
-    <h3 class="mb-2 text-xl font-bold" id="votifier">Votifier Info</h3>
+    <h4 class="mb-2 text-sm font-bold" id="votifier">Votifier</h4>
     <Form.Field {form} name="votifierEnabled">
         <Form.Control>
             {#snippet children({ props })}
@@ -211,53 +270,6 @@
                     placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
                 />
                 <!-- Somehow I knew the AI would autofill with that video. -->
-            {/snippet}
-        </Form.Control>
-        <Form.FieldErrors />
-    </Form.Field>
-
-    <br />
-
-    <h3 class="mb-2 text-xl font-bold" id="automation">Automation</h3>
-
-    <Form.Field {form} name="autoVersion">
-        <Form.Control>
-            {#snippet children({ props })}
-                <div class="flex items-center gap-2">
-                    <Checkbox {...props} bind:checked={$formData.autoVersion} />
-                    <Form.Label>Detect Minecraft version(s)</Form.Label>
-                </div>
-            {/snippet}
-        </Form.Control>
-        <Form.FieldErrors />
-    </Form.Field>
-
-    <br />
-
-    <h3 class="mb-4 text-xl font-bold">Who Can Connect?</h3>
-
-    <Form.Field {form} name="versionString">
-        <Form.Control>
-            {#snippet children({ props })}
-                <Form.Label>Minecraft Versions</Form.Label>
-                <Input
-                    {...props}
-                    bind:value={$formData.versionString}
-                    placeholder="1.8.9"
-                    disabled={$formData.autoVersion}
-                />
-            {/snippet}
-        </Form.Control>
-        <Form.FieldErrors />
-    </Form.Field>
-
-    <Form.Field {form} name="whitelisted">
-        <Form.Control>
-            {#snippet children({ props })}
-                <div class="flex items-center space-x-2">
-                    <Checkbox {...props} bind:checked={$formData.whitelisted} />
-                    <Form.Label>Whitelisted</Form.Label>
-                </div>
             {/snippet}
         </Form.Control>
         <Form.FieldErrors />

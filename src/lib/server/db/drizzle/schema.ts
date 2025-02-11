@@ -77,6 +77,8 @@ export const serverTable = pgTable("server", {
     bedrockAddress: text("bedrock_address").notNull().default(""),
     bedrockPort: integer("bedrock_port").notNull().default(19132),
 
+    addressPrivate: boolean("address_private").notNull().default(false),
+
     votifierEnabled: boolean("votifier_enabled").notNull().default(false),
     votifierAddress: text("votifier_address").notNull().default(""),
     votifierPort: integer("votifier_port").notNull().default(8192),

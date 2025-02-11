@@ -106,6 +106,8 @@ export const ServerSchema = z.object({
         .max(80, { message: "Version cannot exceed 80 characters." })
         .optional(),
 
+    addressPrivate: z.boolean().optional(),
+
     // not in database
     bannerFile: z
         .instanceof(File, { message: "Banner file is invalid." })

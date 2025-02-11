@@ -49,12 +49,9 @@ export const load = (async ({ locals, url, cookies }) => {
         error(400, "Your Discord account must have a verified email.");
     }
 
-    let user = await db.query.userTable
-        .findFirst({
-            where: eq(userTable.discordId, discordInfo.id),
-        })
-
-        .catch();
+    let user = await db.query.userTable.findFirst({
+        where: eq(userTable.discordId, discordInfo.id),
+    });
 
     if (user) {
         updateUser(user.id, discordInfo); // does not need an await
