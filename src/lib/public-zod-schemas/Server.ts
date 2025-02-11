@@ -70,7 +70,7 @@ export const ServerSchema = z.object({
 
     description: z
         .string()
-        .max(1000, { message: "Description may not exceed 1,000 characters." })
+        .max(5000, { message: "Description may not exceed 5,000 characters." })
         .default(""),
     tags: z
         .string()
