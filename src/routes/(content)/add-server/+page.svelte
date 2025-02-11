@@ -32,6 +32,7 @@
         <Form.Field {form} name="name">
             <Form.Control>
                 {#snippet children({ props })}
+                    <Form.Label for="name">Server Name</Form.Label>
                     <Input
                         {...props}
                         bind:value={$formData.name}

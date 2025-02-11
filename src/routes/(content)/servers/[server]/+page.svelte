@@ -159,7 +159,7 @@
             <h3 class="text-xl font-bold">Joining {server.name}</h3>
 
             <ol class="list-inside list-decimal">
-                {#if !server.whitelisted}
+                {#if server.whitelisted}
                     <li>
                         You must be whitelisted by the
                         {server.name}'s staff. First contact the server's staff
