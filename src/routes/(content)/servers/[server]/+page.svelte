@@ -191,21 +191,23 @@
             </ol>
         </section>
 
-        <section>
-            <h3 class="text-xl font-bold">
-                {server.name} has a Discord!
-            </h3>
+        {#if server.discord}
+            <section>
+                <h3 class="text-xl font-bold">
+                    {server.name} has a Discord!
+                </h3>
 
-            <p>
-                {server.name} has a Discord! You can join it with
-                <a
-                    rel="noopener nofollow"
-                    target="_blank"
-                    class="underline"
-                    href={server.discord}>this invite link</a
-                >. Remember to be respectful.
-            </p>
-        </section>
+                <p>
+                    {server.name} has a Discord! You can join it with
+                    <a
+                        rel="noopener nofollow"
+                        target="_blank"
+                        class="underline"
+                        href={server.discord}>this invite link</a
+                    >. Remember to be respectful.
+                </p>
+            </section>
+        {/if}
 
         <br />
 
