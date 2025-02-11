@@ -30,6 +30,12 @@
     }
 </script>
 
+<svelte:head>
+    <title>{server.name}</title>
+    <meta name="description" content={server.description} />
+    <meta name="keywords" content={server.tags} />
+</svelte:head>
+
 <div class="lg:w-3xl m-auto flex w-fit justify-between gap-8 text-left">
     <div>
         <div class="float-right flex gap-2">
