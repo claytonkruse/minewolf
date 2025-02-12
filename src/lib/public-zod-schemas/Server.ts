@@ -92,6 +92,13 @@ export const ServerSchema = z.object({
     mapUrl: z
         .string()
         .max(100, { message: "Map link may not exceed 100 characters." })
+        .trim()
+        // .refine((url) => {
+        //     if (!(url.startsWith("http://") || url.startsWith("https://"))) {
+        //         url = `http://${url}`;
+        //     }
+        //     return url;
+        // })
         .optional()
         .default(""),
 

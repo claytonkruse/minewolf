@@ -61,10 +61,10 @@
                 </TableCell>
             </TableRow>
 
-            <TableRow>
+            <!-- <TableRow>
                 <TableHead>Uptime</TableHead>
                 <TableCell>99%</TableCell>
-            </TableRow>
+            </TableRow> -->
 
             <!-- <TableRow>
                 <TableHead>Votes</TableHead>

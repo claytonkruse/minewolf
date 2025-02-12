@@ -10,6 +10,7 @@
     import Expand from "~icons/nrk/fullscreen";
     import { AspectRatio } from "$lib/components/ui/aspect-ratio";
     import Banner from "$lib/components/Banner.svelte";
+    import RenderMarkdown from "$lib/components/RenderMarkdown";
 
     let tooltip: string = $state("Copy IP?");
 
@@ -32,7 +33,7 @@
 
 <svelte:head>
     <title>{server.name}</title>
-    <meta name="description" content={server.description} />
+    <meta name="description" content={server.description.replaceAll("*", "")} />
     <meta name="keywords" content={server.tags} />
 </svelte:head>
 
@@ -53,7 +54,7 @@
             <h1 class="text-5xl font-bold">{server.name}</h1>
         </hgroup>
         {#if server.description}
-            <p>{server.description}</p>
+            <RenderMarkdown markdown={server.description} />
         {/if}
         <br />
 

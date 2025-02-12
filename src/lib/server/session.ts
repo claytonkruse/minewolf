@@ -5,7 +5,11 @@ import {
 } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import type { Cookies } from "@sveltejs/kit";
-import { sessionTable } from "$lib/server/db/drizzle/schema";
+import {
+    sessionTable,
+    type Session,
+    type User,
+} from "$lib/server/db/drizzle/schema";
 import { db } from "$lib/server/db/drizzle/db";
 import { discord } from "./authProviders";
 import { getDiscordInfo } from "$lib/server/getDiscordInfo";
@@ -62,6 +66,38 @@ export async function createSession(
     return token;
 }
 
+async function refreshSession(session: Session, user: User, cookies: Cookies) {
+    let tokens;
+    try {
+        tokens = await discord.refreshAccessToken(session.discordRefreshToken);
+    } catch (e) {
+        console.error("Failed to refresh access token. Aborting refresh.");
+        return null;
+    }
+    const accessToken = tokens.accessToken();
+    const accessTokenExpiresAt = tokens.accessTokenExpiresAt();
+    const refreshToken = tokens.refreshToken();
+
+    try {
+        await db
+            .update(sessionTable)
+            .set({
+                discordAccessToken: accessToken,
+                discordAccessTokenExpiresAt: accessTokenExpiresAt,
+                discordRefreshToken: refreshToken,
+            })
+            .where(eq(sessionTable.id, session.id));
+    } catch (e) {
+        console.log("Failed to update session in database. Aborting refresh.");
+        return null;
+    }
+
+    updateSessionCookie(cookies, session.id, accessTokenExpiresAt);
+    getDiscordInfo(accessToken).then((discordInfo) =>
+        updateUser(user.id, discordInfo),
+    );
+}
+
 export async function validateSession(cookies: Cookies) {
     const token = cookies.get(COOKIE_NAME);
     if (!token) return null;
@@ -73,14 +109,17 @@ export async function validateSession(cookies: Cookies) {
             with: { user: true },
         });
     } catch (e) {
-        console.log("Failed to find session in database. Removing cookie.");
+        console.error(`Failed to find session ${sessionId} in database.`);
+    }
+    if (!session || new Date() > session.discordAccessTokenExpiresAt) {
+        console.error(
+            `Session ${sessionId} is expired or does not exist. Removing cookie.`,
+        );
         cookies.delete(COOKIE_NAME, { path: "/" });
         return null;
     }
-    if (!session) return null;
-    const { user } = session;
 
-    if (new Date() > session.discordAccessTokenExpiresAt) return null;
+    const { user } = session;
 
     if (
         new Date() >
@@ -88,39 +127,7 @@ export async function validateSession(cookies: Cookies) {
             session.discordAccessTokenExpiresAt.getTime() - 1000 * 60 * 60 * 24,
         )
     ) {
-        let tokens;
-        try {
-            tokens = await discord.refreshAccessToken(
-                session.discordRefreshToken,
-            );
-        } catch (e) {
-            console.log("Failed to refresh access token. Aborting refresh.");
-            return null;
-        }
-        const accessToken = tokens.accessToken();
-        const accessTokenExpiresAt = tokens.accessTokenExpiresAt();
-        const refreshToken = tokens.refreshToken();
-
-        try {
-            await db
-                .update(sessionTable)
-                .set({
-                    discordAccessToken: accessToken,
-                    discordAccessTokenExpiresAt: accessTokenExpiresAt,
-                    discordRefreshToken: refreshToken,
-                })
-                .where(eq(sessionTable.id, session.id));
-        } catch (e) {
-            console.log(
-                "Failed to update session in database. Aborting refresh.",
-            );
-            return null;
-        }
-
-        updateSessionCookie(cookies, session.id, accessTokenExpiresAt);
-        getDiscordInfo(accessToken).then((discordInfo) =>
-            updateUser(user.id, discordInfo),
-        );
+        await refreshSession(session, user, cookies);
     }
 
     return session;

@@ -72,6 +72,9 @@ export const load = (async ({ locals, url, cookies }) => {
                 })
                 .returning();
         } catch (err) {
+            console.error(
+                `Error while adding user to the database. ${discordInfo.id} (${discordInfo.global_name})`,
+            );
             error(500, "Error while adding user to the database.");
         }
     }
@@ -83,7 +86,10 @@ export const load = (async ({ locals, url, cookies }) => {
         refreshToken,
     );
 
-    if (!token) error(500, "Error while adding session to the database.");
+    if (!token) {
+        console.error("Error while creating session.");
+        error(500, "Error while creating session.");
+    }
 
     updateSessionCookie(cookies, token, accessTokenExpiresAt);
     redirect(302, destination);
