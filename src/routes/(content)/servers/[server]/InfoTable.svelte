@@ -11,11 +11,11 @@
     let { server }: { server: Server } = $props();
 </script>
 
-<div class="min-w-72 max-w-72">
+<div class="w-min min-w-72">
     {#if server.bannerUrl}
         <img src={server.bannerUrl} alt="" class="w-full" />
     {/if}
-    <Table class="w-full overflow-x-hidden">
+    <Table>
         <TableBody>
             <TableRow>
                 <TableHead>Rank</TableHead>

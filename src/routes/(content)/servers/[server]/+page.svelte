@@ -211,7 +211,7 @@
                     <a
                         rel="noopener nofollow"
                         target="_blank"
-                        class="underline"
+                        class="underline underline-offset-4 hover:no-underline"
                         href={server.discord}>this invite link</a
                     >. Remember to be respectful.
                 </p>
