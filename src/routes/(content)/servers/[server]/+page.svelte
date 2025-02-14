@@ -138,7 +138,7 @@
                     </li>
                 {:else}
                     <li>
-                        {server.name} is not whitelsited. Anyone can join at any
+                        {server.name} is not whitelisted. Anyone can join at any
                         time.
                     </li>
                 {/if}
