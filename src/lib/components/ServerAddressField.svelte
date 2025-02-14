@@ -18,6 +18,17 @@
 
     import * as Form from "$lib/components/ui/form";
     import { Input } from "$lib/components/ui/input";
+
+    let portInput: any = $state(null);
+    function onAddressInput() {
+        console.log("onAddressInput");
+        const arr = $formData[addressField].toString().split(":");
+        if (arr.length > 1) {
+            $formData[addressField] = arr[0];
+            $formData[portField] = arr[1];
+            portInput.focus();
+        }
+    }
 </script>
 
 <div class="flex gap-2">
@@ -29,6 +40,7 @@
                     {...props}
                     bind:value={$formData[addressField]}
                     placeholder={addressPlaceholder || "mc.minewolf.net"}
+                    oninput={onAddressInput}
                 />
             {/snippet}
         </Form.Control>
@@ -42,6 +54,7 @@
                 <Input
                     {...props}
                     bind:value={$formData[portField]}
+                    bind:ref={portInput}
                     placeholder={portPlaceholder}
                 />
             {/snippet}
