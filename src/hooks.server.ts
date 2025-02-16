@@ -49,6 +49,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (Date.now() > lastPingedServers + 1000 * 60 * 10) {
         // do not await
         updateAllServers();
+        lastPingedServers = Date.now();
     }
 
     return await resolve(event);
