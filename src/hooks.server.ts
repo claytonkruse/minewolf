@@ -16,10 +16,10 @@ async function updateServer(id: number) {
         .update(serverTable)
         .set({
             online: pingData.online,
-            onlinePlayers: pingData.players.online,
-            maxPlayers: pingData.players.max,
-            cleanMotd: pingData.motd.clean.join("\n"),
-            htmlMotd: pingData.motd.html.join("<br>"),
+            onlinePlayers: pingData.players?.online,
+            maxPlayers: pingData.players?.max,
+            cleanMotd: pingData.motd?.clean.join("\n"),
+            htmlMotd: pingData.motd?.html.join("<br>"),
             lastOnlineAt: pingData.online ? new Date() : undefined,
             lastPingAt: new Date(),
         })
