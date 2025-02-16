@@ -7,3 +7,4 @@ async function pingServer(ip: string): Promise<MCSrvStatResponse> {
 }
 
 export default pingServer;
+export { pingServer };

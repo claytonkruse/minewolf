@@ -25,14 +25,14 @@
         server.address + (server.port === 25565 ? "" : `:${server.port}`);
 
     async function copy_ip() {
-        // await navigator.clipboard.writeText(full_ip ?? "69");
+        await navigator.clipboard.writeText(full_address ?? "69");
         tooltip = "Copied.";
         setTimeout(() => (tooltip = "Copy again?"), Math.pow(8, 4));
     }
 </script>
 
 <svelte:head>
-    <title>{server.name}</title>
+    <title>{server.name} - Servers - Minewolf</title>
     <meta name="description" content={server.description.replaceAll("*", "")} />
     <meta name="keywords" content={server.tags} />
 </svelte:head>

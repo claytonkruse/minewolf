@@ -35,13 +35,11 @@ export type MCSrvStatResponse = {
         clean: [string, string];
         html: [string, string];
     };
-    players:
-        | {
-              online: number;
-              max: number;
-              list: Array<{ name: string; uuid: string }> | undefined;
-          }
-        | undefined;
+    players: {
+        online: number;
+        max: number;
+        list: Array<{ name: string; uuid: string }> | undefined;
+    };
     plugins: Array<{ name: string; version: string }> | undefined;
     mods: Array<{ name: string; version: string }> | undefined;
     info:
