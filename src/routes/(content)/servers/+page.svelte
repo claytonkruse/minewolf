@@ -17,18 +17,19 @@
     <title>Browse Minecraft Servers - Minewolf</title>
     <meta
         name="description"
-        content="Browse hundreds of unique Minecraft servers."
+        content="Browse dozens of unique Minecraft servers."
     />
 </svelte:head>
 
-<h1>Browse Minecraft Servers</h1>
-<form>
+<h1 class="text-4xl font-bold">Browse Minecraft Servers</h1>
+<br />
+<!-- <form>
     <input type="search" name="q" id="search" />
-</form>
+</form> -->
 
 <ServerList {servers} />
 
-<section>
+<!-- <section>
     <h3>Todo</h3>
     <ol>
         <li>Search via query</li>
@@ -36,4 +37,4 @@
         <li>Browse by version</li>
         <li>Random Server</li>
     </ol>
-</section>
+</section> -->

@@ -26,7 +26,7 @@
 
             <Button variant="link" href="/">Home</Button>
             <!-- <Button variant="link" href="/articles/">Articles</Button> -->
-            <!-- <Button variant="link" href="/servers/">Browse</Button> -->
+            <Button variant="link" href="/servers/">Browse</Button>
         </nav>
 
         <nav class="lg:float-right">
