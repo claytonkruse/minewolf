@@ -3,6 +3,9 @@
     import type { Server } from "$lib/server/drizzle/schema";
     import { ServerList } from "$lib/components/ServerList";
 
+    import { Button } from "$lib/components/ui/button";
+    import { enhance } from "$app/forms";
+
     interface Props {
         data: PageData;
         servers: Array<Server>;
@@ -23,9 +26,16 @@
 
 <h1 class="text-4xl font-bold">Browse Minecraft Servers</h1>
 <br />
-<!-- <form>
-    <input type="search" name="q" id="search" />
-</form> -->
+<form method="GET" use:enhance>
+    <input
+        class="text-black"
+        type="search"
+        name="name"
+        id="search"
+        placeholder="Search"
+    />
+    <Button type="submit">Search</Button>
+</form>
 
 <ServerList {servers} />
 
