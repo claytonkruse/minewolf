@@ -1,10 +1,2 @@
-This file is now a todo list.
+# Minewolf - Minecraft Server List
 
-# TODOS
-
-- Finish implementing MC server data fetching.
-- server editor/control panel.
-- admin control panel.
-- server bookmarking.
-- voting.
-- server ranking.
