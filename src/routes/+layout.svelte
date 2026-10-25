@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { LayoutProps } from "./$types";
-    import "../app.pcss";
+    import "../app.css";
     import { beforeNavigate, afterNavigate } from "$app/navigation";
     import { Progress } from "$lib/components/ui/progress";
     import { fade } from "svelte/transition";

@@ -37,7 +37,7 @@
     <meta name="keywords" content={server.tags} />
 </svelte:head>
 
-<div class="lg:w-3xl m-auto flex w-fit justify-between gap-8 text-left">
+<div class="mx-auto flex w-fit max-w-6xl justify-between gap-8 text-left">
     <div>
         <div class="float-right flex gap-2">
             <Button variant="default" href="./vote/"

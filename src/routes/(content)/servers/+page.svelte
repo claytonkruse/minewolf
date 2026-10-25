@@ -4,7 +4,7 @@
     import { ServerList } from "$lib/components/ServerList";
 
     import { Button } from "$lib/components/ui/button";
-    import { enhance } from "$app/forms";
+    import { Input } from "$lib/components/ui/input";
 
     interface Props {
         data: PageData;
@@ -13,7 +13,7 @@
 
     let { data }: Props = $props();
     let page = $derived(data.page);
-    let servers = data.servers;
+    let servers = $derived(data.servers);
 </script>
 
 <svelte:head>
@@ -26,14 +26,8 @@
 
 <h1 class="text-4xl font-bold">Browse Minecraft Servers</h1>
 <br />
-<form method="GET" use:enhance>
-    <input
-        class="text-black"
-        type="search"
-        name="name"
-        id="search"
-        placeholder="Search"
-    />
+<form method="GET" class="mx-auto flex max-w-md gap-2">
+    <Input type="search" name="name" id="search" placeholder="Search" />
     <Button type="submit">Search</Button>
 </form>
 
