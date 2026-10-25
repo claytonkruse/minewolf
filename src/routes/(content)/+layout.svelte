@@ -7,12 +7,12 @@
     import * as Sheet from "$lib/components/ui/sheet";
     import { Separator } from "$lib/components/ui/separator";
     import { cn } from "$lib/utils";
-    import logo from "$lib/images/logo.png";
+    import logo from "$lib/assets/logo.png";
 
     import DiscordIcon from "~icons/bi/discord";
     import MenuIcon from "@lucide/svelte/icons/menu";
     import UserIcon from "@lucide/svelte/icons/circle-user";
-    import DashboardIcon from "@lucide/svelte/icons/layout-dashboard";
+    import DashboardIcon from "@lucide/svelte/icons/gauge";
     import ServerIcon from "@lucide/svelte/icons/server";
     import PlusIcon from "@lucide/svelte/icons/plus";
     import SettingsIcon from "@lucide/svelte/icons/settings";
@@ -46,11 +46,19 @@
     }
 </script>
 
+{#if !isMap}
+    <div
+        class="fixed inset-x-0 top-14 bottom-0 -z-10 bg-cover bg-center"
+        style:background-image="url({data.wallpaper})"
+        aria-hidden="true"
+    ></div>
+{/if}
+
 <div class={cn("flex flex-col", isMap ? "h-full" : "min-h-full")}>
     <header
         class="bg-background/80 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 border-b backdrop-blur"
     >
-        <div class="flex h-14 items-center gap-4 px-4 sm:px-10">
+        <div class="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4 sm:px-10 lg:w-[calc(100%-4rem)]">
             <Sheet.Root bind:open={mobileNavOpen}>
                 <Sheet.Trigger
                     class={cn(
@@ -116,22 +124,11 @@
             </nav>
 
             <div class="ml-auto flex items-center gap-2">
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    class="hidden sm:inline-flex"
-                    href="/discord/"
-                    target="_blank"
-                    rel="nofollow noopener noreferrer"
-                >
-                    <DiscordIcon /> Discord
-                </Button>
-
                 {#if user}
                     <DropdownMenu.Root>
                         <DropdownMenu.Trigger
                             class={buttonVariants({
-                                variant: "outline",
+                                variant: "ghost",
                                 size: "sm",
                             })}
                         >
@@ -211,12 +208,15 @@
     </header>
 
     {#if !isMap}
-        <main id="main" class="w-full grow px-4 py-5 text-center sm:px-10">
+        <main
+            id="main"
+            class="bg-background mx-auto w-full max-w-6xl grow px-4 py-5 text-center sm:px-10 lg:my-8 lg:w-[calc(100%-4rem)] lg:panel lg:has-[[data-fit-panel]]:w-fit lg:has-[[data-fit-panel]]:grow-0 lg:has-[[data-panels]]:border-0 lg:has-[[data-panels]]:bg-transparent lg:has-[[data-panels]]:p-0 lg:has-[[data-panels]]:shadow-none"
+        >
             {@render children()}
         </main>
-        <footer class="border-t">
+        <footer class="bg-background mt-auto border-t">
             <div
-                class="flex flex-col gap-6 px-4 py-8 text-left sm:px-10 md:flex-row md:items-center md:justify-between"
+                class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 text-left sm:px-10 md:flex-row md:items-center md:justify-between lg:w-[calc(100%-4rem)]"
             >
                 <div>
                     <a href="/" class="inline-block">

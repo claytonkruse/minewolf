@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { PageData } from "./$types.js";
     import { Input } from "$lib/components/ui/input";
-    import * as Card from "$lib/components/ui/card";
     import * as Form from "$lib/components/ui/form";
     import ServerAddressField from "$lib/components/ServerAddressField.svelte";
     import { superForm } from "sveltekit-superforms";
@@ -72,16 +71,12 @@
     </form>
 {/snippet}
 
-<div class="flex h-full items-center justify-center text-left">
-    <Card.Root class="max-w-[400px]">
-        <Card.Header>
-            <hgroup>
-                <h1 class="text-2xl">Add Your Server</h1>
-                <h2 class="text-muted-foreground">Get ready for players!</h2>
-            </hgroup>
-        </Card.Header>
-        <Card.Content class="text-left">
-            {@render AddServerForm()}
-        </Card.Content>
-    </Card.Root>
+<div class="mx-auto w-md max-w-full text-left" data-fit-panel>
+    <hgroup>
+        <h1 class="font-heading text-4xl font-bold">Add Your Server</h1>
+        <p class="text-muted-foreground mt-3 text-lg">Get ready for players!</p>
+    </hgroup>
+    <div class="mt-8">
+        {@render AddServerForm()}
+    </div>
 </div>

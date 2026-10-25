@@ -6,7 +6,7 @@
     } from "$env/static/public";
     import { Button } from "$lib/components/ui/button";
     import Icon from "~icons/pajamas/discord";
-    import logo from "$lib/images/logo.png";
+    import logo from "$lib/assets/logo.png";
     import { page } from "$app/state";
     import localize_url from "$lib/utils/localize_url";
 

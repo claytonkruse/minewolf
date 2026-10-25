@@ -6,7 +6,7 @@
     import { ytEmbedUrl } from "$lib/utils/ytEmbedUrl";
     import * as Tooltip from "$lib/components/ui/tooltip";
     import ServerIcon from "$lib/components/ServerIcon.svelte";
-    import no_icon from "$lib/images/pack.png";
+    import no_icon from "$lib/assets/pack.png";
     import Expand from "~icons/nrk/fullscreen";
     import { AspectRatio } from "$lib/components/ui/aspect-ratio";
     import Banner from "$lib/components/Banner.svelte";

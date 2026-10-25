@@ -1,6 +1,6 @@
 <script lang="ts">
     import { AspectRatio } from "$lib/components/ui/aspect-ratio";
-    import no_icon from "$lib/images/pack.png";
+    import no_icon from "$lib/assets/pack.png";
 
     let { src, ...props } = $props();
 </script>
