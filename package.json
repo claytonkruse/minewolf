@@ -17,7 +17,8 @@
         "migrate": "drizzle-kit migrate",
         "studio": "drizzle-kit studio",
         "drop": "drizzle-kit drop",
-        "introspect": "drizzle-kit introspect"
+        "introspect": "drizzle-kit introspect",
+        "ping-servers": "tsx scripts/ping-servers.ts"
     },
     "devDependencies": {
         "@eslint/compat": "^1.2.5",

@@ -45,6 +45,12 @@ COPY . .
 
 RUN npm run build
 
+# cron job that pings the listed Minecraft servers
+COPY docker/crontab /etc/crontabs/root
+COPY docker/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 EXPOSE ${PORT}
 
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["node", "build"]
