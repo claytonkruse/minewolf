@@ -67,12 +67,14 @@
         "zod": "^3.24.1"
     },
     "type": "module",
+    "packageManager": "pnpm@12.14.0",
     "dependencies": {
         "@libsql/client": "^0.14.0",
         "@oslojs/crypto": "^1.0.1",
         "@oslojs/encoding": "^1.1.0",
         "arctic": "^3.2.2",
         "better-sqlite3": "^11.8.1",
+        "clsx": "^2.1.1",
         "dotenv": "^16.4.7",
         "drizzle-orm": "^0.39.2",
         "isomorphic-dompurify": "^2.21.0",

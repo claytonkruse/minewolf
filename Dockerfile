@@ -36,14 +36,16 @@ WORKDIR /app
 
 VOLUME /app/storage
 
-COPY package*.json .
+RUN npm install -g pnpm@12.14.0
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
 # clean install
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN npm run build
+RUN pnpm run build
 
 # cron job that pings the listed Minecraft servers
 COPY docker/crontab /etc/crontabs/root

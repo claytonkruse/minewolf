@@ -5,7 +5,6 @@ let requestCount = 0;
 export const handle: Handle = async ({ event, resolve }) => {
     requestCount++;
     console.log(`Req: ${requestCount}`);
-    console.log(event.request);
     const { cookies } = event;
     const session = await validateSession(cookies);
     if (!session) return await resolve(event);
