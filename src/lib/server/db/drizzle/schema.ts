@@ -7,6 +7,7 @@ import {
     integer,
     pgEnum,
     primaryKey,
+    date,
 } from "drizzle-orm/pg-core";
 
 export const userTable = pgTable("user", {
@@ -137,6 +138,7 @@ export const serverRelations = relations(serverTable, ({ one, many }) => ({
         references: [userTable.id],
     }),
     votes: many(voteTable),
+    views: many(serverViewTable),
 }));
 
 export const voteTable = pgTable("vote", {
@@ -152,6 +154,32 @@ export const voteTable = pgTable("vote", {
 export const voteRelations = relations(voteTable, ({ one }) => ({
     server: one(serverTable, {
         fields: [voteTable.serverId],
+        references: [serverTable.id],
+    }),
+}));
+
+// "listing" = shown in the browse list, "page" = server page opened.
+export const viewKindEnum = pgEnum("view_kind", ["listing", "page"]);
+export type ViewKind = (typeof viewKindEnum.enumValues)[number];
+
+// Daily view counters per server, incremented by /api/views/.
+export const serverViewTable = pgTable(
+    "server_view",
+    {
+        serverId: integer("server_id")
+            .notNull()
+            .references(() => serverTable.id, { onDelete: "cascade" }),
+        kind: viewKindEnum("kind").notNull(),
+        day: date("day", { mode: "string" }).notNull(),
+        count: integer("count").notNull().default(0),
+    },
+    (table) => [
+        primaryKey({ columns: [table.serverId, table.kind, table.day] }),
+    ],
+);
+export const serverViewRelations = relations(serverViewTable, ({ one }) => ({
+    server: one(serverTable, {
+        fields: [serverViewTable.serverId],
         references: [serverTable.id],
     }),
 }));

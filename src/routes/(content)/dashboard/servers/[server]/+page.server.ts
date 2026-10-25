@@ -4,6 +4,7 @@ import { error, redirect } from "@sveltejs/kit";
 import { db } from "$lib/server/db/drizzle/db";
 import { eq } from "drizzle-orm";
 import { serverTable } from "$lib/server/db/drizzle/schema";
+import { ANALYTICS_DAYS, getServerAnalytics } from "$lib/server/analytics";
 
 export const load = (async ({ locals, params, url }) => {
     const { user } = locals;
@@ -16,5 +17,7 @@ export const load = (async ({ locals, params, url }) => {
     if (server.userId !== user.id)
         error(403, "You are not authorized to manage this server.");
 
-    return { server };
+    const analytics = await getServerAnalytics(server.id);
+
+    return { server, analytics, analyticsDays: ANALYTICS_DAYS };
 }) satisfies PageServerLoad;

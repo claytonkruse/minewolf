@@ -304,6 +304,7 @@
     <br />
 
     <Button type="submit" disabled={$submitting}>Save Changes</Button>
+    <Button variant="secondary" href="../">Cancel</Button>
 
     <br />
     <br />

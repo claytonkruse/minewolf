@@ -1,5 +1,7 @@
 <script lang="ts">
     import { Button } from "$lib/components/ui/button";
+    import logo from "$lib/assets/logo-large.png";
+    import DiscordIcon from "~icons/bi/discord";
 </script>
 
 <svelte:head>
@@ -11,7 +13,7 @@
 </svelte:head>
 
 <hgroup class="text-center">
-    <h1 class="text-4xl font-bold uppercase">Minewolf</h1>
+    <h1><img class="mx-auto block w-80" src={logo} alt="Minewolf" /></h1>
     <h2>The Superior Minecraft Server List</h2>
 </hgroup>
 <br />
@@ -30,11 +32,17 @@
 </p>
 
 <br />
-<Button variant="default" href="/add-server/">Add Your Server</Button>
-<br />
-<Button variant="secondary" class="mt-2" href="/discord/"
-    >Join us on Discord</Button
->
+<div class="flex flex-wrap justify-center gap-2">
+    <Button variant="default" href="/add-server/">Add Your Server</Button>
+    <Button
+        variant="outline"
+        href="/discord/"
+        target="_blank"
+        rel="nofollow noopener noreferrer"
+    >
+        <DiscordIcon /> Join our Discord
+    </Button>
+</div>
 
 <!-- <iframe
     title="Discord"

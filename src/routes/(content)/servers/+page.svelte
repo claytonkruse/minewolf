@@ -2,6 +2,7 @@
     import type { PageData } from "./$types";
     import type { Server } from "$lib/server/drizzle/schema";
     import { ServerList } from "$lib/components/ServerList";
+    import { trackViews } from "$lib/utils/trackViews";
 
     import { Button } from "$lib/components/ui/button";
     import { Input } from "$lib/components/ui/input";
@@ -15,6 +16,13 @@
     let page = $derived(data.page);
     let servers = $derived(data.servers);
     let tag = $derived(data.tag);
+
+    $effect(() => {
+        trackViews(
+            "listing",
+            servers.map((server) => server.id),
+        );
+    });
 </script>
 
 <svelte:head>

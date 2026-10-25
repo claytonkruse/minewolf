@@ -6,7 +6,7 @@
     } from "$env/static/public";
     import { Button } from "$lib/components/ui/button";
     import Icon from "~icons/pajamas/discord";
-    import logo from "$lib/assets/logo.png";
+    import logo from "$lib/assets/logo-large.png";
     import { page } from "$app/state";
     import localize_url from "$lib/utils/localize_url";
 
@@ -38,7 +38,7 @@
 
         <Button
             {href}
-            class="bg-[#5865F2] font-bold uppercase text-primary transition hover:scale-105 hover:bg-[#5865F2]"
+            class="bg-[#5865F2] font-bold uppercase text-white transition hover:scale-105 hover:bg-[#5865F2]"
             ><Icon /> Log in with Discord</Button
         >
 

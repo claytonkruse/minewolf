@@ -14,6 +14,7 @@
     import { AspectRatio } from "$lib/components/ui/aspect-ratio";
     import Banner from "$lib/components/Banner.svelte";
     import RenderMarkdown from "$lib/components/RenderMarkdown";
+    import { trackViews } from "$lib/utils/trackViews";
 
     let tooltip: string = $state("Copy IP?");
 
@@ -23,6 +24,10 @@
 
     let { data }: Props = $props();
     let { server, user, similarServers } = data;
+
+    $effect(() => {
+        trackViews("page", [data.server.id]);
+    });
 
     let full_address =
         server.address + (server.port === 25565 ? "" : `:${server.port}`);

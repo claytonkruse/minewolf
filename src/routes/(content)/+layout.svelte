@@ -3,7 +3,7 @@
     import { page } from "$app/state";
 
     import { Button, buttonVariants } from "$lib/components/ui/button";
-    import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+    import * as HoverCard from "$lib/components/ui/hover-card";
     import * as Sheet from "$lib/components/ui/sheet";
     import { Separator } from "$lib/components/ui/separator";
     import { cn } from "$lib/utils";
@@ -32,6 +32,21 @@
         { href: "/servers/", label: "Browse" },
         { href: "/add-server/", label: "Add Server" },
     ];
+
+    const profileLinks = [
+        { href: "/dashboard/", label: "Dashboard", icon: DashboardIcon },
+        { href: "/dashboard/servers/", label: "My Servers", icon: ServerIcon },
+        { href: "/add-server/", label: "Add Server", icon: PlusIcon },
+        { href: "/dashboard/account/", label: "Account", icon: SettingsIcon },
+        {
+            href: "/dashboard/admin/",
+            label: "Admin",
+            icon: ShieldIcon,
+            adminOnly: true,
+        },
+    ];
+    const profileLinkClass =
+        "hover:bg-foreground/10 focus-visible:bg-foreground/10 flex items-center gap-2 px-2 py-2 text-xs outline-hidden [&_svg]:size-4 [&_svg]:shrink-0";
 
     const footerLinks = [
         { href: "/servers/", label: "Browse Servers" },
@@ -125,8 +140,9 @@
 
             <div class="ml-auto flex items-center gap-2">
                 {#if user}
-                    <DropdownMenu.Root>
-                        <DropdownMenu.Trigger
+                    <HoverCard.Root openDelay={100} closeDelay={150}>
+                        <HoverCard.Trigger
+                            href="/dashboard/"
                             class={buttonVariants({
                                 variant: "ghost",
                                 size: "sm",
@@ -134,70 +150,36 @@
                         >
                             <UserIcon />
                             <span class="max-w-32 truncate">{user.name}</span>
-                        </DropdownMenu.Trigger>
-                        <DropdownMenu.Content align="end" class="w-48">
-                            <DropdownMenu.Label class="truncate">
+                        </HoverCard.Trigger>
+                        <HoverCard.Content
+                            align="end"
+                            class="bg-popover/70 relative w-48 p-0 text-sm before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:backdrop-blur-2xl before:backdrop-saturate-150"
+                        >
+                            <p
+                                class="text-muted-foreground truncate px-2 py-2 text-xs"
+                            >
                                 {user.name}
-                            </DropdownMenu.Label>
-                            <DropdownMenu.Separator />
-                            <DropdownMenu.Group>
-                                <DropdownMenu.Item>
-                                    {#snippet child({ props })}
-                                        <a href="/dashboard/" {...props}>
-                                            <DashboardIcon /> Dashboard
-                                        </a>
-                                    {/snippet}
-                                </DropdownMenu.Item>
-                                <DropdownMenu.Item>
-                                    {#snippet child({ props })}
+                            </p>
+                            <Separator class="bg-foreground/5" />
+                            <nav class="flex flex-col">
+                                {#each profileLinks as link}
+                                    {#if !link.adminOnly || isAdmin}
                                         <a
-                                            href="/dashboard/servers/"
-                                            {...props}
+                                            href={link.href}
+                                            class={profileLinkClass}
                                         >
-                                            <ServerIcon /> My Servers
+                                            <link.icon />
+                                            {link.label}
                                         </a>
-                                    {/snippet}
-                                </DropdownMenu.Item>
-                                <DropdownMenu.Item>
-                                    {#snippet child({ props })}
-                                        <a href="/add-server/" {...props}>
-                                            <PlusIcon /> Add Server
-                                        </a>
-                                    {/snippet}
-                                </DropdownMenu.Item>
-                                <DropdownMenu.Item>
-                                    {#snippet child({ props })}
-                                        <a
-                                            href="/dashboard/account/"
-                                            {...props}
-                                        >
-                                            <SettingsIcon /> Account
-                                        </a>
-                                    {/snippet}
-                                </DropdownMenu.Item>
-                                {#if isAdmin}
-                                    <DropdownMenu.Item>
-                                        {#snippet child({ props })}
-                                            <a
-                                                href="/dashboard/admin/"
-                                                {...props}
-                                            >
-                                                <ShieldIcon /> Admin
-                                            </a>
-                                        {/snippet}
-                                    </DropdownMenu.Item>
-                                {/if}
-                            </DropdownMenu.Group>
-                            <DropdownMenu.Separator />
-                            <DropdownMenu.Item variant="destructive">
-                                {#snippet child({ props })}
-                                    <a href="/logout/" {...props}>
-                                        <LogOutIcon /> Log out
-                                    </a>
-                                {/snippet}
-                            </DropdownMenu.Item>
-                        </DropdownMenu.Content>
-                    </DropdownMenu.Root>
+                                    {/if}
+                                {/each}
+                            </nav>
+                            <Separator class="bg-foreground/5" />
+                            <a href="/logout/" class={profileLinkClass}>
+                                <LogOutIcon /> Log out
+                            </a>
+                        </HoverCard.Content>
+                    </HoverCard.Root>
                 {:else}
                     <Button size="sm" href={temp_url("/login/", page.url)}>
                         Log in
