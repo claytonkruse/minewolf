@@ -15,6 +15,13 @@
       "when": 1739307108142,
       "tag": "0001_rare_amphibian",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792906713048,
+      "tag": "0002_curved_nekra",
+      "breakpoints": true
     }
   ]
 }

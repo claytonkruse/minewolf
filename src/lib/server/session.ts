@@ -106,7 +106,7 @@ export async function validateSession(cookies: Cookies) {
     try {
         session = await db.query.sessionTable.findFirst({
             where: eq(sessionTable.id, sessionId),
-            with: { user: true },
+            with: { user: { with: { roles: true } } },
         });
     } catch (e) {
         console.error(`Failed to find session ${sessionId} in database.`);

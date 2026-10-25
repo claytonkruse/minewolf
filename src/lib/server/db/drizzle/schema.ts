@@ -5,6 +5,8 @@ import {
     timestamp,
     boolean,
     integer,
+    pgEnum,
+    primaryKey,
 } from "drizzle-orm/pg-core";
 
 export const userTable = pgTable("user", {
@@ -22,7 +24,35 @@ export type User = InferSelectModel<typeof userTable>;
 export const usersRelations = relations(userTable, ({ many }) => ({
     sessions: many(sessionTable),
     servers: many(serverTable),
+    roles: many(userRoleTable),
 }));
+
+// Add new roles here, then run `pnpm generate` to create the migration.
+export const roleEnum = pgEnum("role", ["admin"]);
+export type Role = (typeof roleEnum.enumValues)[number];
+
+export const userRoleTable = pgTable(
+    "user_role",
+    {
+        userId: text("user_id")
+            .notNull()
+            .references(() => userTable.id, { onDelete: "cascade" }),
+        role: roleEnum("role").notNull(),
+
+        createdAt: timestamp("created_at").defaultNow().notNull(),
+    },
+    (table) => [primaryKey({ columns: [table.userId, table.role] })],
+);
+export type UserRole = InferSelectModel<typeof userRoleTable>;
+
+export const userRolesRelations = relations(userRoleTable, ({ one }) => ({
+    user: one(userTable, {
+        fields: [userRoleTable.userId],
+        references: [userTable.id],
+    }),
+}));
+
+export type UserWithRoles = User & { roles: UserRole[] };
 
 export const sessionTable = pgTable("session", {
     id: text("id").primaryKey().unique(),

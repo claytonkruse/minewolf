@@ -33,6 +33,11 @@
                 <li>
                     <Button variant="outline" href="./account/">Account</Button>
                 </li>
+                {#if data.isAdmin}
+                    <li>
+                        <Button variant="outline" href="./admin/">Admin</Button>
+                    </li>
+                {/if}
             </ul>
 
             <br />
