@@ -6,6 +6,7 @@
     import * as HoverCard from "$lib/components/ui/hover-card";
     import * as Sheet from "$lib/components/ui/sheet";
     import { Separator } from "$lib/components/ui/separator";
+    import { Input } from "$lib/components/ui/input";
     import { cn } from "$lib/utils";
     import logo from "$lib/assets/logo.png";
 
@@ -18,6 +19,7 @@
     import SettingsIcon from "@lucide/svelte/icons/settings";
     import ShieldIcon from "@lucide/svelte/icons/shield";
     import LogOutIcon from "@lucide/svelte/icons/log-out";
+    import SearchIcon from "@lucide/svelte/icons/search";
 
     import type { LayoutProps } from "./$types";
     let { data, children }: LayoutProps = $props();
@@ -26,11 +28,13 @@
 
     let isMap = $derived(page.route.id?.split("/").slice(-1)[0] === "map");
     let mobileNavOpen = $state(false);
+    let searchQuery = $derived(page.url.searchParams.get("name") ?? "");
 
     const navLinks = [
         { href: "/", label: "Home" },
         { href: "/servers/", label: "Browse" },
         { href: "/add-server/", label: "Add Server" },
+        { href: "/sponsor/", label: "Sponsor" },
     ];
 
     const profileLinks = [
@@ -51,6 +55,7 @@
     const footerLinks = [
         { href: "/servers/", label: "Browse Servers" },
         { href: "/add-server/", label: "Add Your Server" },
+        { href: "/sponsor/", label: "Become a Sponsor" },
         { href: "/about/", label: "About" },
         { href: "/about/#contact", label: "Contact" },
     ];
@@ -60,6 +65,20 @@
         return href === "/" ? path === "/" : path.startsWith(href);
     }
 </script>
+
+{#snippet searchInput()}
+    <Input
+        type="search"
+        name="name"
+        value={searchQuery}
+        placeholder="Search servers"
+        aria-label="Search servers"
+        class="border-r-0"
+    />
+    <Button type="submit" variant="outline" size="icon" aria-label="Search">
+        <SearchIcon />
+    </Button>
+{/snippet}
 
 {#if !isMap}
     <div
@@ -90,6 +109,15 @@
                             <img src={logo} alt="Minewolf" class="h-6 w-auto" />
                         </Sheet.Title>
                     </Sheet.Header>
+                    <form
+                        method="GET"
+                        action="/servers/"
+                        role="search"
+                        class="mb-2 flex px-4"
+                        onsubmit={() => (mobileNavOpen = false)}
+                    >
+                        {@render searchInput()}
+                    </form>
                     <nav class="flex flex-col gap-1 px-4">
                         {#each navLinks as link}
                             <Button
@@ -138,7 +166,16 @@
                 {/each}
             </nav>
 
-            <div class="ml-auto flex items-center gap-2">
+            <form
+                method="GET"
+                action="/servers/"
+                role="search"
+                class="ml-auto hidden w-full max-w-xs min-w-0 sm:flex"
+            >
+                {@render searchInput()}
+            </form>
+
+            <div class="ml-auto flex items-center gap-2 sm:ml-0">
                 {#if user}
                     <HoverCard.Root openDelay={100} closeDelay={150}>
                         <HoverCard.Trigger

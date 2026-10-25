@@ -5,6 +5,7 @@
     import EditIcon from "@lucide/svelte/icons/pencil";
     import RemoveIcon from "@lucide/svelte/icons/trash-2";
     import BackIcon from "@lucide/svelte/icons/arrow-left";
+    import SponsorIcon from "@lucide/svelte/icons/star";
     import ServerAnalytics from "./ServerAnalytics.svelte";
 
     let { data } = $props();
@@ -40,6 +41,11 @@
     <Button variant="secondary" href="./edit/">
         <EditIcon data-icon="inline-start" /> Edit Server
     </Button>
+    {#if server.sponsorPosition === null}
+        <Button variant="secondary" href="/sponsor/">
+            <SponsorIcon data-icon="inline-start" /> Become a Sponsor
+        </Button>
+    {/if}
     <Button variant="destructive" href="./remove/">
         <RemoveIcon data-icon="inline-start" /> Remove Server
     </Button>

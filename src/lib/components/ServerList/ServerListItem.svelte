@@ -4,17 +4,27 @@
     import Banner from "$lib/components/Banner.svelte";
     import ServerIcon from "$lib/components/ServerIcon.svelte";
     import { goto } from "$app/navigation";
+    import StarIcon from "@lucide/svelte/icons/star";
 
     interface Props {
         server: Server;
+        sponsor?: boolean;
         children?: () => any;
     }
 
-    let { server, children }: Props = $props();
+    let { server, sponsor = false, children }: Props = $props();
 </script>
 
 <Row onclick={() => goto(`/servers/${server.id}/`)}>
-    <Cell class="text-lg font-bold">{server.rank || "?"}</Cell>
+    <Cell class="text-lg font-bold">
+        {#if sponsor}
+            <span class="inline-flex items-center gap-1">
+                <StarIcon class="size-4 fill-current" />{server.sponsorPosition}
+            </span>
+        {:else}
+            {server.rank || "?"}
+        {/if}
+    </Cell>
 
     <Cell>
         <ServerIcon src={server.iconUrl} />

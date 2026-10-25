@@ -4,9 +4,6 @@
     import { ServerList } from "$lib/components/ServerList";
     import { trackViews } from "$lib/utils/trackViews";
 
-    import { Button } from "$lib/components/ui/button";
-    import { Input } from "$lib/components/ui/input";
-
     interface Props {
         data: PageData;
         servers: Array<Server>;
@@ -34,11 +31,6 @@
 </svelte:head>
 
 <h1 class="text-4xl font-bold">Browse Minecraft Servers</h1>
-<br />
-<form method="GET" class="mx-auto flex max-w-md gap-2">
-    <Input type="search" name="name" id="search" placeholder="Search" />
-    <Button type="submit">Search</Button>
-</form>
 
 {#if tag}
     <p class="text-muted-foreground mt-3">

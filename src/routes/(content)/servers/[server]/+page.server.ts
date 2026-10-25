@@ -1,8 +1,10 @@
 import { db } from "$lib/server/db/drizzle/db";
 import { serverTable } from "$lib/server/db/drizzle/schema";
 import { eq, ne } from "drizzle-orm";
-import type { PageServerLoad } from "./$types";
-import { error } from "@sveltejs/kit";
+import type { PageServerLoad, Actions } from "./$types";
+import { error, fail } from "@sveltejs/kit";
+import { hasRole } from "$lib/server/roles";
+import { addSponsor, removeSponsor } from "$lib/server/sponsors";
 
 const SIMILAR_LIMIT = 5;
 
@@ -78,3 +80,23 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     const { user } = locals;
     return { server, user, similarServers };
 };
+
+function requireAdmin(locals: App.Locals) {
+    if (!hasRole(locals.user, "admin"))
+        error(403, "You are not authorized to manage sponsors.");
+}
+
+export const actions = {
+    sponsor: async ({ locals, params }) => {
+        requireAdmin(locals);
+        if (!(await addSponsor(Number(params.server))))
+            return fail(400, {
+                message: "That server doesn't exist or is already a sponsor.",
+            });
+    },
+
+    unsponsor: async ({ locals, params }) => {
+        requireAdmin(locals);
+        await removeSponsor(Number(params.server));
+    },
+} satisfies Actions;

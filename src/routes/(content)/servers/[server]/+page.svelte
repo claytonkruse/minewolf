@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PageData } from "./$types";
+    import type { PageData, ActionData } from "./$types";
     import InfoTable from "./InfoTable.svelte";
     import { Badge } from "$lib/components/ui/badge";
     import { Button } from "$lib/components/ui/button";
@@ -15,15 +15,30 @@
     import Banner from "$lib/components/Banner.svelte";
     import RenderMarkdown from "$lib/components/RenderMarkdown";
     import { trackViews } from "$lib/utils/trackViews";
+    import { enhance } from "$app/forms";
+    import { page } from "$app/state";
+    import EyeIcon from "@lucide/svelte/icons/eye";
+    import StarIcon from "@lucide/svelte/icons/star";
+    import ShieldIcon from "@lucide/svelte/icons/shield";
+    import GaugeIcon from "@lucide/svelte/icons/gauge";
 
     let tooltip: string = $state("Copy IP?");
 
     interface Props {
         data: PageData;
+        form: ActionData;
     }
 
-    let { data }: Props = $props();
+    let { data, form }: Props = $props();
     let { server, user, similarServers } = data;
+
+    let isOwner = $derived(!!user?.id && user.id === server.userId);
+    let canManage = $derived(data.isAdmin || isOwner);
+    // ?view=visitor hides the admin/owner sections so staff can see the public page.
+    let viewAsVisitor = $derived(
+        page.url.searchParams.get("view") === "visitor",
+    );
+    let sponsorPosition = $derived(data.server.sponsorPosition);
 
     $effect(() => {
         trackViews("page", [data.server.id]);
@@ -50,6 +65,19 @@
     data-fit-panel
     data-panels
 >
+    {#if canManage && viewAsVisitor}
+        <div
+            class="lg:panel flex flex-wrap items-center justify-between gap-2 py-2!"
+        >
+            <p class="text-muted-foreground flex items-center gap-2 text-sm">
+                <EyeIcon class="size-4" /> You're viewing this page as a visitor.
+            </p>
+            <Button variant="outline" size="sm" href={page.url.pathname}>
+                Exit visitor view
+            </Button>
+        </div>
+    {/if}
+
     <div class="flex flex-col gap-12 lg:gap-4 xl:w-6xl xl:flex-row xl:items-start">
         <div class="flex w-2xl max-w-full flex-col gap-12 lg:gap-4 xl:w-auto xl:min-w-0 xl:flex-1">
             <section class="lg:panel">
@@ -57,13 +85,6 @@
                     <Button variant="default" href="./vote/"
                         >Vote for {server.name}</Button
                     >
-                    {#if user?.id && user.id === server.userId}
-                        <Button
-                            variant="secondary"
-                            href={`/dashboard/servers/${server.id}/`}
-                            >Dashboard</Button
-                        >
-                    {/if}
                 </div>
                 <hgroup>
                     <h1 class="font-heading text-5xl font-bold">
@@ -267,6 +288,81 @@
         </div>
 
         <div class="flex w-2xl max-w-full flex-col gap-12 lg:gap-4 xl:w-96">
+            {#if data.isAdmin && !viewAsVisitor}
+                <section class="lg:panel">
+                    <h2
+                        class="font-heading mb-3 flex items-center gap-2 text-xl font-bold"
+                    >
+                        <ShieldIcon class="size-5" /> Admin
+                    </h2>
+                    {#if sponsorPosition !== null}
+                        <p class="text-muted-foreground mb-3 text-sm">
+                            Sponsor #{sponsorPosition} on the homepage.
+                        </p>
+                    {/if}
+                    {#if form?.message}
+                        <p class="text-destructive mb-3 text-sm">
+                            {form.message}
+                        </p>
+                    {/if}
+                    <div class="flex flex-wrap gap-2">
+                        <form
+                            method="POST"
+                            action={sponsorPosition === null
+                                ? "?/sponsor"
+                                : "?/unsponsor"}
+                            use:enhance
+                        >
+                            <Button
+                                type="submit"
+                                variant={sponsorPosition === null
+                                    ? "default"
+                                    : "destructive"}
+                            >
+                                <StarIcon
+                                    class={sponsorPosition === null
+                                        ? undefined
+                                        : "fill-current"}
+                                />
+                                {sponsorPosition === null
+                                    ? "Make Sponsor"
+                                    : "Remove Sponsor"}
+                            </Button>
+                        </form>
+                        <Button variant="outline" href="?view=visitor">
+                            <EyeIcon /> View as Visitor
+                        </Button>
+                    </div>
+                </section>
+            {/if}
+
+            {#if isOwner && !viewAsVisitor}
+                <section class="lg:panel">
+                    <h2 class="font-heading mb-3 text-xl font-bold">
+                        Your Server
+                    </h2>
+                    <div class="flex flex-wrap gap-2">
+                        <Button
+                            variant="secondary"
+                            href={`/dashboard/servers/${server.id}/`}
+                        >
+                            <GaugeIcon /> Dashboard
+                        </Button>
+                        {#if sponsorPosition === null}
+                            <Button variant="outline" href="/sponsor/">
+                                <StarIcon /> Become a Sponsor
+                            </Button>
+                        {/if}
+                        <!-- Admins already have this in the admin section. -->
+                        {#if !data.isAdmin}
+                            <Button variant="outline" href="?view=visitor">
+                                <EyeIcon /> View as Visitor
+                            </Button>
+                        {/if}
+                    </div>
+                </section>
+            {/if}
+
             <section class="lg:panel">
                 <InfoTable {server} />
             </section>

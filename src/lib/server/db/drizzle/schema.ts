@@ -100,6 +100,8 @@ export const serverTable = pgTable("server", {
     cleanMotd: text("clean_motd").notNull().default(""),
     htmlMotd: text("html_motd").notNull().default(""),
     crossplay: boolean("crossplay").notNull().default(false),
+    // set by admins; null = not a sponsor, lower = shown first
+    sponsorPosition: integer("sponsor_position"),
 
     // chanable by user
     address: text("ip").unique().notNull(),

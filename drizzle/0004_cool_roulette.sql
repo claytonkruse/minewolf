@@ -1,0 +1,1 @@
+ALTER TABLE "server" ADD COLUMN "sponsor_position" integer;

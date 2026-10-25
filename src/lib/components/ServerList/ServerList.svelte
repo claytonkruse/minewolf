@@ -6,16 +6,18 @@
     type Props = {
         servers?: Array<Server>;
         lastColumn?: string;
+        // Show sponsor levels (star + position) instead of rank.
+        sponsor?: boolean;
         children?: () => any;
     };
 
-    let { lastColumn, servers, children }: Props = $props();
+    let { lastColumn, servers, sponsor = false, children }: Props = $props();
 </script>
 
 <Table.Root class="m-auto w-max">
     <Table.Header>
         <Table.Row>
-            <Table.Head>Rank</Table.Head>
+            <Table.Head>{sponsor ? "Level" : "Rank"}</Table.Head>
             <Table.Head>Icon</Table.Head>
             <Table.Head>Name</Table.Head>
             <Table.Head>Banner/MOTD</Table.Head>
@@ -33,7 +35,7 @@
             {@render children()}
         {:else if servers && servers.length > 0}
             {#each servers as server}
-                <ServerListItem {server} />
+                <ServerListItem {server} {sponsor} />
             {/each}
         {:else}
             <span class="text-muted-foreground">No servers.</span>
