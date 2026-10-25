@@ -1,60 +1,118 @@
-<h1>About <span>Minewolf</span></h1>
-<p>
-    Minewolf is a Minecraft server list. Why did I make another Minecraft server
-    list in a vast, unrelenting sea of server lists? Because I could do it
-    better.
-</p>
-<p>
-    Rather than having server owners manually enter things like the server
-    version, and plugins, these things are tracked automatically. Not only does
-    this save time for the server owners, it will allow players to more easily
-    find servers they're interested in. Server information will be constantly up
-    to date.
-</p>
-<p>
-    The con that comes with this automatic style of server listing, is that many
-    tags cannot be added manually. Proxy servers will not show the plugins of
-    their subservers, unless programmed specifcally to do so. I am content with
-    this. I would like to be the creator of a server list that favors smaller,
-    non-proxied servers anyway.
-</p>
-<p>
-    I also plan for Minewolf to be at least a <em>little</em> inovative, like
-    all developers with delusions of of grandeur. So far I've got:
-    <em>revenue sharing</em>.
-</p>
-<p>
-    With revenue sharing, server owners would get a portion of the ad revenue
-    from votes, and maybe even from their server page in the case that they can
-    find a reason to send people there
-    <em>frequently</em>
-    enough. Revenue sharing will be difficult to do, so I'm planning on adding it
-    late in the game,
-    <em>if it happens at all.</em>
-</p>
-<p>
-    A real optimistic idea I'm having is that I could somehow integrate
-    donations and even become the next Buycraft, though I doubt that's
-    happening.
-</p>
-<p>Your developer,<br /><strong><em>Hiemswolf</em></strong></p>
+<script lang="ts">
+    import { Button } from "$lib/components/ui/button";
+    import * as Card from "$lib/components/ui/card";
+    import DiscordIcon from "~icons/bi/discord";
+</script>
 
-<p>Add free subdomain functionality.</p>
+<svelte:head>
+    <title>About - Minewolf</title>
+    <meta
+        name="description"
+        content="Minewolf is a Minecraft server list that keeps every listing up to date automatically."
+    />
+</svelte:head>
 
-<p>Idea for revenue sharing:</p>
-<p>1 vote = 8w</p>
-<p>
-    wuf or w is a currecy that is paid to server owners through votes, but it
-    may also be bought with cash
-</p>
-<p>Featured Server system:</p>
-<p>Auction has a small entrance fee.</p>
-<p>No 1 winner gets half the total jackpot created by the entarence fees.</p>
-<p>
-    Auction has 8 sponsored slots, but only three slots appear on the front
-    page.
-</p>
+<div class="mx-auto max-w-2xl text-left">
+    <h1 class="font-heading text-4xl font-bold">About Minewolf</h1>
+    <p class="text-muted-foreground mt-3 text-lg">
+        Minewolf is a Minecraft server list built to help players find their
+        next server, and to help servers of every kind get found.
+    </p>
 
-<p>Votes are worth half in the rankings after 8 days and deleted after 16.</p>
+    <div class="mt-8 grid gap-4">
+        <Card.Root>
+            <Card.Header>
+                <Card.Title>Always up to date</Card.Title>
+            </Card.Header>
+            <Card.Content class="text-muted-foreground space-y-2 text-sm">
+                <p>
+                    Listings shouldn't depend on someone remembering to edit
+                    them. Minewolf checks every listed server on its own: online
+                    status, player counts and the server's message of the day
+                    are refreshed every 10 minutes, and the server's version is
+                    detected automatically when it's added.
+                </p>
+                <p>What you see is the server as it is right now.</p>
+            </Card.Content>
+        </Card.Root>
 
-<p>Players can vote for as many servers as they want in one day.</p>
+        <Card.Root>
+            <Card.Header>
+                <Card.Title>Voting</Card.Title>
+            </Card.Header>
+            <Card.Content class="text-muted-foreground space-y-2 text-sm">
+                <p>
+                    Players can vote once every 24 hours. Servers that use
+                    Votifier can reward you in-game for your vote.
+                </p>
+            </Card.Content>
+        </Card.Root>
+
+        <Card.Root>
+            <Card.Header>
+                <Card.Title>For server owners</Card.Title>
+            </Card.Header>
+            <Card.Content class="text-muted-foreground space-y-2 text-sm">
+                <p>
+                    Listing your server is free. Log in with Discord, enter your
+                    server's address, and Minewolf fills in the rest.
+                </p>
+            </Card.Content>
+            <Card.Footer>
+                <Button href="/add-server/">Add Your Server</Button>
+            </Card.Footer>
+        </Card.Root>
+    </div>
+
+    <section id="contact" class="mt-12 scroll-mt-20">
+        <h2 class="font-heading text-3xl font-bold">Contact</h2>
+        <p class="text-muted-foreground mt-3">
+            The best way to reach us is the Minewolf Discord. Whether you're a
+            player or a server owner, we're happy to help.
+        </p>
+
+        <ul
+            class="text-muted-foreground mt-6 grid gap-4 text-sm sm:grid-cols-2"
+        >
+            <li class="border p-4">
+                <p class="text-foreground font-medium">
+                    Help with your listing
+                </p>
+                <p class="mt-1">
+                    Trouble adding, editing or removing a server, or your
+                    server's information looks wrong.
+                </p>
+            </li>
+            <li class="border p-4">
+                <p class="text-foreground font-medium">Report a server</p>
+                <p class="mt-1">
+                    A listing is misleading, offensive or isn't a real Minecraft
+                    server.
+                </p>
+            </li>
+            <li class="border p-4">
+                <p class="text-foreground font-medium">Feedback and ideas</p>
+                <p class="mt-1">
+                    Something you'd like Minewolf to do, or something it could
+                    do better.
+                </p>
+            </li>
+            <li class="border p-4">
+                <p class="text-foreground font-medium">Bugs</p>
+                <p class="mt-1">
+                    Something on the site isn't working the way it should.
+                </p>
+            </li>
+        </ul>
+
+        <Button
+            class="mt-6"
+            size="lg"
+            href="/discord/"
+            target="_blank"
+            rel="nofollow noopener noreferrer"
+        >
+            <DiscordIcon /> Join our Discord
+        </Button>
+    </section>
+</div>

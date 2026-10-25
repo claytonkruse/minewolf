@@ -37,6 +37,7 @@
         { href: "/servers/", label: "Browse Servers" },
         { href: "/add-server/", label: "Add Your Server" },
         { href: "/about/", label: "About" },
+        { href: "/about/#contact", label: "Contact" },
     ];
 
     function isActive(href: string) {
