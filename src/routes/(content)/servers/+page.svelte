@@ -14,6 +14,7 @@
     let { data }: Props = $props();
     let page = $derived(data.page);
     let servers = $derived(data.servers);
+    let tag = $derived(data.tag);
 </script>
 
 <svelte:head>
@@ -30,6 +31,13 @@
     <Input type="search" name="name" id="search" placeholder="Search" />
     <Button type="submit">Search</Button>
 </form>
+
+{#if tag}
+    <p class="text-muted-foreground mt-3">
+        Tagged <span class="text-foreground font-medium">{tag}</span>
+        · <a href="/servers/" class="underline underline-offset-4">Clear</a>
+    </p>
+{/if}
 
 <ServerList {servers} />
 

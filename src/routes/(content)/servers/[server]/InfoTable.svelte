@@ -11,7 +11,7 @@
     let { server }: { server: Server } = $props();
 </script>
 
-<div class="w-min min-w-72">
+<div class="w-full [&_td]:wrap-anywhere [&_td]:whitespace-normal">
     {#if server.bannerUrl}
         <img src={server.bannerUrl} alt="" class="w-full" />
     {/if}
@@ -22,7 +22,7 @@
                 <TableCell>
                     {#if server.rank === 0}
                         <span>?</span>
-                        <small class="ml-1 text-muted-foreground"
+                        <small class="text-muted-foreground ml-1"
                             >(unranked)</small
                         >
                     {:else}

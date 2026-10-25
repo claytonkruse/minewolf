@@ -58,7 +58,7 @@
     <header
         class="bg-background/80 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 border-b backdrop-blur"
     >
-        <div class="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4 sm:px-10 lg:w-[calc(100%-4rem)]">
+        <div class="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4 sm:px-10 lg:px-6 lg:w-[calc(100%-2rem)]">
             <Sheet.Root bind:open={mobileNavOpen}>
                 <Sheet.Trigger
                     class={cn(
@@ -210,13 +210,13 @@
     {#if !isMap}
         <main
             id="main"
-            class="bg-background mx-auto w-full max-w-6xl grow px-4 py-5 text-center sm:px-10 lg:my-8 lg:w-[calc(100%-4rem)] lg:panel lg:has-[[data-fit-panel]]:w-fit lg:has-[[data-fit-panel]]:grow-0 lg:has-[[data-panels]]:border-0 lg:has-[[data-panels]]:bg-transparent lg:has-[[data-panels]]:p-0 lg:has-[[data-panels]]:shadow-none"
+            class="bg-background mx-auto w-full max-w-6xl grow px-4 py-5 text-center sm:px-10 lg:my-8 lg:w-[calc(100%-2rem)] lg:panel lg:has-[[data-fit-panel]]:w-fit lg:has-[[data-fit-panel]]:grow-0 lg:has-[[data-panels]]:border-0 lg:has-[[data-panels]]:bg-transparent lg:has-[[data-panels]]:p-0 lg:has-[[data-panels]]:shadow-none"
         >
             {@render children()}
         </main>
         <footer class="bg-background mt-auto border-t">
             <div
-                class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 text-left sm:px-10 md:flex-row md:items-center md:justify-between lg:w-[calc(100%-4rem)]"
+                class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 text-left sm:px-10 md:flex-row md:items-center md:justify-between lg:px-6 lg:w-[calc(100%-2rem)]"
             >
                 <div>
                     <a href="/" class="inline-block">

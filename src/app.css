@@ -137,5 +137,5 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 @utility panel {
-  @apply bg-background border px-10 py-8 shadow-2xl;
+  @apply bg-background border p-6 shadow-2xl;
 }

@@ -13,7 +13,7 @@
 </svelte:head>
 
 <div
-    class="mx-auto flex max-w-full flex-col gap-12 text-left lg:gap-8 xl:flex-row xl:items-start"
+    class="mx-auto flex max-w-full flex-col gap-12 text-left lg:gap-4 xl:flex-row xl:items-start"
     data-fit-panel
     data-panels
 >
