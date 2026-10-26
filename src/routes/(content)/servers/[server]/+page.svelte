@@ -3,6 +3,7 @@
     import InfoTable from "./InfoTable.svelte";
     import { Badge } from "$lib/components/ui/badge";
     import { Button } from "$lib/components/ui/button";
+    import { Input } from "$lib/components/ui/input";
     import { ytEmbedUrl } from "$lib/utils/ytEmbedUrl";
     import * as Tooltip from "$lib/components/ui/tooltip";
     import * as HoverCard from "$lib/components/ui/hover-card";
@@ -21,6 +22,7 @@
     import StarIcon from "@lucide/svelte/icons/star";
     import ShieldIcon from "@lucide/svelte/icons/shield";
     import GaugeIcon from "@lucide/svelte/icons/gauge";
+    import VoteIcon from "@lucide/svelte/icons/vote";
 
     let tooltip: string = $state("Copy IP?");
 
@@ -78,8 +80,12 @@
         </div>
     {/if}
 
-    <div class="flex flex-col gap-12 lg:gap-4 xl:w-6xl xl:flex-row xl:items-start">
-        <div class="flex w-2xl max-w-full flex-col gap-12 lg:gap-4 xl:w-auto xl:min-w-0 xl:flex-1">
+    <div
+        class="flex flex-col gap-12 lg:gap-4 xl:w-6xl xl:flex-row xl:items-start"
+    >
+        <div
+            class="flex w-2xl max-w-full flex-col gap-12 lg:gap-4 xl:w-auto xl:min-w-0 xl:flex-1"
+        >
             <section class="lg:panel">
                 <div class="float-right flex gap-2">
                     <Button variant="default" href="./vote/"
@@ -305,6 +311,11 @@
                             {form.message}
                         </p>
                     {/if}
+                    {#if form?.forcedVote}
+                        <p class="text-muted-foreground mb-3 text-sm">
+                            Vote recorded for {form.forcedVote}.
+                        </p>
+                    {/if}
                     <div class="flex flex-wrap gap-2">
                         <form
                             method="POST"
@@ -333,6 +344,24 @@
                             <EyeIcon /> View as Visitor
                         </Button>
                     </div>
+                    <form
+                        method="POST"
+                        action="?/forceVote"
+                        use:enhance
+                        class="mt-2 flex gap-2"
+                    >
+                        <Input
+                            name="username"
+                            placeholder="Minecraft username"
+                            value={user?.name ?? ""}
+                            required
+                            minlength={2}
+                            maxlength={100}
+                        />
+                        <Button type="submit" variant="outline">
+                            <VoteIcon /> Force Vote
+                        </Button>
+                    </form>
                 </section>
             {/if}
 

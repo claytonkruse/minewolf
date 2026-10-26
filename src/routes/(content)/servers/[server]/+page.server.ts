@@ -1,10 +1,12 @@
 import { db } from "$lib/server/db/drizzle/db";
-import { serverTable } from "$lib/server/db/drizzle/schema";
+import { serverTable, voteTable } from "$lib/server/db/drizzle/schema";
 import { eq, ne } from "drizzle-orm";
 import type { PageServerLoad, Actions } from "./$types";
 import { error, fail } from "@sveltejs/kit";
 import { hasRole } from "$lib/server/roles";
 import { addSponsor, removeSponsor } from "$lib/server/sponsors";
+import { notifyVote } from "$lib/server/discordNotify";
+import { randomUUID } from "node:crypto";
 
 const SIMILAR_LIMIT = 5;
 
@@ -83,7 +85,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 function requireAdmin(locals: App.Locals) {
     if (!hasRole(locals.user, "admin"))
-        error(403, "You are not authorized to manage sponsors.");
+        error(403, "You are not authorized to do that.");
 }
 
 export const actions = {
@@ -98,5 +100,31 @@ export const actions = {
     unsponsor: async ({ locals, params }) => {
         requireAdmin(locals);
         await removeSponsor(Number(params.server));
+    },
+
+    // Records a vote without the CAPTCHA or 24h limit, for testing.
+    forceVote: async ({ locals, params, request, getClientAddress, url }) => {
+        requireAdmin(locals);
+        const username = String(
+            (await request.formData()).get("username") ?? "",
+        ).trim();
+        if (username.length < 2 || username.length > 100)
+            return fail(400, {
+                message: "Username must be between 2 and 100 characters.",
+            });
+
+        const server = await db.query.serverTable.findFirst({
+            where: eq(serverTable.id, Number(params.server)),
+        });
+        if (!server) error(404, "Server listing not found.");
+
+        await db.insert(voteTable).values({
+            id: randomUUID(),
+            serverId: server.id,
+            minecraftUsername: username,
+            ip: getClientAddress(),
+        });
+        await notifyVote(server, username, url.origin);
+        return { forcedVote: username };
     },
 } satisfies Actions;

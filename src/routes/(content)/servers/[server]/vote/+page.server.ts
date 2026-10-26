@@ -3,6 +3,7 @@ import { db } from "$lib/server/db/drizzle/db";
 import { serverTable, voteTable } from "$lib/server/db/drizzle/schema";
 import { eq, gt, and, or } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
+import { notifyVote } from "$lib/server/discordNotify";
 
 const UsernameSchema = z
     .string({ required_error: "Username is required." })
@@ -124,7 +125,13 @@ function wordwrap(str, maxWidth) {
 import { TurnstileSchema } from "$lib/server/private-zod-schemas";
 
 export const actions: Actions = {
-    default: async ({ getClientAddress, request, params, cookies }) => {
+    default: async ({
+        getClientAddress,
+        request,
+        params,
+        cookies,
+        url,
+    }) => {
         const ip = getClientAddress();
         console.log(`Received vote request from ${ip}.`);
 
@@ -182,6 +189,8 @@ export const actions: Actions = {
             minecraftUsername: username,
             ip,
         });
+
+        void notifyVote(server, username, url.origin);
 
         cookies.set("last_voted_at", Date.now().toString(), {
             path: "/",

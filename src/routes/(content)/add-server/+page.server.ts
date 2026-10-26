@@ -9,6 +9,7 @@ import { db } from "$lib/server/db/drizzle/db";
 import { serverTable } from "$lib/server/db/drizzle/schema";
 import { temp_url } from "$lib/utils/redirect_urls";
 import { z } from "zod";
+import { notifyServerAdded } from "$lib/server/discordNotify";
 
 const PublicSchema = z.object({
     "cf-turnstile-response": z
@@ -27,7 +28,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 import { TurnstileSchema } from "$lib/server/private-zod-schemas";
 export const actions: Actions = {
-    default: async ({ locals, request }) => {
+    default: async ({ locals, request, url }) => {
         const { user } = locals;
         if (!user) error(401, "Unauthenticated.");
 
@@ -83,6 +84,8 @@ export const actions: Actions = {
             );
             return fail(500, { form });
         }
+        // fire-and-forget so a slow Discord API never delays the redirect
+        void notifyServerAdded(server, url.origin);
         redirect(303, `/dashboard/servers/${server.id}/edit/`);
     },
 };
