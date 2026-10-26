@@ -1,9 +1,12 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import type { PageData } from "./$types";
     import { page } from "$app/state";
     import { Button } from "$lib/components/ui/button";
     import * as Breadcrumb from "$lib/components/ui/breadcrumb";
-    import Pagination from "$lib/components/Pagination.svelte";
+    import Pagination, { pageSuffix } from "$lib/components/Pagination.svelte";
+    import JsonLd from "$lib/components/JsonLd.svelte";
+    import { breadcrumbs } from "$lib/utils/structuredData";
     import { temp_url } from "$lib/utils/redirect_urls";
     import { timeAgo } from "$lib/utils/timeAgo";
     import PinIcon from "@lucide/svelte/icons/pin";
@@ -22,10 +25,18 @@
     );
 </script>
 
-<svelte:head>
-    <title>{category.name} - Forum - Minewolf</title>
-    <meta name="description" content={category.description} />
-</svelte:head>
+<Seo
+    title="{category.name}{pageSuffix(data.page)} - Forum - Minewolf"
+    description={category.description}
+/>
+<JsonLd
+    schemas={[
+        breadcrumbs([
+            ["Forum", "/forum/"],
+            [category.name, `/forum/${category.slug}/`],
+        ]),
+    ]}
+/>
 
 <div class="mx-auto max-w-3xl space-y-6 text-left">
     <Breadcrumb.Root>

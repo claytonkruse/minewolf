@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import { Button } from "$lib/components/ui/button";
     import type { PageData } from "./$types";
     import * as Breadcrumb from "$lib/components/ui/breadcrumb";
@@ -26,9 +27,11 @@
     }
 </script>
 
-<svelte:head>
-    <title>Your Servers - Minewolf</title>
-</svelte:head>
+<Seo
+    title="Your Servers - Minewolf"
+    description="Manage your Minecraft server listings on Minewolf."
+    noindex
+/>
 
 <Breadcrumb.Root>
     <Breadcrumb.List>

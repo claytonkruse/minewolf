@@ -1,10 +1,13 @@
 <script>
+    import Seo from "$lib/components/Seo.svelte";
     import { Button } from "$lib/components/ui/button";
 </script>
 
-<svelte:head>
-    <title>Delete Account - Minewolf</title>
-</svelte:head>
+<Seo
+    title="Delete Account - Minewolf"
+    description="Permanently delete your Minewolf account."
+    noindex
+/>
 
 <hgroup>
     <h1 class="text-2xl font-bold">

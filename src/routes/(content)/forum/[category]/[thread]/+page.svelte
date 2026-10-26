@@ -7,8 +7,12 @@
     import { Textarea } from "$lib/components/ui/textarea";
     import * as Form from "$lib/components/ui/form";
     import * as Breadcrumb from "$lib/components/ui/breadcrumb";
+    import Seo from "$lib/components/Seo.svelte";
     import ForumPostCard from "$lib/components/ForumPostCard.svelte";
-    import Pagination from "$lib/components/Pagination.svelte";
+    import Pagination, { pageSuffix } from "$lib/components/Pagination.svelte";
+    import JsonLd from "$lib/components/JsonLd.svelte";
+    import { absoluteUrl, breadcrumbs } from "$lib/utils/structuredData";
+    import type { Schema } from "$lib/utils/structuredData";
     import { superForm } from "sveltekit-superforms";
     import { temp_url } from "$lib/utils/redirect_urls";
     import { trackThreadView } from "$lib/utils/trackViews";
@@ -33,6 +37,34 @@
         trackThreadView(threadId);
     });
 
+    let threadPath = $derived(`/forum/${category.slug}/${thread.id}/`);
+    let schemas = $derived.by(() => {
+        const schemas: Schema[] = [
+            breadcrumbs([
+                ["Forum", "/forum/"],
+                [category.name, `/forum/${category.slug}/`],
+                [thread.title, threadPath],
+            ]),
+        ];
+        const opening = data.openingPost;
+        if (opening)
+            schemas.push({
+                "@type": "DiscussionForumPosting",
+                headline: thread.title,
+                url: absoluteUrl(threadPath),
+                datePublished: opening.createdAt,
+                text: opening.text,
+                author: { "@type": "Person", name: opening.authorName },
+                commentCount: data.replyCount,
+                interactionStatistic: {
+                    "@type": "InteractionCounter",
+                    interactionType: "https://schema.org/ViewAction",
+                    userInteractionCount: thread.views,
+                },
+            });
+        return schemas;
+    });
+
     const form = superForm(data.form, { resetForm: true });
     const { form: formData, enhance: replyEnhance, submitting } = form;
 
@@ -47,9 +79,14 @@
     }
 </script>
 
-<svelte:head>
-    <title>{thread.title} - {category.name} - Forum - Minewolf</title>
-</svelte:head>
+<Seo
+    title="{thread.title}{pageSuffix(
+        data.page,
+    )} - {category.name} - Forum - Minewolf"
+    description={data.description}
+    type="article"
+/>
+<JsonLd {schemas} />
 
 <div class="mx-auto max-w-3xl space-y-6 text-left">
     <Breadcrumb.Root>

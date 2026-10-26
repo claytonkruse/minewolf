@@ -1,14 +1,13 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import { Button } from "$lib/components/ui/button";
 </script>
 
-<svelte:head>
-    <title>Log out of All Devices - Minewolf</title>
-    <meta
-        name="description"
-        content="Sign out of your account on all devices."
-    />
-</svelte:head>
+<Seo
+    title="Log out of All Devices - Minewolf"
+    description="Sign out of your account on all devices."
+    noindex
+/>
 
 <div class="text-center">
     <h1 class="text-2xl font-bold">

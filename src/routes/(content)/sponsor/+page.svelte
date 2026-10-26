@@ -1,16 +1,14 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import { Button } from "$lib/components/ui/button";
     import DiscordIcon from "~icons/bi/discord";
     import StarIcon from "@lucide/svelte/icons/star";
 </script>
 
-<svelte:head>
-    <title>Become a Sponsor - Minewolf</title>
-    <meta
-        name="description"
-        content="Sponsor your Minecraft server on Minewolf to be featured on the homepage."
-    />
-</svelte:head>
+<Seo
+    title="Become a Sponsor - Minewolf"
+    description="Sponsor your Minecraft server on Minewolf to be featured on the homepage."
+/>
 
 <div class="mx-auto max-w-full text-left" data-fit-panel data-panels>
     <section class="lg:panel w-2xl max-w-full">

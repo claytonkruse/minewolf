@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import type { PageData } from "./$types";
     import { Input } from "$lib/components/ui/input";
     import { Button } from "$lib/components/ui/button";
@@ -28,6 +29,12 @@
         localStorage.setItem("minecraft_username", $formData.voteUsername);
     }
 </script>
+
+<Seo
+    title="Vote for {server.name} - Minewolf"
+    description="Vote for {server.name} on Minewolf to help it climb the server rankings."
+    noindex
+/>
 
 <div class="mx-auto max-w-lg">
     <h1 class="text-2xl font-bold">Cast your vote for {server.name}?</h1>

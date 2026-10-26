@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import type { PageData } from "./$types";
     import { Button } from "$lib/components/ui/button";
 
@@ -9,9 +10,11 @@
     let { data }: Props = $props();
 </script>
 
-<svelte:head>
-    <title>Remove {data.name}? - Server Dashboard - Minewolf</title>
-</svelte:head>
+<Seo
+    title="Remove {data.name}? - Server Dashboard - Minewolf"
+    description="Remove the listing for {data.name} from Minewolf."
+    noindex
+/>
 
 <hgroup>
     <h1 class="text-3xl font-bold">

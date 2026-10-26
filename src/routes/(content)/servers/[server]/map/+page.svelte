@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import type { PageData } from "./$types";
     import { Button } from "$lib/components/ui/button";
 
@@ -21,6 +22,11 @@
         }
     }
 </script>
+
+<Seo
+    title="{server.name}'s Map - Minewolf"
+    description="Live map of the {server.name} Minecraft server."
+/>
 
 <svelte:document
     onkeydown={({ key }) => {

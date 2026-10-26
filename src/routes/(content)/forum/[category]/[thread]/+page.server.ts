@@ -9,6 +9,7 @@ import {
     forumThreadTable,
 } from "$lib/server/db/drizzle/schema";
 import { ForumReplySchema } from "$lib/forum";
+import { plainText } from "$lib/utils/plainText";
 import { hasRole } from "$lib/server/roles";
 import {
     POSTS_PER_PAGE,
@@ -21,7 +22,7 @@ export const load = (async ({ params, url }) => {
     const { category, thread } = await requireForumThread(params);
     const page = pageParam(url);
 
-    const [posts, postCount] = await Promise.all([
+    const [posts, postCount, firstPost] = await Promise.all([
         db.query.forumPostTable.findMany({
             where: eq(forumPostTable.threadId, thread.id),
             orderBy: [asc(forumPostTable.createdAt), asc(forumPostTable.id)],
@@ -35,13 +36,31 @@ export const load = (async ({ params, url }) => {
             },
         }),
         db.$count(forumPostTable, eq(forumPostTable.threadId, thread.id)),
+        // The opening post describes the thread on every page, not just page 1.
+        db.query.forumPostTable.findFirst({
+            columns: { body: true, createdAt: true },
+            with: { user: { columns: { name: true } } },
+            where: eq(forumPostTable.threadId, thread.id),
+            orderBy: [asc(forumPostTable.createdAt), asc(forumPostTable.id)],
+        }),
     ]);
 
     const form = await superValidate(zod(ForumReplySchema));
+    const openingText = plainText(firstPost?.body ?? "");
 
     return {
         category,
         thread,
+        description:
+            openingText ||
+            `${thread.title} - a discussion in the ${category.name} forum on Minewolf.`,
+        // For the thread's structured data.
+        openingPost: firstPost && {
+            text: openingText,
+            authorName: firstPost.user.name,
+            createdAt: firstPost.createdAt,
+        },
+        replyCount: Math.max(0, postCount - 1),
         posts: posts.map(({ user, ...post }) => ({
             ...post,
             author: {

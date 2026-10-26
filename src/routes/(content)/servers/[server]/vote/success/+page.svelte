@@ -1,7 +1,14 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import { Button } from "$lib/components/ui/button";
     let { data } = $props();
 </script>
+
+<Seo
+    title="Vote Counted for {data.server!.name} - Minewolf"
+    description="Thanks for voting for {data.server!.name} on Minewolf."
+    noindex
+/>
 
 <h1 class="text-2xl font-bold">Successfully voted for {data.server!.name}!</h1>
 <br />

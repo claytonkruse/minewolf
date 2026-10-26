@@ -1,6 +1,13 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import { Button } from "$lib/components/ui/button";
 </script>
+
+<Seo
+    title="Account - Minewolf"
+    description="Manage your Minewolf account."
+    noindex
+/>
 
 <h1 class="text-2xl font-bold">Account</h1>
 

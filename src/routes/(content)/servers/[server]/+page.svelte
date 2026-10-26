@@ -18,6 +18,10 @@
     import { trackViews } from "$lib/utils/trackViews";
     import { enhance } from "$app/forms";
     import { page } from "$app/state";
+    import Seo from "$lib/components/Seo.svelte";
+    import JsonLd from "$lib/components/JsonLd.svelte";
+    import { breadcrumbs } from "$lib/utils/structuredData";
+    import { plainText } from "$lib/utils/plainText";
     import EyeIcon from "@lucide/svelte/icons/eye";
     import StarIcon from "@lucide/svelte/icons/star";
     import ShieldIcon from "@lucide/svelte/icons/shield";
@@ -56,9 +60,21 @@
     }
 </script>
 
+<Seo
+    title="{server.name} - Servers - Minewolf"
+    description={plainText(server.description) ||
+        `${server.name} is a Minecraft server listed on Minewolf.`}
+/>
+<JsonLd
+    schemas={[
+        breadcrumbs([
+            ["Home", "/"],
+            ["Servers", "/servers/"],
+            [server.name, `/servers/${server.id}/`],
+        ]),
+    ]}
+/>
 <svelte:head>
-    <title>{server.name} - Servers - Minewolf</title>
-    <meta name="description" content={server.description.replaceAll("*", "")} />
     <meta name="keywords" content={server.tags} />
 </svelte:head>
 

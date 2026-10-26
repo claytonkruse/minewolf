@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import type { PageData } from "./$types";
     import { Input } from "$lib/components/ui/input";
     import { Textarea } from "$lib/components/ui/textarea";
@@ -24,9 +25,11 @@
     const { form: formData, enhance, submitting } = form;
 </script>
 
-<svelte:head>
-    <title>New Thread - {category.name} - Forum - Minewolf</title>
-</svelte:head>
+<Seo
+    title="New Thread - {category.name} - Forum - Minewolf"
+    description="Start a new thread in the {category.name} forum on Minewolf."
+    noindex
+/>
 
 <div class="mx-auto max-w-3xl space-y-6 text-left">
     <Breadcrumb.Root>

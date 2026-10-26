@@ -1,11 +1,13 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import { page } from "$app/stores";
 </script>
 
-<svelte:head>
-    <title>Error - Minewolf</title>
-    <meta name="description" content="An error occurred on this page." />
-</svelte:head>
+<Seo
+    title="Error - Minewolf"
+    description="An error occurred on this page."
+    noindex
+/>
 
 <main id="main">
     <article>

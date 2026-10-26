@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import { Button } from "$lib/components/ui/button";
     import * as Breadcrumb from "$lib/components/ui/breadcrumb";
     import ViewIcon from "@lucide/svelte/icons/eye";
@@ -12,10 +13,11 @@
     let { server, analytics, analyticsDays } = data;
 </script>
 
-<svelte:head>
-    <title>{server.name} - Server Dashboard - Minewolf</title>
-    <meta name="description" content="Manage your server on Minewolf" />
-</svelte:head>
+<Seo
+    title="{server.name} - Server Dashboard - Minewolf"
+    description="Manage your server on Minewolf"
+    noindex
+/>
 
 <Breadcrumb.Root>
     <Breadcrumb.List>

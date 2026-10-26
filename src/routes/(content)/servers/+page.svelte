@@ -2,6 +2,8 @@
     import type { PageData } from "./$types";
     import type { Server } from "$lib/server/drizzle/schema";
     import { ServerList } from "$lib/components/ServerList";
+    import Pagination, { pageSuffix } from "$lib/components/Pagination.svelte";
+    import Seo from "$lib/components/Seo.svelte";
     import { trackViews } from "$lib/utils/trackViews";
 
     interface Props {
@@ -22,13 +24,16 @@
     });
 </script>
 
-<svelte:head>
-    <title>Browse Minecraft Servers - Minewolf</title>
-    <meta
-        name="description"
-        content="Browse dozens of unique Minecraft servers."
-    />
-</svelte:head>
+<!-- Search results are endless near-duplicates, so only tag pages get indexed. -->
+<Seo
+    title="{tag
+        ? `${tag[0].toUpperCase() + tag.slice(1)} Minecraft Servers`
+        : 'Browse Minecraft Servers'}{pageSuffix(page)} - Minewolf"
+    description={tag
+        ? `Browse Minecraft servers tagged ${tag} on Minewolf.`
+        : "Browse dozens of unique Minecraft servers."}
+    noindex={!!data.name}
+/>
 
 <h1 class="text-4xl font-bold">Browse Minecraft Servers</h1>
 
@@ -40,6 +45,10 @@
 {/if}
 
 <ServerList {servers} />
+
+<div class="mt-6">
+    <Pagination {page} pageCount={data.pageCount} />
+</div>
 
 <!-- <section>
     <h3>Todo</h3>

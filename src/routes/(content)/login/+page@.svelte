@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import * as arctic from "arctic";
     import {
         PUBLIC_DISCORD_CLIENT_ID as clientId,
@@ -16,10 +17,11 @@
     const href = discord.createAuthorizationURL(state, null, scopes).toString();
 </script>
 
-<svelte:head>
-    <title>Login - Minewolf</title>
-    <meta name="description" content="Log in to Minewolf with Discord." />
-</svelte:head>
+<Seo
+    title="Login - Minewolf"
+    description="Log in to Minewolf with Discord."
+    noindex
+/>
 
 <div class="flex h-full content-center items-center justify-center text-center">
     <div>

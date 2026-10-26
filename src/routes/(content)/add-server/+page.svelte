@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import type { PageData } from "./$types.js";
     import { Input } from "$lib/components/ui/input";
     import * as Form from "$lib/components/ui/form";
@@ -22,9 +23,10 @@
     const { form: formData, enhance, submitting } = form;
 </script>
 
-<svelte:head>
-    <title>Add Your Server - Minewolf</title>
-</svelte:head>
+<Seo
+    title="Add Your Server - Minewolf"
+    description="Add your Minecraft server to Minewolf so players can find it. Its status, player count and version stay up to date automatically."
+/>
 
 {#snippet AddServerForm()}
     <form method="POST" use:enhance>

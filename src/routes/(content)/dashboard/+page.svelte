@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import { Button } from "$lib/components/ui/button";
     import type { PageData } from "./$types";
 
@@ -6,10 +7,11 @@
     let user = data.user;
 </script>
 
-<svelte:head>
-    <title>Dashboard - Minewolf</title>
-    <meta name="description" content="Your Minewolf Dashboard" />
-</svelte:head>
+<Seo
+    title="Dashboard - Minewolf"
+    description="Your Minewolf Dashboard"
+    noindex
+/>
 
 <div>
     <h1 class="text-4xl font-bold">{user.name}'s Minewolf Dashboard</h1>

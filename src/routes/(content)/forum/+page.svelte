@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import type { PageData } from "./$types";
     import { getForumCategory } from "$lib/forum";
     import { timeAgo } from "$lib/utils/timeAgo";
@@ -14,13 +15,10 @@
     let { data }: Props = $props();
 </script>
 
-<svelte:head>
-    <title>Forum - Minewolf</title>
-    <meta
-        name="description"
-        content="Talk Minecraft servers with the Minewolf community."
-    />
-</svelte:head>
+<Seo
+    title="Forum - Minewolf"
+    description="Talk Minecraft servers with the Minewolf community."
+/>
 
 <div
     class="mx-auto flex max-w-full flex-col gap-12 text-left lg:gap-4 xl:flex-row xl:items-start"

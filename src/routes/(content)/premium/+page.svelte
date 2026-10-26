@@ -1,3 +1,13 @@
+<script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
+</script>
+
+<Seo
+    title="Premium - Minewolf"
+    description="Boost your server's reach with Minewolf Premium."
+    noindex
+/>
+
 <h1 class="text-4xl font-bold uppercase">Minewolf Premium</h1>
 <p>Boost your server's reach with Minewolf Premium!</p>
 <br />

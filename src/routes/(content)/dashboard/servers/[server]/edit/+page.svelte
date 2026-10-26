@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import ServerAddressField from "$lib/components/ServerAddressField.svelte";
     import * as Form from "$lib/components/ui/form";
     import { Input } from "$lib/components/ui/input";
@@ -23,9 +24,11 @@
     let newBannerUrl: string | undefined = $state();
 </script>
 
-<svelte:head>
-    <title>Edit {server.name} - Minewolf</title>
-</svelte:head>
+<Seo
+    title="Edit {server.name} - Minewolf"
+    description="Edit the listing for {server.name} on Minewolf."
+    noindex
+/>
 
 <h1 class="text-2xl font-bold">Edit {server.name}</h1>
 

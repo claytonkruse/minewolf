@@ -1,4 +1,7 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
+    import JsonLd from "$lib/components/JsonLd.svelte";
+    import { organization, website } from "$lib/utils/structuredData";
     import { Button } from "$lib/components/ui/button";
     import logo from "$lib/assets/logo-large.png";
     import DiscordIcon from "~icons/bi/discord";
@@ -11,13 +14,11 @@
     let topServers = $derived(data.topServers);
 </script>
 
-<svelte:head>
-    <title>Minewolf - The Superior Minecraft Server List</title>
-    <meta
-        name="description"
-        content="Minewolf is a new Minecraft server list that is different. Add your server before launch day now!"
-    />
-</svelte:head>
+<Seo
+    title="Minewolf - The Superior Minecraft Server List"
+    description="Find the best Minecraft servers on Minewolf. See live status, player counts and versions, vote for your favorites, and list your own server for free."
+/>
+<JsonLd schemas={[website, organization]} />
 
 <div
     class="mx-auto flex max-w-full flex-col gap-12 lg:gap-4"
@@ -41,9 +42,16 @@
             small servers grow. Find a hidden gem, or list your server today!
         </p> -->
 
-        <p>
-            Minewolf is a new Minecraft server list that is different. Add your
-            server before launch day now!
+        <p class="mx-auto max-w-xl">
+            Minewolf is a Minecraft server list that helps players find their
+            next server and helps servers of every kind get found. Whether
+            you're looking for survival, SMP, minigames or something modded,
+            every listing shows live status, player counts and versions,
+            refreshed every 10 minutes.
+        </p>
+        <p class="mx-auto mt-3 max-w-xl">
+            Vote for your favorite servers, join the conversation in the forum,
+            or list your own Minecraft server for free.
         </p>
 
         <br />

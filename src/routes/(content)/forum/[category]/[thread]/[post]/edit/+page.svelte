@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import type { PageData } from "./$types";
     import { Input } from "$lib/components/ui/input";
     import { Textarea } from "$lib/components/ui/textarea";
@@ -17,9 +18,11 @@
     const { form: formData, enhance, submitting } = form;
 </script>
 
-<svelte:head>
-    <title>Edit Post - {thread.title} - Forum - Minewolf</title>
-</svelte:head>
+<Seo
+    title="Edit Post - {thread.title} - Forum - Minewolf"
+    description="Edit your post in {thread.title}."
+    noindex
+/>
 
 <div class="mx-auto max-w-3xl space-y-6 text-left">
     <Breadcrumb.Root>

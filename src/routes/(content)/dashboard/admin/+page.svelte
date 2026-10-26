@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import { Button } from "$lib/components/ui/button";
     import * as Breadcrumb from "$lib/components/ui/breadcrumb";
     import * as Card from "$lib/components/ui/card";
@@ -16,9 +17,11 @@
     let sponsorResults = $derived(data.sponsorResults);
 </script>
 
-<svelte:head>
-    <title>Admin Dashboard - Minewolf</title>
-</svelte:head>
+<Seo
+    title="Admin Dashboard - Minewolf"
+    description="Minewolf site administration."
+    noindex
+/>
 
 <Breadcrumb.Root>
     <Breadcrumb.List>

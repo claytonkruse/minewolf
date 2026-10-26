@@ -1,16 +1,14 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import { PUBLIC_DISCORD_INVITE } from "$env/static/public";
     import { Button } from "$lib/components/ui/button";
     import DiscordIcon from "~icons/bi/discord";
 </script>
 
-<svelte:head>
-    <title>Minecraft Server Discord Community - Minewolf</title>
-    <meta
-        name="description"
-        content="Join the Minewolf Discord, an active Minecraft community where you can advertise your Minecraft server, find new servers to play, and get support."
-    />
-</svelte:head>
+<Seo
+    title="Minecraft Server Discord Community - Minewolf"
+    description="Join the Minewolf Discord, an active Minecraft community where you can advertise your Minecraft server, find new servers to play, and get support."
+/>
 
 <div class="mx-auto max-w-full text-left" data-fit-panel data-panels>
     <section class="lg:panel w-2xl max-w-full">

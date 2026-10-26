@@ -1,3 +1,10 @@
+<script lang="ts" module>
+    // Keeps paginated pages from sharing one title in search results.
+    export function pageSuffix(page: number) {
+        return page > 1 ? ` - Page ${page}` : "";
+    }
+</script>
+
 <script lang="ts">
     import { page as pageState } from "$app/state";
     import { Button } from "$lib/components/ui/button";

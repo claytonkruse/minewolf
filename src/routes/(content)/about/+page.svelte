@@ -1,16 +1,14 @@
 <script lang="ts">
+    import Seo from "$lib/components/Seo.svelte";
     import { Button } from "$lib/components/ui/button";
     import * as Card from "$lib/components/ui/card";
     import DiscordIcon from "~icons/bi/discord";
 </script>
 
-<svelte:head>
-    <title>About - Minewolf</title>
-    <meta
-        name="description"
-        content="Minewolf is a Minecraft server list that keeps every listing up to date automatically."
-    />
-</svelte:head>
+<Seo
+    title="About - Minewolf"
+    description="Minewolf is a Minecraft server list that keeps every listing up to date automatically."
+/>
 
 <div
     class="mx-auto flex max-w-full flex-col gap-12 text-left lg:gap-4 xl:flex-row xl:items-start"
