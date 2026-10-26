@@ -17,8 +17,12 @@ export const userTable = pgTable("user", {
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
 
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    lastOnlineAt: timestamp("last_online_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+        .defaultNow()
+        .notNull(),
+    lastOnlineAt: timestamp("last_online_at", { withTimezone: true })
+        .defaultNow()
+        .notNull(),
 });
 export type User = InferSelectModel<typeof userTable>;
 
@@ -40,7 +44,9 @@ export const userRoleTable = pgTable(
             .references(() => userTable.id, { onDelete: "cascade" }),
         role: roleEnum("role").notNull(),
 
-        createdAt: timestamp("created_at").defaultNow().notNull(),
+        createdAt: timestamp("created_at", { withTimezone: true })
+            .defaultNow()
+            .notNull(),
     },
     (table) => [primaryKey({ columns: [table.userId, table.role] })],
 );
@@ -62,12 +68,14 @@ export const sessionTable = pgTable("session", {
         .references(() => userTable.id, { onDelete: "cascade" }),
 
     discordAccessToken: text("discord_access_token").notNull(),
-    discordAccessTokenExpiresAt: timestamp(
-        "discord_access_token_expires_at",
-    ).notNull(),
+    discordAccessTokenExpiresAt: timestamp("discord_access_token_expires_at", {
+        withTimezone: true,
+    }).notNull(),
     discordRefreshToken: text("discord_refresh_token").notNull(),
 
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+        .defaultNow()
+        .notNull(),
 });
 export type Session = InferSelectModel<typeof sessionTable>;
 
@@ -84,11 +92,16 @@ export const serverTable = pgTable("server", {
     userId: text("user_id")
         .notNull()
         .references(() => userTable.id, { onDelete: "cascade" }),
-    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
-    lastPingAt: timestamp("last_ping_at", { mode: "date" })
+    createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
         .defaultNow()
         .notNull(),
-    lastOnlineAt: timestamp("last_online_at", { mode: "date" })
+    lastPingAt: timestamp("last_ping_at", { mode: "date", withTimezone: true })
+        .defaultNow()
+        .notNull(),
+    lastOnlineAt: timestamp("last_online_at", {
+        mode: "date",
+        withTimezone: true,
+    })
         .defaultNow()
         .notNull(),
 
@@ -99,7 +112,6 @@ export const serverTable = pgTable("server", {
     iconUrl: text("icon_url").notNull().default(""),
     cleanMotd: text("clean_motd").notNull().default(""),
     htmlMotd: text("html_motd").notNull().default(""),
-    crossplay: boolean("crossplay").notNull().default(false),
     // set by admins; null = not a sponsor, lower = shown first
     sponsorPosition: integer("sponsor_position"),
 
@@ -109,6 +121,7 @@ export const serverTable = pgTable("server", {
 
     bedrockAddress: text("bedrock_address").notNull().default(""),
     bedrockPort: integer("bedrock_port").notNull().default(19132),
+    crossplay: boolean("crossplay").notNull().default(false),
 
     addressPrivate: boolean("address_private").notNull().default(false),
 
@@ -151,7 +164,9 @@ export const voteTable = pgTable("vote", {
     ip: text("ip").notNull(),
     minecraftUsername: text("minecraft_username").notNull(),
 
-    createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
+        .notNull()
+        .defaultNow(),
 });
 export const voteRelations = relations(voteTable, ({ one }) => ({
     server: one(serverTable, {
@@ -200,9 +215,11 @@ export const forumThreadTable = pgTable("forum_thread", {
     // incremented by /api/forum/views/
     views: integer("views").notNull().default(0),
 
-    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
+        .defaultNow()
+        .notNull(),
     // bumped on every reply so active threads sort first
-    lastPostAt: timestamp("last_post_at", { mode: "date" })
+    lastPostAt: timestamp("last_post_at", { mode: "date", withTimezone: true })
         .defaultNow()
         .notNull(),
 });
@@ -229,8 +246,10 @@ export const forumPostTable = pgTable("forum_post", {
         .references(() => userTable.id, { onDelete: "cascade" }),
     body: text("body").notNull(),
 
-    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
-    editedAt: timestamp("edited_at", { mode: "date" }),
+    createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
+        .defaultNow()
+        .notNull(),
+    editedAt: timestamp("edited_at", { mode: "date", withTimezone: true }),
 });
 export type ForumPost = InferSelectModel<typeof forumPostTable>;
 export const forumPostRelations = relations(forumPostTable, ({ one }) => ({

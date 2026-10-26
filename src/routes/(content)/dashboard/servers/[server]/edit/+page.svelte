@@ -164,6 +164,18 @@
     <br />
 
     <h4 class="mb-2 text-sm font-bold">Bedrock Edition</h4>
+    <Form.Field {form} name="crossplay">
+        <Form.Control>
+            {#snippet children({ props })}
+                <div class="flex items-center gap-2">
+                    <Checkbox {...props} bind:checked={$formData.crossplay} />
+                    <Form.Label>Bedrock players can join (crossplay)</Form.Label
+                    >
+                </div>
+            {/snippet}
+        </Form.Control>
+        <Form.FieldErrors />
+    </Form.Field>
     <ServerAddressField
         {form}
         addressField="bedrockAddress"

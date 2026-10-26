@@ -20,24 +20,40 @@ const db = drizzle(pool, { schema });
 type ServerRow = { id: number; address: string; port: number };
 
 async function updateServer({ id, address, port }: ServerRow) {
-    const pingData = await pingServer(`${address}:${port}`);
-    if (!pingData) return;
+    // the port column defaults to 25565, so treat that as "no port given"
+    // to allow servers like 2b2t.org that only resolve through an SRV record
+    const pingData = await pingServer(
+        address,
+        port === 25565 ? undefined : port,
+    );
+    if (!pingData.online) {
+        // offline: keep the last known MOTD and icon, but not player counts
+        await db
+            .update(serverTable)
+            .set({
+                online: false,
+                onlinePlayers: 0,
+                maxPlayers: 0,
+                lastPingAt: new Date(),
+            })
+            .where(eq(serverTable.id, id));
+        return;
+    }
     await db
         .update(serverTable)
         .set({
-            online: pingData.online,
-            onlinePlayers: pingData.players?.online,
-            maxPlayers: pingData.players?.max,
-            cleanMotd: pingData.motd?.clean.join("\n"),
-            htmlMotd:
-                pingData.motd &&
-                sanitizeHtml(pingData.motd.html.join("<br />"), {
-                    allowedTags: ["span", "br"],
-                    allowedAttributes: {
-                        span: ["style"],
-                    },
-                }),
-            lastOnlineAt: pingData.online ? new Date() : undefined,
+            online: true,
+            onlinePlayers: pingData.players.online,
+            maxPlayers: pingData.players.max,
+            iconUrl: pingData.icon,
+            cleanMotd: pingData.motd.clean.join("\n"),
+            htmlMotd: sanitizeHtml(pingData.motd.html.join("<br />"), {
+                allowedTags: ["span", "br"],
+                allowedAttributes: {
+                    span: ["style"],
+                },
+            }),
+            lastOnlineAt: new Date(),
             lastPingAt: new Date(),
         })
         .where(eq(serverTable.id, id));

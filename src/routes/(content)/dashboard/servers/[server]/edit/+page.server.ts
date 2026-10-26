@@ -41,7 +41,6 @@ export const load = (async ({ locals, params }) => {
         iconUrl,
         cleanMotd,
         htmlMotd,
-        crossplay,
         bannerUrl,
         ...userChangeable
     } = server; // remove fields that cannot be changed by user

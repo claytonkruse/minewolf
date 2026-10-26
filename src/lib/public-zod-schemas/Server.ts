@@ -32,6 +32,7 @@ export const ServerSchema = z.object({
         .nonnegative({ message: "Port cannot be negative." })
         .lte(65535, { message: "Port must be valid." })
         .default(19132),
+    crossplay: z.boolean().default(false),
     votifierEnabled: z.boolean().default(false),
     votifierAddress: z
         .string({ required_error: "A server IP or hostname is required." })

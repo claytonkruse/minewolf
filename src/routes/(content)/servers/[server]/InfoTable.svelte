@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { Server } from "$lib/server/drizzle/schema";
+    import { timeAgo } from "$lib/utils/timeAgo";
     import {
         Table,
         TableCell,
@@ -57,7 +58,7 @@
             <TableRow>
                 <TableHead>Last Pinged</TableHead>
                 <TableCell>
-                    {server.lastPingAt.toTimeString()}
+                    {timeAgo(server.lastPingAt)}
                 </TableCell>
             </TableRow>
 

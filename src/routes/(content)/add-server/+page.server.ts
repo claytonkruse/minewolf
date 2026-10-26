@@ -46,7 +46,7 @@ export const actions: Actions = {
         }
 
         const { address, port } = form.data;
-        let pingData = await pingServer(port ? `${address}:${port}` : address);
+        let pingData = await pingServer(address, port);
         if (!pingData?.online) {
             setError(
                 form,
