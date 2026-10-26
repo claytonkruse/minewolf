@@ -16,7 +16,7 @@
             <StarIcon class="size-8 fill-current" /> Become a Sponsor
         </h1>
         <p class="text-muted-foreground mt-3 text-lg">
-            Sponsored servers are featured in the Sponsors section at the top of
+            Sponsor servers are featured in the Sponsors section at the top of
             the Minewolf homepage, so they're one of the first things players
             see.
         </p>
@@ -26,8 +26,8 @@
         </h2>
         <p class="text-muted-foreground mt-2">
             Sponsorships are arranged directly with the Minewolf team for now.
-            Join the Minewolf Discord and let us know which server you'd like to
-            sponsor, and we'll get you the details.
+            Join the Minewolf Discord and let us know you want to become a sponsor,
+            and we'll get you the details.
         </p>
 
         <Button class="mt-6" size="lg" href="/discord/">
