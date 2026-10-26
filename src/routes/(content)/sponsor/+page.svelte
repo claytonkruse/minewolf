@@ -36,8 +36,6 @@
             class="mt-6"
             size="lg"
             href="/discord/"
-            target="_blank"
-            rel="nofollow noopener noreferrer"
         >
             <DiscordIcon /> Join our Discord
         </Button>

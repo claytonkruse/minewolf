@@ -54,8 +54,6 @@
             <Button
                 variant="outline"
                 href="/discord/"
-                target="_blank"
-                rel="nofollow noopener noreferrer"
             >
                 <DiscordIcon /> Join our Discord
             </Button>

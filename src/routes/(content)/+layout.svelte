@@ -136,8 +136,6 @@
                             variant="ghost"
                             class="justify-start"
                             href="/discord/"
-                            target="_blank"
-                            rel="nofollow noopener noreferrer"
                         >
                             <DiscordIcon /> Discord
                         </Button>
@@ -271,8 +269,6 @@
                 <Button
                     variant="outline"
                     href="/discord/"
-                    target="_blank"
-                    rel="nofollow noopener noreferrer"
                 >
                     <DiscordIcon /> Join our Discord
                 </Button>
