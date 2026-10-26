@@ -7,7 +7,7 @@
     <AspectRatio
         {...props}
         ratio={468 / 60}
-        class="flex content-center items-center justify-center overflow-hidden rounded-sm bg-muted"
+        class="bg-muted flex content-center items-center justify-center overflow-hidden rounded-sm"
     >
         <img {src} {alt} class="min-h-full min-w-full" />
     </AspectRatio>

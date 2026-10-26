@@ -125,13 +125,7 @@ function wordwrap(str, maxWidth) {
 import { TurnstileSchema } from "$lib/server/private-zod-schemas";
 
 export const actions: Actions = {
-    default: async ({
-        getClientAddress,
-        request,
-        params,
-        cookies,
-        url,
-    }) => {
+    default: async ({ getClientAddress, request, params, cookies, url }) => {
         const ip = getClientAddress();
         console.log(`Received vote request from ${ip}.`);
 

@@ -1,2 +1,1 @@
 # Minewolf - Minecraft Server List
-

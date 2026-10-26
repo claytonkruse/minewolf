@@ -44,7 +44,7 @@
 
         <ServerAddressField {form} />
 
-        <p class="text-sm text-muted-foreground">
+        <p class="text-muted-foreground text-sm">
             Please ensure your server is online before you submit.
         </p>
 

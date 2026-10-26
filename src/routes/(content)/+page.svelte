@@ -51,10 +51,7 @@
             <Button variant="default" href="/add-server/"
                 >Add Your Server</Button
             >
-            <Button
-                variant="outline"
-                href="/discord/"
-            >
+            <Button variant="outline" href="/discord/">
                 <DiscordIcon /> Join our Discord
             </Button>
         </div>

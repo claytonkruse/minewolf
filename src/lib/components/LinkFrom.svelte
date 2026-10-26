@@ -5,12 +5,16 @@
     interface Props {
         href?: string;
         role?: string | undefined;
-        children?: import('svelte').Snippet;
+        children?: import("svelte").Snippet;
     }
 
     let { href = "/", role = undefined, children }: Props = $props();
 
-    let from = $derived(localize_url($page.url.searchParams.get("from") || $page.url));
+    let from = $derived(
+        localize_url($page.url.searchParams.get("from") || $page.url),
+    );
 </script>
 
-<a {role} href={`${href}?from=${from}`}>{#if children}{@render children()}{:else}{href}{/if}</a>
+<a {role} href={`${href}?from=${from}`}
+    >{#if children}{@render children()}{:else}{href}{/if}</a
+>

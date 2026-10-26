@@ -42,7 +42,7 @@
     <div transition:fade>
         <Progress
             value={navProg}
-            class="fixed left-0 top-0 h-[2px] w-full rounded-none bg-transparent"
+            class="fixed top-0 left-0 h-[2px] w-full rounded-none bg-transparent"
         />
     </div>
 {/if}

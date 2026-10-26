@@ -72,14 +72,14 @@
             <li>
                 <Button
                     variant="link"
-                    class="px-0 text-xs text-muted-foreground"
+                    class="text-muted-foreground px-0 text-xs"
                     href="..">Cancel</Button
                 >
             </li>
             <li>
                 <Button
                     variant="link"
-                    class="px-0 text-xs text-muted-foreground"
+                    class="text-muted-foreground px-0 text-xs"
                     href="../map/"
                 ></Button>
             </li>

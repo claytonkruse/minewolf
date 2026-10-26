@@ -1,5 +1,5 @@
 allowBuilds:
-  # Unused (the app is on Postgres), and its native build fails on newer Node.
-  better-sqlite3: false
-  esbuild: true
-  sharp: true
+    # Unused (the app is on Postgres), and its native build fails on newer Node.
+    better-sqlite3: false
+    esbuild: true
+    sharp: true

@@ -26,7 +26,7 @@
         <hgroup>
             <img class="block w-80" src={logo} alt="Minewolf" />
             <br />
-            <h1 class="text-center text-lg font-bold uppercase tracking-widest">
+            <h1 class="text-center text-lg font-bold tracking-widest uppercase">
                 Sign In
             </h1>
         </hgroup>
@@ -38,7 +38,7 @@
 
         <Button
             {href}
-            class="bg-[#5865F2] font-bold uppercase text-white transition hover:scale-105 hover:bg-[#5865F2]"
+            class="bg-[#5865F2] font-bold text-white uppercase transition hover:scale-105 hover:bg-[#5865F2]"
             ><Icon /> Log in with Discord</Button
         >
 

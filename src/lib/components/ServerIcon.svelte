@@ -9,7 +9,7 @@
     <AspectRatio
         {...props}
         ratio={1 / 1}
-        class="content-center items-center justify-center overflow-hidden bg-muted"
+        class="bg-muted content-center items-center justify-center overflow-hidden"
     >
         <img src={src || no_icon} alt="" />
     </AspectRatio>

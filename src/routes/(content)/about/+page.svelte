@@ -114,11 +114,7 @@
             </li>
         </ul>
 
-        <Button
-            class="mt-6"
-            size="lg"
-            href="/discord/"
-        >
+        <Button class="mt-6" size="lg" href="/discord/">
             <DiscordIcon /> Join our Discord
         </Button>
     </section>

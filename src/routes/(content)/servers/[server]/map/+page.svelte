@@ -40,7 +40,7 @@
         {#if fullscreen}
             <Button
                 variant="outline"
-                class="fixed bottom-2 right-6"
+                class="fixed right-6 bottom-2"
                 onclick={toggleFullscreen}
             >
                 <ExitFullscreenIcon />
