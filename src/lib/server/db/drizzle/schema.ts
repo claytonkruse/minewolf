@@ -186,6 +186,64 @@ export const serverViewRelations = relations(serverViewTable, ({ one }) => ({
     }),
 }));
 
+// Categories live in $lib/forum.ts; the slug is stored here.
+export const forumThreadTable = pgTable("forum_thread", {
+    id: integer().primaryKey().generatedByDefaultAsIdentity().notNull(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => userTable.id, { onDelete: "cascade" }),
+    category: text("category").notNull(),
+    title: text("title").notNull(),
+
+    pinned: boolean("pinned").notNull().default(false),
+    locked: boolean("locked").notNull().default(false),
+    // incremented by /api/forum/views/
+    views: integer("views").notNull().default(0),
+
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    // bumped on every reply so active threads sort first
+    lastPostAt: timestamp("last_post_at", { mode: "date" })
+        .defaultNow()
+        .notNull(),
+});
+export type ForumThread = InferSelectModel<typeof forumThreadTable>;
+export const forumThreadRelations = relations(
+    forumThreadTable,
+    ({ one, many }) => ({
+        user: one(userTable, {
+            fields: [forumThreadTable.userId],
+            references: [userTable.id],
+        }),
+        posts: many(forumPostTable),
+    }),
+);
+
+// The first post of a thread is its opening post.
+export const forumPostTable = pgTable("forum_post", {
+    id: integer().primaryKey().generatedByDefaultAsIdentity().notNull(),
+    threadId: integer("thread_id")
+        .notNull()
+        .references(() => forumThreadTable.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+        .notNull()
+        .references(() => userTable.id, { onDelete: "cascade" }),
+    body: text("body").notNull(),
+
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    editedAt: timestamp("edited_at", { mode: "date" }),
+});
+export type ForumPost = InferSelectModel<typeof forumPostTable>;
+export const forumPostRelations = relations(forumPostTable, ({ one }) => ({
+    thread: one(forumThreadTable, {
+        fields: [forumPostTable.threadId],
+        references: [forumThreadTable.id],
+    }),
+    user: one(userTable, {
+        fields: [forumPostTable.userId],
+        references: [userTable.id],
+    }),
+}));
+
 // export const tags = pgTable("tag", {
 //     id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
 //     type: text("type").notNull(),

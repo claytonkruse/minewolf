@@ -1,0 +1,771 @@
+{
+    "id": "b185190c-e7cf-4c07-ae97-93cb7d8683c3",
+    "prevId": "fa0ea9f6-1fa0-4420-8fcd-220f3d2b5413",
+    "version": "7",
+    "dialect": "postgresql",
+    "tables": {
+        "public.forum_post": {
+            "name": "forum_post",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "integer",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "identity": {
+                        "type": "byDefault",
+                        "name": "forum_post_id_seq",
+                        "schema": "public",
+                        "increment": "1",
+                        "startWith": "1",
+                        "minValue": "1",
+                        "maxValue": "2147483647",
+                        "cache": "1",
+                        "cycle": false
+                    }
+                },
+                "thread_id": {
+                    "name": "thread_id",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "user_id": {
+                    "name": "user_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "body": {
+                    "name": "body",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                },
+                "edited_at": {
+                    "name": "edited_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": false
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "forum_post_thread_id_forum_thread_id_fk": {
+                    "name": "forum_post_thread_id_forum_thread_id_fk",
+                    "tableFrom": "forum_post",
+                    "tableTo": "forum_thread",
+                    "columnsFrom": ["thread_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                },
+                "forum_post_user_id_user_id_fk": {
+                    "name": "forum_post_user_id_user_id_fk",
+                    "tableFrom": "forum_post",
+                    "tableTo": "user",
+                    "columnsFrom": ["user_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.forum_thread": {
+            "name": "forum_thread",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "integer",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "identity": {
+                        "type": "byDefault",
+                        "name": "forum_thread_id_seq",
+                        "schema": "public",
+                        "increment": "1",
+                        "startWith": "1",
+                        "minValue": "1",
+                        "maxValue": "2147483647",
+                        "cache": "1",
+                        "cycle": false
+                    }
+                },
+                "user_id": {
+                    "name": "user_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "category": {
+                    "name": "category",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "title": {
+                    "name": "title",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "pinned": {
+                    "name": "pinned",
+                    "type": "boolean",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": false
+                },
+                "locked": {
+                    "name": "locked",
+                    "type": "boolean",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": false
+                },
+                "views": {
+                    "name": "views",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                },
+                "last_post_at": {
+                    "name": "last_post_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "forum_thread_user_id_user_id_fk": {
+                    "name": "forum_thread_user_id_user_id_fk",
+                    "tableFrom": "forum_thread",
+                    "tableTo": "user",
+                    "columnsFrom": ["user_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.server": {
+            "name": "server",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "integer",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "identity": {
+                        "type": "byDefault",
+                        "name": "server_id_seq",
+                        "schema": "public",
+                        "increment": "1",
+                        "startWith": "1",
+                        "minValue": "1",
+                        "maxValue": "2147483647",
+                        "cache": "1",
+                        "cycle": false
+                    }
+                },
+                "user_id": {
+                    "name": "user_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                },
+                "last_ping_at": {
+                    "name": "last_ping_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                },
+                "last_online_at": {
+                    "name": "last_online_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                },
+                "rank": {
+                    "name": "rank",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                },
+                "online": {
+                    "name": "online",
+                    "type": "boolean",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": true
+                },
+                "online_players": {
+                    "name": "online_players",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                },
+                "max_players": {
+                    "name": "max_players",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                },
+                "icon_url": {
+                    "name": "icon_url",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "clean_motd": {
+                    "name": "clean_motd",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "html_motd": {
+                    "name": "html_motd",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "crossplay": {
+                    "name": "crossplay",
+                    "type": "boolean",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": false
+                },
+                "sponsor_position": {
+                    "name": "sponsor_position",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "ip": {
+                    "name": "ip",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "port": {
+                    "name": "port",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 25565
+                },
+                "bedrock_address": {
+                    "name": "bedrock_address",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "bedrock_port": {
+                    "name": "bedrock_port",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 19132
+                },
+                "address_private": {
+                    "name": "address_private",
+                    "type": "boolean",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": false
+                },
+                "votifier_enabled": {
+                    "name": "votifier_enabled",
+                    "type": "boolean",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": false
+                },
+                "votifier_address": {
+                    "name": "votifier_address",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "votifier_port": {
+                    "name": "votifier_port",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 8192
+                },
+                "votifier_key": {
+                    "name": "votifier_key",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "name": {
+                    "name": "name",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "description": {
+                    "name": "description",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "banner_url": {
+                    "name": "banner_url",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "website": {
+                    "name": "website",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "video": {
+                    "name": "video",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "map_url": {
+                    "name": "map_url",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "discord": {
+                    "name": "discord",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "tags": {
+                    "name": "tags",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "whitelisted": {
+                    "name": "whitelisted",
+                    "type": "boolean",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": false
+                },
+                "version_string": {
+                    "name": "version_string",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'1.8.9'"
+                },
+                "auto_version": {
+                    "name": "auto_version",
+                    "type": "boolean",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": true
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "server_user_id_user_id_fk": {
+                    "name": "server_user_id_user_id_fk",
+                    "tableFrom": "server",
+                    "tableTo": "user",
+                    "columnsFrom": ["user_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {
+                "server_ip_unique": {
+                    "name": "server_ip_unique",
+                    "nullsNotDistinct": false,
+                    "columns": ["ip"]
+                }
+            },
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.server_view": {
+            "name": "server_view",
+            "schema": "",
+            "columns": {
+                "server_id": {
+                    "name": "server_id",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "kind": {
+                    "name": "kind",
+                    "type": "view_kind",
+                    "typeSchema": "public",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "day": {
+                    "name": "day",
+                    "type": "date",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "count": {
+                    "name": "count",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "server_view_server_id_server_id_fk": {
+                    "name": "server_view_server_id_server_id_fk",
+                    "tableFrom": "server_view",
+                    "tableTo": "server",
+                    "columnsFrom": ["server_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {
+                "server_view_server_id_kind_day_pk": {
+                    "name": "server_view_server_id_kind_day_pk",
+                    "columns": ["server_id", "kind", "day"]
+                }
+            },
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.session": {
+            "name": "session",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "text",
+                    "primaryKey": true,
+                    "notNull": true
+                },
+                "user_id": {
+                    "name": "user_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "discord_access_token": {
+                    "name": "discord_access_token",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "discord_access_token_expires_at": {
+                    "name": "discord_access_token_expires_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "discord_refresh_token": {
+                    "name": "discord_refresh_token",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "session_user_id_user_id_fk": {
+                    "name": "session_user_id_user_id_fk",
+                    "tableFrom": "session",
+                    "tableTo": "user",
+                    "columnsFrom": ["user_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {
+                "session_id_unique": {
+                    "name": "session_id_unique",
+                    "nullsNotDistinct": false,
+                    "columns": ["id"]
+                }
+            },
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.user_role": {
+            "name": "user_role",
+            "schema": "",
+            "columns": {
+                "user_id": {
+                    "name": "user_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "role": {
+                    "name": "role",
+                    "type": "role",
+                    "typeSchema": "public",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "user_role_user_id_user_id_fk": {
+                    "name": "user_role_user_id_user_id_fk",
+                    "tableFrom": "user_role",
+                    "tableTo": "user",
+                    "columnsFrom": ["user_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {
+                "user_role_user_id_role_pk": {
+                    "name": "user_role_user_id_role_pk",
+                    "columns": ["user_id", "role"]
+                }
+            },
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.user": {
+            "name": "user",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "text",
+                    "primaryKey": true,
+                    "notNull": true
+                },
+                "discord_id": {
+                    "name": "discord_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "name": {
+                    "name": "name",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "email": {
+                    "name": "email",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                },
+                "last_online_at": {
+                    "name": "last_online_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {},
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {
+                "user_id_unique": {
+                    "name": "user_id_unique",
+                    "nullsNotDistinct": false,
+                    "columns": ["id"]
+                },
+                "user_discord_id_unique": {
+                    "name": "user_discord_id_unique",
+                    "nullsNotDistinct": false,
+                    "columns": ["discord_id"]
+                },
+                "user_email_unique": {
+                    "name": "user_email_unique",
+                    "nullsNotDistinct": false,
+                    "columns": ["email"]
+                }
+            },
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.vote": {
+            "name": "vote",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "text",
+                    "primaryKey": true,
+                    "notNull": true
+                },
+                "server_id": {
+                    "name": "server_id",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "ip": {
+                    "name": "ip",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "minecraft_username": {
+                    "name": "minecraft_username",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "vote_server_id_server_id_fk": {
+                    "name": "vote_server_id_server_id_fk",
+                    "tableFrom": "vote",
+                    "tableTo": "server",
+                    "columnsFrom": ["server_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {
+                "vote_id_unique": {
+                    "name": "vote_id_unique",
+                    "nullsNotDistinct": false,
+                    "columns": ["id"]
+                }
+            },
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        }
+    },
+    "enums": {
+        "public.role": {
+            "name": "role",
+            "schema": "public",
+            "values": ["admin"]
+        },
+        "public.view_kind": {
+            "name": "view_kind",
+            "schema": "public",
+            "values": ["listing", "page"]
+        }
+    },
+    "schemas": {},
+    "sequences": {},
+    "roles": {},
+    "policies": {},
+    "views": {},
+    "_meta": {
+        "columns": {},
+        "schemas": {},
+        "tables": {}
+    }
+}

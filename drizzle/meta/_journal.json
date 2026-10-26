@@ -36,6 +36,20 @@
             "when": 1792965426708,
             "tag": "0004_cool_roulette",
             "breakpoints": true
+        },
+        {
+            "idx": 5,
+            "version": "7",
+            "when": 1793043039615,
+            "tag": "0005_loud_leech",
+            "breakpoints": true
+        },
+        {
+            "idx": 6,
+            "version": "7",
+            "when": 1793045565910,
+            "tag": "0006_windy_gravity",
+            "breakpoints": true
         }
     ]
 }

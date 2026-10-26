@@ -2,9 +2,8 @@ import { error } from "@sveltejs/kit";
 import { z } from "zod";
 import { recordViews } from "$lib/server/analytics";
 import { viewKindEnum } from "$lib/server/db/drizzle/schema";
+import { isBot } from "$lib/server/bots";
 import type { RequestHandler } from "./$types";
-
-const BOT_PATTERN = /bot|crawl|spider|slurp|preview|headless/i;
 
 const ViewsSchema = z.object({
     kind: z.enum(viewKindEnum.enumValues),
@@ -17,7 +16,7 @@ export const POST: RequestHandler = async ({ request }) => {
     );
     if (!parsed.success) error(400, "Invalid view payload.");
 
-    if (!BOT_PATTERN.test(request.headers.get("user-agent") ?? "")) {
+    if (!isBot(request)) {
         const { kind, serverIds } = parsed.data;
         await recordViews([...new Set(serverIds)], kind).catch(() =>
             error(500, "Database error."),

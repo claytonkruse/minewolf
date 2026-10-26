@@ -1,6 +1,7 @@
 <script lang="ts">
     import { temp_url } from "$lib/utils/redirect_urls";
     import { page } from "$app/state";
+    import { untrack } from "svelte";
 
     import { Button, buttonVariants } from "$lib/components/ui/button";
     import * as HoverCard from "$lib/components/ui/hover-card";
@@ -25,6 +26,9 @@
     let { data, children }: LayoutProps = $props();
     let user = $derived(data.user);
     let isAdmin = $derived(data.isAdmin);
+    // The root load picks a random wallpaper every time it runs, including
+    // after form actions, so keep the first one for the life of the page.
+    const wallpaper = untrack(() => data.wallpaper);
 
     let isMap = $derived(page.route.id?.split("/").slice(-1)[0] === "map");
     let mobileNavOpen = $state(false);
@@ -33,6 +37,7 @@
     const navLinks = [
         { href: "/", label: "Home" },
         { href: "/servers/", label: "Browse" },
+        { href: "/forum/", label: "Forum" },
         { href: "/add-server/", label: "Add Server" },
         { href: "/sponsor/", label: "Sponsor" },
     ];
@@ -54,6 +59,7 @@
 
     const footerLinks = [
         { href: "/servers/", label: "Browse Servers" },
+        { href: "/forum/", label: "Forum" },
         { href: "/add-server/", label: "Add Your Server" },
         { href: "/sponsor/", label: "Become a Sponsor" },
         { href: "/about/", label: "About" },
@@ -83,7 +89,7 @@
 {#if !isMap}
     <div
         class="fixed inset-x-0 top-14 bottom-0 -z-10 bg-cover bg-center"
-        style:background-image="url({data.wallpaper})"
+        style:background-image="url({wallpaper})"
         aria-hidden="true"
     ></div>
 {/if}

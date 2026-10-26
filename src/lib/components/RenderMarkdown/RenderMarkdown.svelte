@@ -20,10 +20,6 @@
         "li",
     ];
     const allowedAttributes = ["href", "title"];
-    const purifyConfig = {
-        ALLOWED_TAGS: allowedTags,
-        ADD_ATTR: allowedAttributes,
-    };
 
     // Add a hook to make all links open a new window
     purify.addHook("afterSanitizeAttributes", (node: any) => {
@@ -58,8 +54,14 @@
 
     interface Props {
         markdown: string;
+        // Keep paragraph breaks, e.g. for forum posts.
+        paragraphs?: boolean;
     }
     let props: Props = $props();
+    let purifyConfig = $derived({
+        ALLOWED_TAGS: props.paragraphs ? [...allowedTags, "p"] : allowedTags,
+        ADD_ATTR: allowedAttributes,
+    });
 </script>
 
 <div>

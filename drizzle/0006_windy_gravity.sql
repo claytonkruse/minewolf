@@ -1,0 +1,1 @@
+ALTER TABLE "forum_thread" ADD COLUMN "views" integer DEFAULT 0 NOT NULL;

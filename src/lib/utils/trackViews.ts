@@ -10,3 +10,12 @@ export function trackViews(kind: ViewKind, serverIds: number[]) {
         keepalive: true,
     }).catch(() => {});
 }
+
+export function trackThreadView(threadId: number) {
+    fetch("/api/forum/views/", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ threadId }),
+        keepalive: true,
+    }).catch(() => {});
+}
