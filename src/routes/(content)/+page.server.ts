@@ -1,10 +1,19 @@
 import type { PageServerLoad } from "./$types";
 import { db } from "$lib/server/db/drizzle/db";
-import { serverTable } from "$lib/server/db/drizzle/schema";
-import { asc, isNotNull, sql } from "drizzle-orm";
+import { withUptime } from "$lib/server/analytics";
+import { serverTable, voteTable } from "$lib/server/db/drizzle/schema";
+import {
+    asc,
+    desc,
+    eq,
+    getTableColumns,
+    isNotNull,
+    max,
+    sql,
+} from "drizzle-orm";
 
 export const load: PageServerLoad = async () => {
-    const [sponsors, topServers] = await Promise.all([
+    const [sponsors, topServers, recentlyVoted] = await Promise.all([
         db
             .select()
             .from(serverTable)
@@ -20,6 +29,18 @@ export const load: PageServerLoad = async () => {
                 asc(serverTable.name),
             )
             .limit(10),
+        // Servers ordered by their most recent vote.
+        db
+            .select(getTableColumns(serverTable))
+            .from(serverTable)
+            .innerJoin(voteTable, eq(voteTable.serverId, serverTable.id))
+            .groupBy(serverTable.id)
+            .orderBy(desc(max(voteTable.createdAt)))
+            .limit(10),
     ]);
-    return { sponsors, topServers };
+    return {
+        sponsors: await withUptime(sponsors),
+        topServers: await withUptime(topServers),
+        recentlyVoted: await withUptime(recentlyVoted),
+    };
 };

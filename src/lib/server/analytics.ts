@@ -1,6 +1,7 @@
 import { db } from "$lib/server/db/drizzle/db";
 import {
     serverTable,
+    serverUptimeTable,
     serverViewTable,
     voteTable,
     type ViewKind,
@@ -46,27 +47,47 @@ export async function recordViews(serverIds: number[], kind: ViewKind) {
         });
 }
 
-export async function getServerAnalytics(
-    serverId: number,
-): Promise<AnalyticsDay[]> {
+// First day (YYYY-MM-DD) of the ANALYTICS_DAYS window ending today.
+async function windowStart() {
     const [{ start }] = await db
         .execute<{ start: string }>(
             sql`select (${today} - ${ANALYTICS_DAYS - 1}::int)::text as start`,
         )
         .then((result) => result.rows);
+    return start;
+}
 
+// The ANALYTICS_DAYS dates of the window as UTC midnights, keyed by YYYY-MM-DD.
+function windowDays(start: string) {
+    const days: [string, Date][] = [];
+    for (let i = 0; i < ANALYTICS_DAYS; i++) {
+        const date = new Date(`${start}T00:00:00Z`);
+        date.setUTCDate(date.getUTCDate() + i);
+        days.push([date.toISOString().slice(0, 10), date]);
+    }
+    return days;
+}
+
+function dailyVotes(serverId: number, start: string) {
     const voteDay = sql<string>`${voteTable.createdAt}::date::text`;
+    return db
+        .select({ day: voteDay, count: sql<number>`count(*)::int` })
+        .from(voteTable)
+        .where(
+            and(
+                eq(voteTable.serverId, serverId),
+                gte(voteTable.createdAt, sql`${start}::date`),
+            ),
+        )
+        .groupBy(voteDay);
+}
+
+export async function getServerAnalytics(
+    serverId: number,
+): Promise<AnalyticsDay[]> {
+    const start = await windowStart();
     const [votes, views] = await Promise.all([
-        db
-            .select({ day: voteDay, count: sql<number>`count(*)::int` })
-            .from(voteTable)
-            .where(
-                and(
-                    eq(voteTable.serverId, serverId),
-                    gte(voteTable.createdAt, sql`${start}::date`),
-                ),
-            )
-            .groupBy(voteDay),
+        dailyVotes(serverId, start),
         db
             .select({
                 day: serverViewTable.day,
@@ -83,15 +104,8 @@ export async function getServerAnalytics(
     ]);
 
     const days = new Map<string, AnalyticsDay>();
-    for (let i = 0; i < ANALYTICS_DAYS; i++) {
-        const date = new Date(`${start}T00:00:00Z`);
-        date.setUTCDate(date.getUTCDate() + i);
-        days.set(date.toISOString().slice(0, 10), {
-            date,
-            votes: 0,
-            listingViews: 0,
-            pageViews: 0,
-        });
+    for (const [key, date] of windowDays(start)) {
+        days.set(key, { date, votes: 0, listingViews: 0, pageViews: 0 });
     }
     for (const { day, count } of votes) {
         const entry = days.get(day);
@@ -104,4 +118,90 @@ export async function getServerAnalytics(
         else entry.pageViews = count;
     }
     return [...days.values()];
+}
+
+export type HistoryDay = {
+    date: Date;
+    votes: number;
+    // Percent of pings that found the server online, or null if it wasn't pinged.
+    uptime: number | null;
+};
+
+// Public per-day votes and uptime for a server's page.
+export async function getServerHistory(
+    serverId: number,
+): Promise<HistoryDay[]> {
+    const start = await windowStart();
+    const [votes, uptime] = await Promise.all([
+        dailyVotes(serverId, start),
+        db
+            .select({
+                day: serverUptimeTable.day,
+                pings: serverUptimeTable.pings,
+                onlinePings: serverUptimeTable.onlinePings,
+            })
+            .from(serverUptimeTable)
+            .where(
+                and(
+                    eq(serverUptimeTable.serverId, serverId),
+                    gte(serverUptimeTable.day, start),
+                ),
+            ),
+    ]);
+
+    const days = new Map<string, HistoryDay>();
+    for (const [key, date] of windowDays(start)) {
+        days.set(key, { date, votes: 0, uptime: null });
+    }
+    for (const { day, count } of votes) {
+        const entry = days.get(day);
+        if (entry) entry.votes = count;
+    }
+    for (const { day, pings, onlinePings } of uptime) {
+        const entry = days.get(day);
+        if (entry && pings > 0) entry.uptime = (onlinePings / pings) * 100;
+    }
+    return [...days.values()];
+}
+
+// Uptime percent over the last ANALYTICS_DAYS days for each server, or null
+// for servers that haven't been pinged in that time.
+export async function getUptimes(
+    serverIds: number[],
+): Promise<Map<number, number | null>> {
+    const uptimes = new Map<number, number | null>(
+        serverIds.map((id) => [id, null]),
+    );
+    if (serverIds.length === 0) return uptimes;
+
+    const start = await windowStart();
+    const rows = await db
+        .select({
+            serverId: serverUptimeTable.serverId,
+            pings: sql<number>`sum(${serverUptimeTable.pings})::int`,
+            onlinePings: sql<number>`sum(${serverUptimeTable.onlinePings})::int`,
+        })
+        .from(serverUptimeTable)
+        .where(
+            and(
+                inArray(serverUptimeTable.serverId, serverIds),
+                gte(serverUptimeTable.day, start),
+            ),
+        )
+        .groupBy(serverUptimeTable.serverId);
+    for (const { serverId, pings, onlinePings } of rows) {
+        if (pings > 0) uptimes.set(serverId, (onlinePings / pings) * 100);
+    }
+    return uptimes;
+}
+
+// Adds each server's uptime percent (see getUptimes) for list views.
+export async function withUptime<T extends { id: number }>(
+    servers: T[],
+): Promise<(T & { uptime: number | null })[]> {
+    const uptimes = await getUptimes(servers.map((server) => server.id));
+    return servers.map((server) => ({
+        ...server,
+        uptime: uptimes.get(server.id) ?? null,
+    }));
 }

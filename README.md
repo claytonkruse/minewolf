@@ -34,7 +34,7 @@ It's built with SvelteKit (Svelte 5), PostgreSQL via Drizzle ORM, Tailwind CSS v
 
 ### For players
 
-- **Browse and search.** The home page and `/servers/` list every server, sponsors first, then by rank. Search matches name, public address, tags and description, with exact and prefix name matches ranked highest. Tag links filter the list to servers sharing that tag.
+- **Browse and search.** The home page and `/servers/` list every server, sponsors first, then by rank. Search matches name, public address, tags and description, with exact and prefix name matches ranked highest. Tag links filter the list to servers sharing that tag. The `/servers/` search page also filters by tag, supported version (including proxy version ranges like `1.7.2-26.3`), online status, crossplay and whitelist, and sorts by relevance, rank, players, uptime, newest or name. A Random Server button on the home page and search page opens a random online server.
 - **Live server pages.** Each server has its own page with its banner, colored MOTD, current player count, version, tags, description, an embedded YouTube video, website and Discord links, and a "similar servers" panel based on shared tags.
 - **Live maps.** Servers that publish a web map (Dynmap, BlueMap, etc.) get an embedded map page at `/servers/<id>/map/`.
 - **Voting.** Players can vote once every 24 hours, protected by Cloudflare Turnstile. Servers running [Votifier](https://github.com/NuVotifier/NuVotifier) receive the vote in-game so they can hand out rewards.
@@ -211,7 +211,7 @@ Minewolf implements the Java Edition [Server List Ping](https://minecraft.wiki/w
 - times out after 5 seconds and rejects responses over 1 MB,
 - parses the MOTD (both legacy `§` codes and JSON chat components) into plain text and colored HTML.
 
-When a server is added, it's pinged once to confirm it's reachable. After that, `scripts/ping-servers.ts` refreshes every server. In Docker it runs from cron every 10 minutes, guarded by `flock` so runs never overlap. Offline servers keep their last MOTD and icon but report zero players. MOTD HTML is sanitized down to `<span style>` and `<br>` before it's stored.
+When a server is added, it's pinged once to confirm it's reachable. After that, `scripts/ping-servers.ts` refreshes every server. In Docker it runs from cron every 10 minutes, guarded by `flock` so runs never overlap. Offline servers keep their last MOTD and icon but report zero players. Each ping also adds to that day's counters in `server_uptime`. Uptime is online pings divided by total pings over the last 30 days, shown in the status tooltip on server lists and charted daily on server pages. MOTD HTML is sanitized down to `<span style>` and `<br>` before it's stored.
 
 The ping script runs outside SvelteKit, so it can't use `$lib` or `$env` imports. It reads `DB_URL` from the environment directly.
 
@@ -239,16 +239,17 @@ The client reports which servers appeared in a list (`listing`) and which server
 
 The schema lives in `src/lib/server/db/drizzle/schema.ts`. Main tables:
 
-| Table          | Purpose                                                       |
-| -------------- | ------------------------------------------------------------- |
-| `user`         | Discord-linked accounts                                       |
-| `user_role`    | Roles per user (currently just `admin`)                       |
-| `session`      | Login sessions and Discord tokens                             |
-| `server`       | Listings: address, ping results, owner settings, sponsor slot |
-| `vote`         | Votes with IP, username and timestamp                         |
-| `server_view`  | Daily listing/page view counters                              |
-| `forum_thread` | Threads with category slug, pin/lock flags and views          |
-| `forum_post`   | Posts; the first post in a thread is its opening post         |
+| Table           | Purpose                                                       |
+| --------------- | ------------------------------------------------------------- |
+| `user`          | Discord-linked accounts                                       |
+| `user_role`     | Roles per user (currently just `admin`)                       |
+| `session`       | Login sessions and Discord tokens                             |
+| `server`        | Listings: address, ping results, owner settings, sponsor slot |
+| `vote`          | Votes with IP, username and timestamp                         |
+| `server_view`   | Daily listing/page view counters                              |
+| `server_uptime` | Daily ping counts per server, used for uptime                 |
+| `forum_thread`  | Threads with category slug, pin/lock flags and views          |
+| `forum_post`    | Posts; the first post in a thread is its opening post         |
 
 To change the schema:
 

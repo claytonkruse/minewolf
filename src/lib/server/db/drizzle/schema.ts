@@ -154,6 +154,7 @@ export const serverRelations = relations(serverTable, ({ one, many }) => ({
     }),
     votes: many(voteTable),
     views: many(serverViewTable),
+    uptime: many(serverUptimeTable),
 }));
 
 export const voteTable = pgTable("vote", {
@@ -200,6 +201,30 @@ export const serverViewRelations = relations(serverViewTable, ({ one }) => ({
         references: [serverTable.id],
     }),
 }));
+
+// Daily ping counters per server, incremented by scripts/ping-servers.ts.
+// Uptime for a day is onlinePings / pings.
+export const serverUptimeTable = pgTable(
+    "server_uptime",
+    {
+        serverId: integer("server_id")
+            .notNull()
+            .references(() => serverTable.id, { onDelete: "cascade" }),
+        day: date("day", { mode: "string" }).notNull(),
+        pings: integer("pings").notNull().default(0),
+        onlinePings: integer("online_pings").notNull().default(0),
+    },
+    (table) => [primaryKey({ columns: [table.serverId, table.day] })],
+);
+export const serverUptimeRelations = relations(
+    serverUptimeTable,
+    ({ one }) => ({
+        server: one(serverTable, {
+            fields: [serverUptimeTable.serverId],
+            references: [serverTable.id],
+        }),
+    }),
+);
 
 // Categories live in $lib/forum.ts; the slug is stored here.
 export const forumThreadTable = pgTable("forum_thread", {

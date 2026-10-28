@@ -4,7 +4,7 @@
     import type { Server } from "$lib/server/db/drizzle/schema";
 
     type Props = {
-        servers?: Array<Server>;
+        servers?: Array<Server & { uptime?: number | null }>;
         lastColumn?: string;
         // Show sponsor levels (star + position) instead of rank.
         sponsor?: boolean;
@@ -17,15 +17,20 @@
 <Table.Root class="m-auto w-max">
     <Table.Header>
         <Table.Row>
-            <Table.Head>{sponsor ? "Level" : "Rank"}</Table.Head>
-            <Table.Head>Icon</Table.Head>
-            <Table.Head>Name</Table.Head>
-            <Table.Head>Banner/MOTD</Table.Head>
-            <Table.Head>Players</Table.Head>
-            <Table.Head>Status</Table.Head>
+            <Table.Head class="w-16 min-w-16 text-center"
+                >{sponsor ? "Level" : "Rank"}</Table.Head
+            >
+            <Table.Head class="text-center">Icon</Table.Head>
+            <Table.Head class="w-48 text-center">Name</Table.Head>
+            <!-- 468px banner + 16px cell padding -->
+            <Table.Head class="w-[484px] min-w-[484px] text-center"
+                >Banner/MOTD</Table.Head
+            >
+            <Table.Head class="w-20 min-w-20 text-center">Players</Table.Head>
+            <Table.Head class="w-20 min-w-20 text-center">Status</Table.Head>
 
             {#if lastColumn}
-                <Table.Head>{lastColumn}</Table.Head>
+                <Table.Head class="text-center">{lastColumn}</Table.Head>
             {/if}
         </Table.Row>
     </Table.Header>

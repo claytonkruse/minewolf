@@ -59,6 +59,8 @@
         <Button href={newThreadHref}><PlusIcon /> New Thread</Button>
     </div>
 
+    <Pagination page={data.page} pageCount={data.pageCount} />
+
     {#if data.threads.length === 0}
         <p class="text-muted-foreground border p-8 text-center">
             No threads yet. Start the conversation!

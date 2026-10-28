@@ -6,12 +6,14 @@
     import logo from "$lib/assets/logo-large.png";
     import DiscordIcon from "~icons/bi/discord";
     import HelpIcon from "@lucide/svelte/icons/circle-question-mark";
+    import ShuffleIcon from "@lucide/svelte/icons/shuffle";
     import { ServerList } from "$lib/components/ServerList";
     import type { PageData } from "./$types";
 
     let { data }: { data: PageData } = $props();
     let sponsors = $derived(data.sponsors);
     let topServers = $derived(data.topServers);
+    let recentlyVoted = $derived(data.recentlyVoted);
 </script>
 
 <Seo
@@ -62,6 +64,13 @@
             <Button variant="outline" href="/discord/">
                 <DiscordIcon /> Join our Discord
             </Button>
+            <Button
+                variant="outline"
+                href="/servers/random"
+                data-sveltekit-reload
+            >
+                <ShuffleIcon data-icon="inline-start" /> Random Server
+            </Button>
         </div>
     </section>
 
@@ -83,8 +92,15 @@
         </section>
     {/if}
 
+    {#if recentlyVoted.length > 0}
+        <section class="lg:panel">
+            <h2 class="font-heading mb-3 text-2xl font-bold">Recently Voted</h2>
+            <ServerList servers={recentlyVoted} />
+        </section>
+    {/if}
+
     <section class="lg:panel">
-        <h2 class="font-heading mb-3 text-2xl font-bold">Top Servers</h2>
+        <h2 class="font-heading mb-3 text-2xl font-bold">Top Voted</h2>
         <ServerList servers={topServers} />
         <Button variant="outline" class="mt-4" href="/servers/">
             Browse All Servers

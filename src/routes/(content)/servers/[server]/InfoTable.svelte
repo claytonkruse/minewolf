@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { Server } from "$lib/server/drizzle/schema";
     import { timeAgo } from "$lib/utils/timeAgo";
+    import { formatUptime } from "$lib/utils/formatUptime";
     import {
         Table,
         TableCell,
@@ -9,7 +10,9 @@
         TableBody,
     } from "$lib/components/ui/table";
 
-    let { server }: { server: Server } = $props();
+    // uptime is a percent over the last 30 days; null means no pings yet.
+    let { server, uptime }: { server: Server; uptime: number | null } =
+        $props();
 </script>
 
 <div class="w-full [&_td]:wrap-anywhere [&_td]:whitespace-normal">
@@ -62,10 +65,19 @@
                 </TableCell>
             </TableRow>
 
-            <!-- <TableRow>
+            <TableRow>
                 <TableHead>Uptime</TableHead>
-                <TableCell>99%</TableCell>
-            </TableRow> -->
+                <TableCell>
+                    {#if uptime == null}
+                        <span class="text-muted-foreground">No data yet</span>
+                    {:else}
+                        {formatUptime(uptime)}
+                        <small class="text-muted-foreground ml-1"
+                            >(30 days)</small
+                        >
+                    {/if}
+                </TableCell>
+            </TableRow>
 
             <!-- <TableRow>
                 <TableHead>Votes</TableHead>

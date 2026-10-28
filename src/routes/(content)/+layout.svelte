@@ -36,7 +36,7 @@
 
     const navLinks = [
         { href: "/", label: "Home" },
-        { href: "/servers/", label: "Browse" },
+        { href: "/servers/", label: "Search" },
         { href: "/forum/", label: "Forum" },
         { href: "/add-server/", label: "Add Server" },
         { href: "/sponsor/", label: "Sponsor" },
@@ -58,7 +58,7 @@
         "hover:bg-foreground/10 focus-visible:bg-foreground/10 flex items-center gap-2 px-2 py-2 text-xs outline-hidden [&_svg]:size-4 [&_svg]:shrink-0";
 
     const footerLinks = [
-        { href: "/servers/", label: "Browse Servers" },
+        { href: "/servers/", label: "Search Servers" },
         { href: "/forum/", label: "Forum" },
         { href: "/add-server/", label: "Add Your Server" },
         { href: "/sponsor/", label: "Become a Sponsor" },

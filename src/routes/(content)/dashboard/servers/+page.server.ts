@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
 import { temp_url } from "$lib/utils/redirect_urls";
+import { withUptime } from "$lib/server/analytics";
 
 export const load = (async ({ locals }) => {
     const { user } = locals;
@@ -13,5 +14,5 @@ export const load = (async ({ locals }) => {
         .from(serverTable)
         .where(eq(serverTable.userId, user.id));
 
-    return { servers: user_servers };
+    return { servers: await withUptime(user_servers) };
 }) satisfies PageServerLoad;

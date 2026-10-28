@@ -57,6 +57,13 @@
       "when": 1793048598149,
       "tag": "0007_timestamptz",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793220782933,
+      "tag": "0008_server_uptime",
+      "breakpoints": true
     }
   ]
 }

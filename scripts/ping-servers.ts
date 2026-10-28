@@ -3,12 +3,12 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import sanitizeHtml from "sanitize-html";
 import * as schema from "../src/lib/server/db/drizzle/schema";
 import { pingServer } from "../src/lib/server/pingServer";
 
-const { serverTable } = schema;
+const { serverTable, serverUptimeTable } = schema;
 
 const pool = new pg.Pool({
     connectionString:
@@ -18,6 +18,22 @@ const pool = new pg.Pool({
 const db = drizzle(pool, { schema });
 
 type ServerRow = { id: number; address: string; port: number };
+
+// Counts this ping toward today's uptime. Days use the database's
+// current_date, matching how votes and views are bucketed.
+async function recordUptime(serverId: number, online: boolean) {
+    const onlinePings = online ? 1 : 0;
+    await db
+        .insert(serverUptimeTable)
+        .values({ serverId, day: sql`current_date`, pings: 1, onlinePings })
+        .onConflictDoUpdate({
+            target: [serverUptimeTable.serverId, serverUptimeTable.day],
+            set: {
+                pings: sql`${serverUptimeTable.pings} + 1`,
+                onlinePings: sql`${serverUptimeTable.onlinePings} + ${onlinePings}`,
+            },
+        });
+}
 
 async function updateServer({ id, address, port }: ServerRow) {
     // the port column defaults to 25565, so treat that as "no port given"
@@ -37,6 +53,7 @@ async function updateServer({ id, address, port }: ServerRow) {
                 lastPingAt: new Date(),
             })
             .where(eq(serverTable.id, id));
+        await recordUptime(id, false);
         return;
     }
     await db
@@ -57,6 +74,7 @@ async function updateServer({ id, address, port }: ServerRow) {
             lastPingAt: new Date(),
         })
         .where(eq(serverTable.id, id));
+    await recordUptime(id, true);
 }
 
 async function updateAllServers() {

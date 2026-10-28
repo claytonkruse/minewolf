@@ -7,6 +7,11 @@ import { hasRole } from "$lib/server/roles";
 import { addSponsor, removeSponsor } from "$lib/server/sponsors";
 import { notifyVote } from "$lib/server/discordNotify";
 import { randomUUID } from "node:crypto";
+import {
+    ANALYTICS_DAYS,
+    getServerHistory,
+    getUptimes,
+} from "$lib/server/analytics";
 
 const SIMILAR_LIMIT = 5;
 
@@ -79,8 +84,20 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         )
         .slice(0, SIMILAR_LIMIT);
 
+    const [history, uptimes] = await Promise.all([
+        getServerHistory(server.id),
+        getUptimes([server.id]),
+    ]);
+
     const { user } = locals;
-    return { server, user, similarServers };
+    return {
+        server,
+        user,
+        similarServers,
+        history,
+        historyDays: ANALYTICS_DAYS,
+        uptime: uptimes.get(server.id) ?? null,
+    };
 };
 
 function requireAdmin(locals: App.Locals) {

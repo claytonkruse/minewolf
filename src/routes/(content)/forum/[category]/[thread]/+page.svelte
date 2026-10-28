@@ -137,6 +137,8 @@
         {/if}
     </div>
 
+    <Pagination page={data.page} pageCount={data.pageCount} />
+
     <ol class="space-y-4">
         {#each data.posts as post (post.id)}
             {@const isFirstPost = post.id === data.firstPostId}

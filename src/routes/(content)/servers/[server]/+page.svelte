@@ -6,7 +6,8 @@
     import { Input } from "$lib/components/ui/input";
     import { ytEmbedUrl } from "$lib/utils/ytEmbedUrl";
     import * as Tooltip from "$lib/components/ui/tooltip";
-    import * as HoverCard from "$lib/components/ui/hover-card";
+    import ServerHoverCard from "$lib/components/ServerHoverCard.svelte";
+    import ServerHistory from "./ServerHistory.svelte";
     import ServerIcon from "$lib/components/ServerIcon.svelte";
     import TagLine from "$lib/components/TagLine.svelte";
     import { tagSearchUrl } from "$lib/utils/tagSearchUrl";
@@ -409,7 +410,7 @@
             {/if}
 
             <section class="lg:panel">
-                <InfoTable {server} />
+                <InfoTable {server} uptime={data.uptime} />
             </section>
 
             {#if server.video && server.mapUrl && server.online}
@@ -434,6 +435,12 @@
         </div>
     </div>
 
+    <ServerHistory
+        history={data.history}
+        days={data.historyDays}
+        uptime={data.uptime}
+    />
+
     {#if similarServers.length > 0}
         <section class="lg:panel">
             <h2 class="font-heading mb-3 text-xl font-bold">Similar Servers</h2>
@@ -441,100 +448,34 @@
             <ul class="grid gap-x-4 sm:grid-cols-2 xl:grid-cols-3">
                 {#each similarServers as similar (similar.id)}
                     <li>
-                        <HoverCard.Root openDelay={300}>
-                            <HoverCard.Trigger>
-                                {#snippet child({ props })}
-                                    <!-- The name link stretches over the whole tile so the tags can be their own links. -->
-                                    <div
-                                        {...props}
-                                        class="hover:bg-muted/50 relative flex h-full items-center gap-3 p-2 transition-colors"
-                                    >
-                                        <div class="shrink-0">
-                                            <ServerIcon src={similar.iconUrl} />
-                                        </div>
-                                        <div class="min-w-0 grow">
-                                            <a
-                                                href={`/servers/${similar.id}/`}
-                                                class="block truncate font-bold after:absolute after:inset-0"
-                                            >
-                                                {similar.name}
-                                            </a>
-                                            <div class="relative z-10 mt-1">
-                                                <TagLine
-                                                    tags={similar.sharedTags}
-                                                />
-                                            </div>
-                                            <p class="mt-1 text-sm">
-                                                {similar.onlinePlayers} / {similar.maxPlayers}
-                                                ·
-                                                {#if similar.online}
-                                                    <span class="text-green-500"
-                                                        >Online</span
-                                                    >
-                                                {:else}
-                                                    <span
-                                                        class="text-destructive"
-                                                        >Offline</span
-                                                    >
-                                                {/if}
-                                            </p>
-                                        </div>
+                        <ServerHoverCard
+                            server={similar}
+                            highlightTags={similar.sharedTags}
+                        >
+                            {#snippet trigger({ props })}
+                                <!-- The name link stretches over the whole tile so the tags can be their own links. -->
+                                <div
+                                    {...props}
+                                    class="hover:bg-muted/50 relative flex h-full items-center gap-3 p-2 transition-colors"
+                                >
+                                    <div class="shrink-0">
+                                        <ServerIcon src={similar.iconUrl} />
                                     </div>
-                                {/snippet}
-                            </HoverCard.Trigger>
-                            <HoverCard.Content
-                                class="w-80 p-0 text-left"
-                                side="top"
-                            >
-                                {#if similar.bannerUrl}
-                                    <img
-                                        src={similar.bannerUrl}
-                                        alt={`${similar.name} Banner`}
-                                        class="aspect-[468/60] w-full object-cover"
-                                    />
-                                {:else if similar.htmlMotd}
-                                    <div
-                                        class="bg-muted max-h-16 overflow-hidden p-2"
-                                    >
-                                        {@html similar.htmlMotd}
-                                    </div>
-                                {/if}
-                                <div class="space-y-3 p-3">
-                                    <div
-                                        class="flex items-baseline justify-between gap-2"
-                                    >
-                                        <p
-                                            class="font-heading truncate text-base font-bold"
+                                    <div class="min-w-0 grow">
+                                        <a
+                                            href={`/servers/${similar.id}/`}
+                                            class="block truncate font-bold after:absolute after:inset-0"
                                         >
                                             {similar.name}
-                                        </p>
-                                        <span
-                                            class="text-muted-foreground shrink-0"
-                                        >
-                                            {similar.rank
-                                                ? `#${similar.rank}`
-                                                : "Unranked"}
-                                        </span>
-                                    </div>
-
-                                    {#if similar.description}
-                                        <p
-                                            class="text-muted-foreground line-clamp-3"
-                                        >
-                                            {similar.description.replaceAll(
-                                                "*",
-                                                "",
-                                            )}
-                                        </p>
-                                    {/if}
-
-                                    <dl
-                                        class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1"
-                                    >
-                                        <dt class="text-muted-foreground">
-                                            Status
-                                        </dt>
-                                        <dd>
+                                        </a>
+                                        <div class="relative z-10 mt-1">
+                                            <TagLine
+                                                tags={similar.sharedTags}
+                                            />
+                                        </div>
+                                        <p class="mt-1 text-sm">
+                                            {similar.onlinePlayers} / {similar.maxPlayers}
+                                            ·
                                             {#if similar.online}
                                                 <span class="text-green-500"
                                                     >Online</span
@@ -544,49 +485,11 @@
                                                     >Offline</span
                                                 >
                                             {/if}
-                                        </dd>
-                                        <dt class="text-muted-foreground">
-                                            Players
-                                        </dt>
-                                        <dd>
-                                            {similar.onlinePlayers} / {similar.maxPlayers}
-                                        </dd>
-                                        <dt class="text-muted-foreground">
-                                            Version
-                                        </dt>
-                                        <dd>{similar.versionString}</dd>
-                                        <dt class="text-muted-foreground">
-                                            Whitelisted
-                                        </dt>
-                                        <dd>
-                                            {similar.whitelisted ? "Yes" : "No"}
-                                        </dd>
-                                        <dt class="text-muted-foreground">
-                                            Crossplay
-                                        </dt>
-                                        <dd>
-                                            {similar.crossplay ? "Yes" : "No"}
-                                        </dd>
-                                    </dl>
-
-                                    {#if similar.allTags.length > 0}
-                                        <div class="flex flex-wrap gap-1">
-                                            {#each similar.allTags as tag}
-                                                <Badge
-                                                    variant={similar.sharedTags.includes(
-                                                        tag,
-                                                    )
-                                                        ? "default"
-                                                        : "secondary"}
-                                                    href={tagSearchUrl(tag)}
-                                                    >{tag}</Badge
-                                                >
-                                            {/each}
-                                        </div>
-                                    {/if}
+                                        </p>
+                                    </div>
                                 </div>
-                            </HoverCard.Content>
-                        </HoverCard.Root>
+                            {/snippet}
+                        </ServerHoverCard>
                     </li>
                 {/each}
             </ul>
