@@ -321,6 +321,25 @@
                     {/if}
                 </div>
 
+                {#if server.website}
+                    <div>
+                        <h2 class="font-heading text-xl font-bold">
+                            {server.name} has a website!
+                        </h2>
+
+                        <p class="mt-2">
+                            {server.name} has its own website, where you can find
+                            out more about the server. You can visit it at
+                            <a
+                                rel="noopener nofollow"
+                                target="_blank"
+                                class="underline underline-offset-4 hover:no-underline"
+                                href={server.website}>{server.website}</a
+                            >.
+                        </p>
+                    </div>
+                {/if}
+
                 {#if server.discord}
                     <div>
                         <h2 class="font-heading text-xl font-bold">
@@ -486,6 +505,7 @@
         history={data.history}
         days={data.historyDays}
         uptime={data.uptime}
+        rank={data.server.rank}
     />
 
     {#if similarServers.length > 0}

@@ -223,6 +223,14 @@ Only Java Edition servers are pinged. Bedrock address and port fields are stored
 
 Lists show sponsored servers first (ordered by `sponsor_position`), then servers by `rank` ascending, then by name. A `rank` of `0` means unranked, and those servers sort last.
 
+After each ping run, `scripts/ping-servers.ts` recomputes every rank from the score in `src/lib/server/rankScore.ts`:
+
+```
+score = votes / (avgPlayers + 1) * uptime + min(avgPlayers, 5)
+```
+
+`votes` and `avgPlayers` cover the last 7 days and `uptime` (0 to 1) the last 30. Average players come from the daily `players` sum in `server_uptime`, divided by that day's pings. The highest score gets rank 1, ties go to the older server, and servers scoring 0 are unranked. Each day's rank is also saved in `server_uptime.rank` for the rank chart on server pages, which sits alongside uptime, votes and average players.
+
 ### Voting and Votifier
 
 A vote records the voter's IP and Minecraft username. A new vote is rejected if, in the last 24 hours, the same IP voted for any server, or the same username voted for this server. The username-per-server rule stops someone from burning another player's daily vote on an arbitrary server.

@@ -125,6 +125,10 @@ export type HistoryDay = {
     votes: number;
     // Percent of pings that found the server online, or null if it wasn't pinged.
     uptime: number | null;
+    // Average online players across the day's pings, or null if it wasn't pinged.
+    players: number | null;
+    // Rank after the day's last ranking, or null if unranked or not pinged.
+    rank: number | null;
 };
 
 // Public per-day votes and uptime for a server's page.
@@ -139,6 +143,8 @@ export async function getServerHistory(
                 day: serverUptimeTable.day,
                 pings: serverUptimeTable.pings,
                 onlinePings: serverUptimeTable.onlinePings,
+                players: serverUptimeTable.players,
+                rank: serverUptimeTable.rank,
             })
             .from(serverUptimeTable)
             .where(
@@ -151,15 +157,24 @@ export async function getServerHistory(
 
     const days = new Map<string, HistoryDay>();
     for (const [key, date] of windowDays(start)) {
-        days.set(key, { date, votes: 0, uptime: null });
+        days.set(key, {
+            date,
+            votes: 0,
+            uptime: null,
+            players: null,
+            rank: null,
+        });
     }
     for (const { day, count } of votes) {
         const entry = days.get(day);
         if (entry) entry.votes = count;
     }
-    for (const { day, pings, onlinePings } of uptime) {
+    for (const { day, pings, onlinePings, players, rank } of uptime) {
         const entry = days.get(day);
-        if (entry && pings > 0) entry.uptime = (onlinePings / pings) * 100;
+        if (!entry || pings === 0) continue;
+        entry.uptime = (onlinePings / pings) * 100;
+        entry.players = players / pings;
+        if (rank > 0) entry.rank = rank;
     }
     return [...days.values()];
 }

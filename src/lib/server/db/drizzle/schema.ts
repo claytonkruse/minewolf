@@ -210,7 +210,7 @@ export const serverViewRelations = relations(serverViewTable, ({ one }) => ({
 }));
 
 // Daily ping counters per server, incremented by scripts/ping-servers.ts.
-// Uptime for a day is onlinePings / pings.
+// Uptime for a day is onlinePings / pings, average players is players / pings.
 export const serverUptimeTable = pgTable(
     "server_uptime",
     {
@@ -220,6 +220,10 @@ export const serverUptimeTable = pgTable(
         day: date("day", { mode: "string" }).notNull(),
         pings: integer("pings").notNull().default(0),
         onlinePings: integer("online_pings").notNull().default(0),
+        // sum of online players across the day's pings (offline counts as 0)
+        players: integer("players").notNull().default(0),
+        // the server's rank after the day's last ranking, 0 = unranked
+        rank: integer("rank").notNull().default(0),
     },
     (table) => [primaryKey({ columns: [table.serverId, table.day] })],
 );

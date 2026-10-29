@@ -71,6 +71,13 @@
       "when": 1793250128983,
       "tag": "0009_server_country",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793257814295,
+      "tag": "0010_uptime_players",
+      "breakpoints": true
     }
   ]
 }
