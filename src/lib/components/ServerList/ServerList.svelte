@@ -27,7 +27,7 @@
                 >Banner/MOTD</Table.Head
             >
             <Table.Head class="w-20 min-w-20 text-center">Players</Table.Head>
-            <Table.Head class="w-20 min-w-20 text-center">Status</Table.Head>
+            <Table.Head class="w-24 min-w-24 text-center">Status</Table.Head>
 
             {#if lastColumn}
                 <Table.Head class="text-center">{lastColumn}</Table.Head>

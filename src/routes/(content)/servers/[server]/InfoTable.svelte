@@ -3,12 +3,18 @@
     import { timeAgo } from "$lib/utils/timeAgo";
     import { formatUptime } from "$lib/utils/formatUptime";
     import {
+        countryFlag,
+        countryName,
+        countrySearchUrl,
+    } from "$lib/utils/country";
+    import {
         Table,
         TableCell,
         TableRow,
         TableHead,
         TableBody,
     } from "$lib/components/ui/table";
+    import * as Tooltip from "$lib/components/ui/tooltip";
 
     // uptime is a percent over the last 30 days; null means no pings yet.
     let { server, uptime }: { server: Server; uptime: number | null } =
@@ -89,10 +95,41 @@
                 <TableCell>-100</TableCell>
             </TableRow> -->
 
-            <!-- <TableRow>
-                    <TableHead>Location</TableHead>
-                    <TableCell>US</TableCell>
-                </TableRow> -->
+            <TableRow>
+                <TableHead>Country</TableHead>
+                <TableCell>
+                    {#if server.country}
+                        <Tooltip.Provider>
+                            <Tooltip.Root>
+                                <Tooltip.Trigger>
+                                    {#snippet child({ props })}
+                                        <a
+                                            {...props}
+                                            href={countrySearchUrl(
+                                                server.country,
+                                            )}
+                                        >
+                                            <span aria-hidden="true"
+                                                >{countryFlag(
+                                                    server.country,
+                                                )}</span
+                                            >
+                                            {countryName(server.country)}
+                                        </a>
+                                    {/snippet}
+                                </Tooltip.Trigger>
+                                <Tooltip.Content>
+                                    Click to see more from this country
+                                </Tooltip.Content>
+                            </Tooltip.Root>
+                        </Tooltip.Provider>
+                    {:else}
+                        <span class="text-muted-foreground"
+                            >Location unknown</span
+                        >
+                    {/if}
+                </TableCell>
+            </TableRow>
 
             <TableRow>
                 <TableHead>Players</TableHead>

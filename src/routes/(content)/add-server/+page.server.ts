@@ -2,6 +2,7 @@ import type { PageServerLoad, Actions } from "./$types";
 import sanitizeHtml from "sanitize-html";
 import { error, fail, redirect } from "@sveltejs/kit";
 import pingServer from "$lib/server/pingServer";
+import { geolocate } from "$lib/server/geolocate";
 import { InsertServerSchema } from "$lib/public-zod-schemas";
 import { superValidate, setError } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
@@ -56,6 +57,8 @@ export const actions: Actions = {
             return fail(400, { form });
         }
 
+        const country = await geolocate(pingData.ip);
+
         let server;
         try {
             [server] = await db
@@ -74,6 +77,7 @@ export const actions: Actions = {
                     onlinePlayers: pingData.players?.online,
                     maxPlayers: pingData.players?.max,
                     versionString: pingData.version,
+                    ...(country && { country, countryCheckedAt: new Date() }),
                 })
                 .returning();
         } catch (e) {

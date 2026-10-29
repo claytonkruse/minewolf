@@ -54,13 +54,17 @@ export const load: PageServerLoad = async ({ params, locals }) => {
                   bannerUrl: serverTable.bannerUrl,
                   whitelisted: serverTable.whitelisted,
                   crossplay: serverTable.crossplay,
+                  country: serverTable.country,
               })
               .from(serverTable)
               .where(ne(serverTable.id, serverId))
               .catch(() => [])
         : [];
 
-    // Most shared tags first, then by rank (unranked servers last).
+    // Most shared tags first, then servers in the same country (likely
+    // similar ping), then by rank (unranked servers last).
+    const sameCountry = (other: { country: string }) =>
+        server.country && other.country === server.country ? 1 : 0;
     const similarServers = others
         .map((other) => {
             const allTags = other.tags
@@ -79,6 +83,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         .sort(
             (a, b) =>
                 b.sharedTags.length - a.sharedTags.length ||
+                sameCountry(b) - sameCountry(a) ||
                 (a.rank || Number.MAX_SAFE_INTEGER) -
                     (b.rank || Number.MAX_SAFE_INTEGER),
         )

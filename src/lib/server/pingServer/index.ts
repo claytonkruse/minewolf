@@ -19,6 +19,8 @@ export type PingResult =
           players: { online: number; max: number };
           motd: { clean: string[]; html: string[] };
           icon: string | undefined;
+          // the address we actually connected to, for geolocation
+          ip: string | undefined;
       };
 
 type StatusResponse = {
@@ -91,38 +93,41 @@ function parseStatus(buf: Buffer): StatusResponse | undefined {
 }
 
 function requestStatus(host: string, port: number) {
-    return new Promise<StatusResponse>((resolve, reject) => {
-        const socket = net.connect({ host, port });
-        let data = Buffer.alloc(0);
+    return new Promise<{ status: StatusResponse; ip: string | undefined }>(
+        (resolve, reject) => {
+            const socket = net.connect({ host, port });
+            let data = Buffer.alloc(0);
 
-        const fail = (err: Error) => {
-            socket.destroy();
-            reject(err);
-        };
-
-        socket.setTimeout(TIMEOUT_MS, () => fail(new Error("Timed out")));
-        socket.on("error", fail);
-        socket.on("close", () => fail(new Error("Connection closed")));
-
-        socket.on("connect", () => {
-            socket.write(handshake(host, port));
-            socket.write(packet(0x00)); // status request
-        });
-
-        socket.on("data", (chunk) => {
-            data = Buffer.concat([data, chunk]);
-            if (data.length > MAX_RESPONSE_BYTES)
-                return fail(new Error("Response too large"));
-            try {
-                const status = parseStatus(data);
-                if (!status) return;
+            const fail = (err: Error) => {
                 socket.destroy();
-                resolve(status);
-            } catch (e) {
-                fail(e as Error);
-            }
-        });
-    });
+                reject(err);
+            };
+
+            socket.setTimeout(TIMEOUT_MS, () => fail(new Error("Timed out")));
+            socket.on("error", fail);
+            socket.on("close", () => fail(new Error("Connection closed")));
+
+            socket.on("connect", () => {
+                socket.write(handshake(host, port));
+                socket.write(packet(0x00)); // status request
+            });
+
+            socket.on("data", (chunk) => {
+                data = Buffer.concat([data, chunk]);
+                if (data.length > MAX_RESPONSE_BYTES)
+                    return fail(new Error("Response too large"));
+                try {
+                    const status = parseStatus(data);
+                    if (!status) return;
+                    const ip = socket.remoteAddress;
+                    socket.destroy();
+                    resolve({ status, ip });
+                } catch (e) {
+                    fail(e as Error);
+                }
+            });
+        },
+    );
 }
 
 // like the vanilla client, only look up an SRV record when no port is given
@@ -140,7 +145,7 @@ async function resolveAddress(address: string, port: number | undefined) {
 async function pingServer(address: string, port?: number): Promise<PingResult> {
     try {
         const target = await resolveAddress(address, port);
-        const status = await requestStatus(target.host, target.port);
+        const { status, ip } = await requestStatus(target.host, target.port);
         return {
             online: true,
             version: stripCodes(status.version?.name ?? ""),
@@ -153,6 +158,7 @@ async function pingServer(address: string, port?: number): Promise<PingResult> {
             icon: status.favicon?.startsWith("data:image/")
                 ? status.favicon
                 : undefined,
+            ip,
         };
     } catch {
         return { online: false };

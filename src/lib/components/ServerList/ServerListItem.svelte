@@ -8,6 +8,12 @@
     import ServerHoverCard from "$lib/components/ServerHoverCard.svelte";
     import * as Tooltip from "$lib/components/ui/tooltip";
     import { formatUptime } from "$lib/utils/formatUptime";
+    import {
+        countryFlag,
+        countryName,
+        countrySearchUrl,
+    } from "$lib/utils/country";
+    import { mergeProps } from "bits-ui";
 
     interface Props {
         // uptime is a percent over the last 30 days; null means no pings yet.
@@ -87,7 +93,7 @@
         </Tooltip.Provider>
     </Cell>
 
-    <Cell class="w-20 min-w-20">
+    <Cell class="w-24 min-w-24">
         <Tooltip.Provider>
             <Tooltip.Root>
                 <Tooltip.Trigger>
@@ -109,6 +115,32 @@
                 </Tooltip.Content>
             </Tooltip.Root>
         </Tooltip.Provider>
+        {#if server.country}
+            <Tooltip.Provider>
+                <Tooltip.Root>
+                    <Tooltip.Trigger>
+                        {#snippet child({ props })}
+                            <!-- stopPropagation: the row's own click opens the server page -->
+                            <a
+                                {...mergeProps(props, {
+                                    onclick: (e: MouseEvent) =>
+                                        e.stopPropagation(),
+                                })}
+                                href={countrySearchUrl(server.country)}
+                                aria-label="More servers from {countryName(
+                                    server.country,
+                                )}"
+                                class="ml-1 align-middle text-xl leading-none"
+                                >{countryFlag(server.country)}</a
+                            >
+                        {/snippet}
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                        {countryName(server.country)}
+                    </Tooltip.Content>
+                </Tooltip.Root>
+            </Tooltip.Provider>
+        {/if}
     </Cell>
 
     {#if children}

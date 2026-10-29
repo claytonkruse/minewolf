@@ -4,6 +4,11 @@
     import * as HoverCard from "$lib/components/ui/hover-card";
     import { Badge } from "$lib/components/ui/badge";
     import { tagSearchUrl } from "$lib/utils/tagSearchUrl";
+    import {
+        countryFlag,
+        countryName,
+        countrySearchUrl,
+    } from "$lib/utils/country";
 
     type Props = {
         server: Pick<
@@ -20,6 +25,7 @@
             | "bannerUrl"
             | "htmlMotd"
             | "tags"
+            | "country"
         >;
         // Tags drawn with the primary badge style, e.g. tags shared with another server.
         highlightTags?: string[];
@@ -83,6 +89,21 @@
                 <dd>{server.onlinePlayers} / {server.maxPlayers}</dd>
                 <dt class="text-muted-foreground">Version</dt>
                 <dd>{server.versionString}</dd>
+                <dt class="text-muted-foreground">Country</dt>
+                <dd>
+                    {#if server.country}
+                        <a href={countrySearchUrl(server.country)}>
+                            <span aria-hidden="true"
+                                >{countryFlag(server.country)}</span
+                            >
+                            {countryName(server.country)}
+                        </a>
+                    {:else}
+                        <span class="text-muted-foreground"
+                            >Location unknown</span
+                        >
+                    {/if}
+                </dd>
                 <dt class="text-muted-foreground">Whitelisted</dt>
                 <dd>{server.whitelisted ? "Yes" : "No"}</dd>
                 <dt class="text-muted-foreground">Crossplay</dt>

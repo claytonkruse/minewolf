@@ -10,6 +10,8 @@ export type ServerFilters = {
     name: string | null;
     tag: string | null;
     version: string | null;
+    // ISO 3166-1 alpha-2 code, e.g. "US"
+    country: string | null;
     // Offline servers are hidden unless asked for.
     offline: boolean;
     crossplay: boolean;
@@ -28,6 +30,7 @@ export function parseFilters(params: URLSearchParams): ServerFilters {
         name: params.get("name")?.trim() || null,
         tag: params.get("tag")?.trim() || null,
         version: params.get("version")?.trim() || null,
+        country: params.get("country")?.trim().toUpperCase() || null,
         offline: params.get("offline") === "1",
         crossplay: params.get("crossplay") === "1",
         open: params.get("open") === "1",
@@ -36,7 +39,7 @@ export function parseFilters(params: URLSearchParams): ServerFilters {
 
 // Every matching server: by relevance for a text search, otherwise by rank.
 export async function findServers(filters: ServerFilters) {
-    const { name, tag, version, offline, crossplay, open } = filters;
+    const { name, tag, version, country, offline, crossplay, open } = filters;
     const matches = name
         ? await searchServers(name)
         : await db
@@ -57,6 +60,7 @@ export async function findServers(filters: ServerFilters) {
                     (t) => t.toLowerCase() === wantedTag,
                 )) &&
             (!version || supportsRelease(server.versionString, version)) &&
+            (!country || server.country === country) &&
             (offline || server.online) &&
             (!crossplay || server.crossplay) &&
             (!open || !server.whitelisted),

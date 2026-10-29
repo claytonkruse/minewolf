@@ -23,6 +23,11 @@
     import JsonLd from "$lib/components/JsonLd.svelte";
     import { breadcrumbs } from "$lib/utils/structuredData";
     import { plainText } from "$lib/utils/plainText";
+    import {
+        countryFlag,
+        countryName,
+        countrySearchUrl,
+    } from "$lib/utils/country";
     import EyeIcon from "@lucide/svelte/icons/eye";
     import StarIcon from "@lucide/svelte/icons/star";
     import ShieldIcon from "@lucide/svelte/icons/shield";
@@ -202,7 +207,7 @@
                         Who can join?
                     </h2>
 
-                    <ul class="mt-2 list-inside list-disc">
+                    <ul class="mt-2 list-outside list-disc pl-5">
                         {#if server.whitelisted}
                             <li>
                                 {server.name} only allows whitelisted players to join.
@@ -237,10 +242,52 @@
 
                 <div>
                     <h2 class="font-heading text-xl font-bold">
+                        Where is {server.name} based?
+                    </h2>
+
+                    <p class="mt-2">
+                        {#if server.country}
+                            {server.name} is hosted in
+                            <Tooltip.Provider>
+                                <Tooltip.Root>
+                                    <!-- content first: whitespace between the parts renders inline, and
+                                         before the link it merges with the space after "hosted in" -->
+                                    <Tooltip.Content>
+                                        Click to see more from this country
+                                    </Tooltip.Content>
+                                    <Tooltip.Trigger>
+                                        {#snippet child({ props })}
+                                            <a
+                                                {...props}
+                                                class="underline underline-offset-4 hover:no-underline"
+                                                href={countrySearchUrl(
+                                                    server.country,
+                                                )}
+                                                ><span aria-hidden="true"
+                                                    >{countryFlag(
+                                                        server.country,
+                                                    )}</span
+                                                >
+                                                {countryName(server.country)}</a
+                                            >
+                                        {/snippet}
+                                    </Tooltip.Trigger>
+                                </Tooltip.Root>
+                            </Tooltip.Provider>. Players closer to
+                            {countryName(server.country)} will usually get lower ping.
+                        {:else}
+                            Location unknown. We haven't been able to work out
+                            where {server.name} is hosted yet.
+                        {/if}
+                    </p>
+                </div>
+
+                <div>
+                    <h2 class="font-heading text-xl font-bold">
                         Joining {server.name}
                     </h2>
 
-                    <ol class="mt-2 list-inside list-decimal">
+                    <ol class="mt-2 list-outside list-decimal pl-5">
                         {#if server.whitelisted}
                             <li>
                                 You must be whitelisted by the
@@ -484,6 +531,37 @@
                                                 <span class="text-destructive"
                                                     >Offline</span
                                                 >
+                                            {/if}
+                                            {#if similar.country}
+                                                <Tooltip.Provider>
+                                                    <Tooltip.Root>
+                                                        <Tooltip.Trigger>
+                                                            {#snippet child({
+                                                                props,
+                                                            })}
+                                                                <!-- z-10 lifts it above the stretched name link, like the tags -->
+                                                                <a
+                                                                    {...props}
+                                                                    href={countrySearchUrl(
+                                                                        similar.country,
+                                                                    )}
+                                                                    aria-label="More servers from {countryName(
+                                                                        similar.country,
+                                                                    )}"
+                                                                    class="relative z-10 ml-1 align-middle text-xl leading-none"
+                                                                    >{countryFlag(
+                                                                        similar.country,
+                                                                    )}</a
+                                                                >
+                                                            {/snippet}
+                                                        </Tooltip.Trigger>
+                                                        <Tooltip.Content>
+                                                            {countryName(
+                                                                similar.country,
+                                                            )}
+                                                        </Tooltip.Content>
+                                                    </Tooltip.Root>
+                                                </Tooltip.Provider>
                                             {/if}
                                         </p>
                                     </div>

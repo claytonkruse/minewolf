@@ -13,6 +13,7 @@
     import * as Select from "$lib/components/ui/select";
     import * as Empty from "$lib/components/ui/empty";
     import { SORTS, SORT_LABELS, type Sort } from "$lib/serverSearch";
+    import { countryFlag, countryName } from "$lib/utils/country";
     import SearchIcon from "@lucide/svelte/icons/search";
     import ShuffleIcon from "@lucide/svelte/icons/shuffle";
     import SearchXIcon from "@lucide/svelte/icons/search-x";
@@ -36,6 +37,7 @@
     let name = $derived(data.name ?? "");
     let tagValue = $derived(data.tag?.toLowerCase() ?? "");
     let version = $derived(data.version ?? "");
+    let country = $derived(data.country ?? "");
     let sort = $derived<string>(data.sort);
     let offline = $derived(data.offline);
     let crossplay = $derived(data.crossplay);
@@ -53,6 +55,7 @@
             data.name ||
             data.tag ||
             data.version ||
+            data.country ||
             data.offline ||
             data.crossplay ||
             data.open ||
@@ -68,6 +71,7 @@
         if (query) params.set("name", query);
         if (tagValue) params.set("tag", tagLabel ?? tagValue);
         if (version) params.set("version", version);
+        if (country) params.set("country", country);
         if (offline) params.set("offline", "1");
         if (crossplay) params.set("crossplay", "1");
         if (open) params.set("open", "1");
@@ -94,10 +98,11 @@
         : 'Search Minecraft Servers'}{pageSuffix(page)} - Minewolf"
     description={tag
         ? `Browse Minecraft servers tagged ${tag} on Minewolf.`
-        : "Search Minecraft servers by name, tag and version, and filter by online status, crossplay and whitelist."}
+        : "Search Minecraft servers by name, tag, version and country, and filter by online status, crossplay and whitelist."}
     noindex={!!(
         data.name ||
         data.version ||
+        data.country ||
         data.offline ||
         data.crossplay ||
         data.open ||
@@ -162,6 +167,36 @@
                     <Select.Item value="" label="Any version" />
                     {#each data.versionOptions as option (option)}
                         <Select.Item value={option} label={option} />
+                    {/each}
+                </Select.Group>
+            </Select.Content>
+        </Select.Root>
+
+        <Select.Root type="single" bind:value={country} onValueChange={apply}>
+            <Select.Trigger class="w-44" aria-label="Country">
+                {#if country}
+                    <span aria-hidden="true">{countryFlag(country)}</span>
+                    {countryName(country)}
+                {:else}
+                    Any country
+                {/if}
+            </Select.Trigger>
+            <Select.Content>
+                <Select.Group>
+                    <Select.Item value="" label="Any country" />
+                    {#each data.countryOptions as option (option.code)}
+                        <Select.Item
+                            value={option.code}
+                            label={countryName(option.code)}
+                        >
+                            <span aria-hidden="true"
+                                >{countryFlag(option.code)}</span
+                            >
+                            {countryName(option.code)}
+                            <span class="text-muted-foreground ml-auto"
+                                >{option.count}</span
+                            >
+                        </Select.Item>
                     {/each}
                 </Select.Group>
             </Select.Content>

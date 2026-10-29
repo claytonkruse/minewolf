@@ -5,6 +5,7 @@ import { pageParam } from "$lib/server/forum";
 import { getUptimes } from "$lib/server/analytics";
 import { SORTS, type Sort } from "$lib/serverSearch";
 import { releaseOptions } from "$lib/server/versions";
+import { countryName } from "$lib/utils/country";
 import {
     findServers,
     parseFilters,
@@ -33,6 +34,7 @@ export const load: PageServerLoad = async ({ url }) => {
             .select({
                 tags: serverTable.tags,
                 versionString: serverTable.versionString,
+                country: serverTable.country,
             })
             .from(serverTable),
     ]);
@@ -58,6 +60,19 @@ export const load: PageServerLoad = async ({ url }) => {
     const versionOptions = releaseOptions(
         allServers.map((server) => server.versionString),
     );
+    // Only countries some server is in, most servers first.
+    const countryCounts = new Map<string, number>();
+    for (const { country } of allServers) {
+        if (country)
+            countryCounts.set(country, (countryCounts.get(country) ?? 0) + 1);
+    }
+    const countryOptions = [...countryCounts.entries()]
+        .map(([code, count]) => ({ code, count }))
+        .sort(
+            (a, b) =>
+                b.count - a.count ||
+                countryName(a.code).localeCompare(countryName(b.code)),
+        );
 
     let servers = matches;
 
@@ -99,5 +114,6 @@ export const load: PageServerLoad = async ({ url }) => {
         defaultSort,
         tagOptions,
         versionOptions,
+        countryOptions,
     };
 };

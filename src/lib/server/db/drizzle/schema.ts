@@ -145,6 +145,13 @@ export const serverTable = pgTable("server", {
 
     versionString: text("version_string").default("1.8.9").notNull(),
     autoVersion: boolean("auto_version").default(true).notNull(),
+
+    // set by the ping script from the server's IP; ISO 3166-1 alpha-2, "" = unknown
+    country: text("country").notNull().default(""),
+    countryCheckedAt: timestamp("country_checked_at", {
+        mode: "date",
+        withTimezone: true,
+    }),
 });
 export type Server = InferSelectModel<typeof serverTable>;
 export const serverRelations = relations(serverTable, ({ one, many }) => ({

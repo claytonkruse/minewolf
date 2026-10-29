@@ -7,6 +7,7 @@ import { eq, sql } from "drizzle-orm";
 import sanitizeHtml from "sanitize-html";
 import * as schema from "../src/lib/server/db/drizzle/schema";
 import { pingServer } from "../src/lib/server/pingServer";
+import { geolocate } from "../src/lib/server/geolocate";
 
 const { serverTable, serverUptimeTable } = schema;
 
@@ -17,7 +18,23 @@ const pool = new pg.Pool({
 });
 const db = drizzle(pool, { schema });
 
-type ServerRow = { id: number; address: string; port: number };
+type ServerRow = {
+    id: number;
+    address: string;
+    port: number;
+    online: boolean;
+    countryCheckedAt: Date | null;
+};
+
+// what happened to the country during one server's update
+type CountryResult = "skipped" | "updated" | "failed";
+
+const log = (msg: string) => console.log(`[ping-servers] ${msg}`);
+
+// servers rarely move, so only re-check the country once a day
+const COUNTRY_RECHECK_MS = 24 * 60 * 60 * 1000;
+// servers pinged at once; matches pg.Pool's default of 10 connections
+const CONCURRENCY = 10;
 
 // Counts this ping toward today's uptime. Days use the database's
 // current_date, matching how votes and views are bucketed.
@@ -35,7 +52,13 @@ async function recordUptime(serverId: number, online: boolean) {
         });
 }
 
-async function updateServer({ id, address, port }: ServerRow) {
+async function updateServer({
+    id,
+    address,
+    port,
+    online: wasOnline,
+    countryCheckedAt,
+}: ServerRow): Promise<{ online: boolean; country: CountryResult }> {
     // the port column defaults to 25565, so treat that as "no port given"
     // to allow servers like 2b2t.org that only resolve through an SRV record
     const pingData = await pingServer(
@@ -54,8 +77,14 @@ async function updateServer({ id, address, port }: ServerRow) {
             })
             .where(eq(serverTable.id, id));
         await recordUptime(id, false);
-        return;
+        if (wasOnline) log(`server ${id} (${address}) went offline`);
+        return { online: false, country: "skipped" };
     }
+    const recheckCountry =
+        !countryCheckedAt ||
+        Date.now() - countryCheckedAt.getTime() > COUNTRY_RECHECK_MS;
+    // a failed lookup leaves the last known country in place
+    const country = recheckCountry ? await geolocate(pingData.ip) : undefined;
     await db
         .update(serverTable)
         .set({
@@ -72,31 +101,56 @@ async function updateServer({ id, address, port }: ServerRow) {
             }),
             lastOnlineAt: new Date(),
             lastPingAt: new Date(),
+            ...(country && { country, countryCheckedAt: new Date() }),
         })
         .where(eq(serverTable.id, id));
     await recordUptime(id, true);
+    if (!wasOnline) log(`server ${id} (${address}) is back online`);
+    return {
+        online: true,
+        country: !recheckCountry ? "skipped" : country ? "updated" : "failed",
+    };
 }
 
 async function updateAllServers() {
+    const startedAt = Date.now();
     const servers = await db
         .select({
             id: serverTable.id,
             address: serverTable.address,
             port: serverTable.port,
+            online: serverTable.online,
+            countryCheckedAt: serverTable.countryCheckedAt,
         })
         .from(serverTable);
 
+    log(`pinging ${servers.length} servers, ${CONCURRENCY} at a time`);
+
     let failed = 0;
-    for (const server of servers) {
-        try {
-            await updateServer(server);
-        } catch (e) {
-            failed++;
-            console.error(`Failed to ping server ${server.id}:`, e);
+    let online = 0;
+    const countries = { updated: 0, failed: 0 };
+    let next = 0;
+    // each worker takes the next unpinged server until none are left
+    async function worker() {
+        while (next < servers.length) {
+            const server = servers[next++];
+            try {
+                const result = await updateServer(server);
+                if (result.online) online++;
+                if (result.country !== "skipped") countries[result.country]++;
+            } catch (e) {
+                failed++;
+                console.error(`Failed to ping server ${server.id}:`, e);
+            }
         }
     }
-    console.log(
-        `[ping-servers] ${new Date().toISOString()} pinged ${servers.length} servers (${failed} failed)`,
+    await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+    const offline = servers.length - online - failed;
+    const seconds = ((Date.now() - startedAt) / 1000).toFixed(1);
+    log(
+        `${new Date().toISOString()} pinged ${servers.length} servers in ${seconds}s: ` +
+            `${online} online, ${offline} offline, ${failed} failed; ` +
+            `countries ${countries.updated} updated, ${countries.failed} failed`,
     );
 }
 

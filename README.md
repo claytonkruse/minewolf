@@ -34,7 +34,7 @@ It's built with SvelteKit (Svelte 5), PostgreSQL via Drizzle ORM, Tailwind CSS v
 
 ### For players
 
-- **Browse and search.** The home page and `/servers/` list every server, sponsors first, then by rank. Search matches name, public address, tags and description, with exact and prefix name matches ranked highest. Tag links filter the list to servers sharing that tag. The `/servers/` search page also filters by tag, supported version (including proxy version ranges like `1.7.2-26.3`), online status, crossplay and whitelist, and sorts by relevance, rank, players, uptime, newest or name. A Random Server button on the home page and search page opens a random online server.
+- **Browse and search.** The home page and `/servers/` list every server, sponsors first, then by rank. Search matches name, public address, tags and description, with exact and prefix name matches ranked highest. Tag links filter the list to servers sharing that tag. The `/servers/` search page also filters by tag, supported version (including proxy version ranges like `1.7.2-26.3`), hosting country, online status, crossplay and whitelist, and sorts by relevance, rank, players, uptime, newest or name. A Random Server button on the home page and search page opens a random online server.
 - **Live server pages.** Each server has its own page with its banner, colored MOTD, current player count, version, tags, description, an embedded YouTube video, website and Discord links, and a "similar servers" panel based on shared tags.
 - **Live maps.** Servers that publish a web map (Dynmap, BlueMap, etc.) get an embedded map page at `/servers/<id>/map/`.
 - **Voting.** Players can vote once every 24 hours, protected by Cloudflare Turnstile. Servers running [Votifier](https://github.com/NuVotifier/NuVotifier) receive the vote in-game so they can hand out rewards.
@@ -212,6 +212,8 @@ Minewolf implements the Java Edition [Server List Ping](https://minecraft.wiki/w
 - parses the MOTD (both legacy `§` codes and JSON chat components) into plain text and colored HTML.
 
 When a server is added, it's pinged once to confirm it's reachable. After that, `scripts/ping-servers.ts` refreshes every server. In Docker it runs from cron every 10 minutes, guarded by `flock` so runs never overlap. Offline servers keep their last MOTD and icon but report zero players. Each ping also adds to that day's counters in `server_uptime`. Uptime is online pings divided by total pings over the last 30 days, shown in the status tooltip on server lists and charted daily on server pages. MOTD HTML is sanitized down to `<span style>` and `<br>` before it's stored.
+
+The IP address each ping connects to is geolocated with [country.is](https://country.is) when a server is added and again at most once a day after that. The country code is stored in `server.country` and shown with its flag on the server page. If a lookup fails, the last known country is kept.
 
 The ping script runs outside SvelteKit, so it can't use `$lib` or `$env` imports. It reads `DB_URL` from the environment directly.
 
