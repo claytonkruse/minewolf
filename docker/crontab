@@ -1,3 +1,5 @@
 # Ping all listed Minecraft servers every 10 minutes.
 # flock -n skips a run if the previous one is still going.
 */10 * * * * . /app/.cron-env && cd /app && flock -n /tmp/ping-servers.lock node_modules/.bin/tsx scripts/ping-servers.ts > /proc/1/fd/1 2> /proc/1/fd/2
+# Recompute server ranks every 8 hours, a few minutes after that hour's ping.
+5 */8 * * * . /app/.cron-env && cd /app && flock -n /tmp/rank-servers.lock node_modules/.bin/tsx scripts/rank-servers.ts > /proc/1/fd/1 2> /proc/1/fd/2

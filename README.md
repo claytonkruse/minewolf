@@ -169,7 +169,8 @@ minewolf/
 ├── docker/                    # crontab + entrypoint for the production image
 ├── drizzle/                   # generated SQL migrations and snapshots
 ├── scripts/
-│   └── ping-servers.ts        # cron job: refresh every server's status
+│   ├── ping-servers.ts        # cron job: refresh every server's status
+│   └── rank-servers.ts        # cron job: recompute server ranks
 ├── src/
 │   ├── hooks.server.ts        # loads the session on every request
 │   ├── lib/
@@ -223,7 +224,7 @@ Only Java Edition servers are pinged. Bedrock address and port fields are stored
 
 Lists show sponsored servers first (ordered by `sponsor_position`), then servers by `rank` ascending, then by name. A `rank` of `0` means unranked, and those servers sort last.
 
-After each ping run, `scripts/ping-servers.ts` recomputes every rank from the score in `src/lib/server/rankScore.ts`:
+Every 8 hours, `scripts/rank-servers.ts` recomputes every rank from the score in `src/lib/server/rankScore.ts`:
 
 ```
 score = votes / (avgPlayers + 1) * uptime + min(avgPlayers, 5)
@@ -288,7 +289,7 @@ The forum rules panel on the forum home page shows the thread whose ID is `FORUM
 The `Dockerfile` builds a self-contained production image:
 
 1. Installs dependencies with pnpm and runs `pnpm build`.
-2. Installs `docker/crontab`, which runs the ping script every 10 minutes.
+2. Installs `docker/crontab`, which runs the ping script every 10 minutes and the rank script every 8 hours.
 3. On start, `docker/entrypoint.sh` snapshots the container environment for cron (cron jobs don't inherit it), starts `crond`, then runs `node build`.
 
 ```sh
