@@ -55,5 +55,16 @@
         >
             <DiscordIcon /> Join our Discord
         </Button>
+
+        <iframe
+            class="mt-8 max-w-full"
+            title="Minewolf Discord widget"
+            src="https://discord.com/widget?id=1299235285271314463&theme=dark"
+            width="350"
+            height="500"
+            allowtransparency
+            frameborder="0"
+            sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+        ></iframe>
     </section>
 </div>
