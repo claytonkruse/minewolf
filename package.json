@@ -18,7 +18,8 @@
         "studio": "drizzle-kit studio",
         "drop": "drizzle-kit drop",
         "introspect": "drizzle-kit introspect",
-        "ping-servers": "tsx scripts/ping-servers.ts"
+        "ping-servers": "tsx scripts/ping-servers.ts",
+        "rank-servers": "tsx scripts/rank-servers.ts"
     },
     "devDependencies": {
         "@eslint/compat": "^1.2.5",
