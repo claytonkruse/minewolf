@@ -15,6 +15,8 @@
     let sponsors = $derived(data.sponsors);
     let sponsorQuery = $derived(data.sponsorQuery);
     let sponsorResults = $derived(data.sponsorResults);
+    let userQuery = $derived(data.userQuery);
+    let userList = $derived(data.userList);
 </script>
 
 <Seo
@@ -53,6 +55,60 @@
 
     <br />
 
+    <h2 class="mb-2 text-xl font-bold">Users</h2>
+    <form method="GET" class="mb-2 flex gap-2" data-sveltekit-keepfocus>
+        <Input
+            type="search"
+            name="user"
+            value={userQuery}
+            placeholder="Search by name, Discord ID or email"
+            aria-label="Search users"
+        />
+        <Button type="submit">Search</Button>
+    </form>
+    <Table.Root class="text-left">
+        <Table.Header>
+            <Table.Row>
+                <Table.Head>User</Table.Head>
+                <Table.Head>Discord ID</Table.Head>
+                <Table.Head>Email</Table.Head>
+                <Table.Head>Servers</Table.Head>
+                <Table.Head>Joined</Table.Head>
+                <Table.Head>Last Online</Table.Head>
+            </Table.Row>
+        </Table.Header>
+        <Table.Body>
+            {#each userList as u (u.id)}
+                <Table.Row>
+                    <Table.Cell>
+                        <a href={`/dashboard/admin/users/${u.id}/`}>{u.name}</a>
+                    </Table.Cell>
+                    <Table.Cell class="font-mono">{u.discordId}</Table.Cell>
+                    <Table.Cell>{u.email}</Table.Cell>
+                    <Table.Cell>{u.servers}</Table.Cell>
+                    <Table.Cell>{u.createdAt.toLocaleDateString()}</Table.Cell>
+                    <Table.Cell
+                        >{u.lastOnlineAt.toLocaleDateString()}</Table.Cell
+                    >
+                </Table.Row>
+            {:else}
+                <Table.Row>
+                    <Table.Cell colspan={6} class="text-muted-foreground">
+                        No users found.
+                    </Table.Cell>
+                </Table.Row>
+            {/each}
+        </Table.Body>
+    </Table.Root>
+    {#if !userQuery && stats.users > userList.length}
+        <p class="text-muted-foreground mt-2 text-sm">
+            Showing the newest {userList.length} of {stats.users} users. Search to
+            find others.
+        </p>
+    {/if}
+
+    <br />
+
     <h2 class="mb-2 text-xl font-bold">Roles</h2>
     <Table.Root class="text-left">
         <Table.Header>
@@ -71,6 +127,40 @@
                     >
                     <Table.Cell>{r.role}</Table.Cell>
                     <Table.Cell>{r.createdAt.toLocaleDateString()}</Table.Cell>
+                </Table.Row>
+            {/each}
+        </Table.Body>
+    </Table.Root>
+
+    <br />
+
+    <h2 class="mb-2 text-xl font-bold">Latest Votes</h2>
+    <Table.Root class="text-left">
+        <Table.Header>
+            <Table.Row>
+                <Table.Head>Server</Table.Head>
+                <Table.Head>Username</Table.Head>
+                <Table.Head>IP</Table.Head>
+                <Table.Head>Time</Table.Head>
+            </Table.Row>
+        </Table.Header>
+        <Table.Body>
+            {#each data.recentVotes as vote (vote.id)}
+                <Table.Row>
+                    <Table.Cell>
+                        <a href={`/servers/${vote.serverId}/`}
+                            >{vote.serverName}</a
+                        >
+                    </Table.Cell>
+                    <Table.Cell>{vote.minecraftUsername}</Table.Cell>
+                    <Table.Cell class="font-mono">{vote.ip}</Table.Cell>
+                    <Table.Cell>{vote.createdAt.toLocaleString()}</Table.Cell>
+                </Table.Row>
+            {:else}
+                <Table.Row>
+                    <Table.Cell colspan={4} class="text-muted-foreground">
+                        No votes yet.
+                    </Table.Cell>
                 </Table.Row>
             {/each}
         </Table.Body>

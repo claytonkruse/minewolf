@@ -445,6 +445,49 @@
                             <VoteIcon /> Force Vote
                         </Button>
                     </form>
+                    {#if data.admin}
+                        <dl
+                            class="mt-4 grid grid-cols-[auto_1fr] gap-x-3 text-sm"
+                        >
+                            <dt class="text-muted-foreground">Created by</dt>
+                            <dd>
+                                {#if data.admin.owner}
+                                    {data.admin.owner.name}
+                                    <span
+                                        class="text-muted-foreground font-mono"
+                                        >({data.admin.owner.discordId})</span
+                                    >
+                                {:else}
+                                    Unknown user
+                                {/if}
+                            </dd>
+                            <dt class="text-muted-foreground">Created</dt>
+                            <dd>{server.createdAt.toLocaleString()}</dd>
+                            <dt class="text-muted-foreground">Votes</dt>
+                            <dd>{data.admin.voteCount}</dd>
+                        </dl>
+                        <h3 class="mt-4 mb-1 font-bold">Latest Votes</h3>
+                        {#if data.admin.votes.length}
+                            <ul class="divide-y text-sm">
+                                {#each data.admin.votes as vote (vote.id)}
+                                    <li class="flex justify-between gap-2 py-1">
+                                        <span class="truncate"
+                                            >{vote.minecraftUsername}</span
+                                        >
+                                        <span
+                                            class="text-muted-foreground shrink-0"
+                                            title={vote.ip}
+                                            >{vote.createdAt.toLocaleString()}</span
+                                        >
+                                    </li>
+                                {/each}
+                            </ul>
+                        {:else}
+                            <p class="text-muted-foreground text-sm">
+                                No votes yet.
+                            </p>
+                        {/if}
+                    {/if}
                 </section>
             {/if}
 

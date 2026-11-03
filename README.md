@@ -280,7 +280,7 @@ INSERT INTO user_role (user_id, role)
 SELECT id, 'admin' FROM "user" WHERE discord_id = '<discord user id>';
 ```
 
-Admins get an admin section in the dashboard for adding, removing and reordering sponsored servers. New roles are added to `roleEnum` in the schema, followed by `pnpm generate`.
+Admins get an admin section in the dashboard showing the latest votes across all servers and tools for adding, removing and reordering sponsored servers. On each server page, the admin panel also shows who created the listing, its total vote count and its latest votes. New roles are added to `roleEnum` in the schema, followed by `pnpm generate`.
 
 The forum rules panel on the forum home page shows the thread whose ID is `FORUM_RULES_THREAD_ID` in `src/lib/forum.ts`.
 
@@ -306,12 +306,14 @@ docker build \
 docker run -d -p 3000:3000 -v minewolf-storage:/app/storage minewolf
 ```
 
+To deploy to production, run `scripts/deploy.sh`. It uploads the local working tree (tracked and untracked files that aren't gitignored, so uncommitted changes go too) to `~/minewolf/src` on `hetzner-arch`, then runs `docker compose build migrate` and `docker compose up -d` there. Pushing to `master` does not deploy. Set `DEPLOY_HOST` or `DEPLOY_DIR` to override the target.
+
 Things to keep in mind:
 
 - Environment variables are build args because they're read at build time. Rebuild after changing them.
 - Mount a volume at `/app/storage` so uploaded banners survive container rebuilds.
 - Run `pnpm migrate` against the production database before deploying a release that includes new migrations.
-- Put the app behind a reverse proxy that sets `X-Forwarded-For`. Vote limits are per IP, so the real client address must reach the app.
+- The app reads the visitor's IP from the `CF-Connecting-IP` header (`ADDRESS_HEADER` in the `Dockerfile`). Vote limits are per IP, so the real client address must reach the app. In production, Caddy trusts that header only from Cloudflare's IP ranges and sets it on requests to the app, so it can't be spoofed by connecting to the server directly.
 - The `docker-compose.yaml` in this repo is only for the development database, not production.
 
 ## Testing and code quality

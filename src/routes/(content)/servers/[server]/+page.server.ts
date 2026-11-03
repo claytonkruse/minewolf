@@ -1,6 +1,10 @@
 import { db } from "$lib/server/db/drizzle/db";
-import { serverTable, voteTable } from "$lib/server/db/drizzle/schema";
-import { eq, ne } from "drizzle-orm";
+import {
+    serverTable,
+    userTable,
+    voteTable,
+} from "$lib/server/db/drizzle/schema";
+import { desc, eq, ne } from "drizzle-orm";
 import type { PageServerLoad, Actions } from "./$types";
 import { error, fail } from "@sveltejs/kit";
 import { hasRole } from "$lib/server/roles";
@@ -14,6 +18,7 @@ import {
 } from "$lib/server/analytics";
 
 const SIMILAR_LIMIT = 5;
+const ADMIN_VOTES_LIMIT = 20;
 
 function parseTags(tags: string) {
     return tags
@@ -89,12 +94,15 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         )
         .slice(0, SIMILAR_LIMIT);
 
-    const [history, uptimes] = await Promise.all([
+    const { user } = locals;
+    const isAdmin = hasRole(user, "admin");
+
+    const [history, uptimes, admin] = await Promise.all([
         getServerHistory(server.id),
         getUptimes([server.id]),
+        isAdmin ? getAdminInfo(server.id, server.userId) : null,
     ]);
 
-    const { user } = locals;
     return {
         server,
         user,
@@ -102,8 +110,32 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         history,
         historyDays: ANALYTICS_DAYS,
         uptime: uptimes.get(server.id) ?? null,
+        admin,
     };
 };
+
+// Owner and vote details, only loaded for admins.
+async function getAdminInfo(serverId: number, ownerId: string) {
+    const [owner, voteCount, votes] = await Promise.all([
+        db.query.userTable.findFirst({
+            where: eq(userTable.id, ownerId),
+            columns: { name: true, discordId: true },
+        }),
+        db.$count(voteTable, eq(voteTable.serverId, serverId)),
+        db
+            .select({
+                id: voteTable.id,
+                minecraftUsername: voteTable.minecraftUsername,
+                ip: voteTable.ip,
+                createdAt: voteTable.createdAt,
+            })
+            .from(voteTable)
+            .where(eq(voteTable.serverId, serverId))
+            .orderBy(desc(voteTable.createdAt))
+            .limit(ADMIN_VOTES_LIMIT),
+    ]);
+    return { owner: owner ?? null, voteCount, votes };
+}
 
 function requireAdmin(locals: App.Locals) {
     if (!hasRole(locals.user, "admin"))
