@@ -4,6 +4,8 @@
     import { Badge } from "$lib/components/ui/badge";
     import { Button } from "$lib/components/ui/button";
     import { Input } from "$lib/components/ui/input";
+    import { Textarea } from "$lib/components/ui/textarea";
+    import * as Tabs from "$lib/components/ui/tabs";
     import { ytEmbedUrl } from "$lib/utils/ytEmbedUrl";
     import * as Tooltip from "$lib/components/ui/tooltip";
     import ServerHoverCard from "$lib/components/ServerHoverCard.svelte";
@@ -35,6 +37,9 @@
     import VoteIcon from "@lucide/svelte/icons/vote";
 
     let tooltip: string = $state("Copy IP?");
+    // Height of a history card (header, 200px chart, footer) in its iframe,
+    // measured from the rendered embed.
+    const CHART_EMBED_HEIGHT = 358;
 
     interface Props {
         data: PageData;
@@ -58,6 +63,38 @@
 
     let full_address =
         server.address + (server.port === 25565 ? "" : `:${server.port}`);
+
+    // What the Embed section gives code for: the server widget, or one of the
+    // history charts. Minecraft is the widget's default theme, so it needs no
+    // ?theme=.
+    let embedKind = $state("server");
+    let widgetTheme = $state("minecraft");
+    let widgetUrl = $derived(
+        `${page.url.origin}/servers/${server.id}/widget/` +
+            (embedKind !== "server"
+                ? `${embedKind}/`
+                : widgetTheme === "minecraft"
+                  ? ""
+                  : `?theme=${widgetTheme}`),
+    );
+    let embedSize = $derived(
+        embedKind === "server"
+            ? { width: 610, height: 72 }
+            : { width: 500, height: CHART_EMBED_HEIGHT },
+    );
+    let embedCode = $derived(
+        `<a href="${page.url.origin}/servers/${server.id}/">` +
+            `<iframe src="${widgetUrl}" width="${embedSize.width}" height="${embedSize.height}" ` +
+            `style="border:0;max-width:100%" ` +
+            `title="${server.name.replace(/[&"<>]/g, (c) => `&#${c.charCodeAt(0)};`)} on Minewolf"></iframe></a>`,
+    );
+    let embedCopied = $state(false);
+
+    async function copyEmbed() {
+        await navigator.clipboard.writeText(embedCode);
+        embedCopied = true;
+        setTimeout(() => (embedCopied = false), 2000);
+    }
 
     async function copy_ip() {
         await navigator.clipboard.writeText(full_address ?? "69");
@@ -541,6 +578,54 @@
                     </AspectRatio>
                 </section>
             {/if}
+
+            <section class="lg:panel">
+                <h2 class="font-heading mb-3 text-xl font-bold">Embed</h2>
+                <Tabs.Root bind:value={embedKind} class="mb-2">
+                    <Tabs.List>
+                        <Tabs.Trigger value="server">Server</Tabs.Trigger>
+                        <Tabs.Trigger value="uptime">Uptime</Tabs.Trigger>
+                        <Tabs.Trigger value="votes">Votes</Tabs.Trigger>
+                        <Tabs.Trigger value="players">Players</Tabs.Trigger>
+                        <Tabs.Trigger value="rank">Rank</Tabs.Trigger>
+                    </Tabs.List>
+                </Tabs.Root>
+                {#if embedKind === "server"}
+                    <Tabs.Root bind:value={widgetTheme} class="mb-2">
+                        <Tabs.List>
+                            <Tabs.Trigger value="minecraft"
+                                >Minecraft</Tabs.Trigger
+                            >
+                            <Tabs.Trigger value="basic">Basic</Tabs.Trigger>
+                            <Tabs.Trigger value="minewolf"
+                                >Minewolf</Tabs.Trigger
+                            >
+                        </Tabs.List>
+                    </Tabs.Root>
+                {/if}
+                <iframe
+                    src={widgetUrl}
+                    width="100%"
+                    height={embedSize.height}
+                    class="border-0"
+                    title={`${server.name} on Minewolf`}
+                ></iframe>
+                <p class="text-muted-foreground mt-3 mb-2 text-sm">
+                    Show this {embedKind === "server" ? "server" : "chart"} on your
+                    website:
+                </p>
+                <Textarea
+                    readonly
+                    value={embedCode}
+                    rows={4}
+                    class="font-mono text-xs"
+                    aria-label="Embed code"
+                    onfocus={(e) => e.currentTarget.select()}
+                />
+                <Button variant="outline" class="mt-2" onclick={copyEmbed}>
+                    {embedCopied ? "Copied" : "Copy Code"}
+                </Button>
+            </section>
         </div>
     </div>
 

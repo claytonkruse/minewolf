@@ -4,8 +4,16 @@
     import { beforeNavigate, afterNavigate } from "$app/navigation";
     import { Progress } from "$lib/components/ui/progress";
     import { fade } from "svelte/transition";
+    import { onMount } from "svelte";
+    import { polyfillCountryFlagEmojis } from "country-flag-emoji-polyfill";
+    import flagFontUrl from "country-flag-emoji-polyfill/dist/TwemojiCountryFlags.woff2?url";
 
     let { children }: LayoutProps = $props();
+
+    // Windows has no country flag emoji, so load a flags-only font there.
+    onMount(() => {
+        polyfillCountryFlagEmojis("Twemoji Country Flags", flagFontUrl);
+    });
 
     function sleep(ms: number): Promise<void> {
         return new Promise((resolve) => setTimeout(resolve, ms));

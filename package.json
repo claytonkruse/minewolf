@@ -41,6 +41,7 @@
         "@typescript-eslint/parser": "^8.6.0",
         "bits-ui": "^2.20.2",
         "cn": "^0.5.0",
+        "country-flag-emoji-polyfill": "0.1.10",
         "drizzle-kit": "^0.30.4",
         "eslint": "^9.18.0",
         "eslint-config-prettier": "^10.0.1",
@@ -87,6 +88,7 @@
         "node-cache": "^5.1.2",
         "pg": "^8.13.1",
         "sanitize-html": "^2.14.0",
+        "satori": "0.63.2",
         "sharp": "^0.33.5",
         "ursa-purejs": "^0.0.3"
     }
